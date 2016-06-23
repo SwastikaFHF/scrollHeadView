@@ -15,6 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
+        <activity android:name=".verticalscroll.VerticalScrollActivity"></activity>
+        <activity android:name=".customswipe.CustomSwipeActivity"></activity>
     </application>
 
 </manifest>

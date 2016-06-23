@@ -1,36 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.aitangba.scrollheadview.ScrollHeadView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:visibility="visible">
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"/>
+        <Button
+            android:id="@+id/bt_horizon_scroll"
+            style="@style/MainBigButton"
+            android:text="水平滚动"/>
 
+        <Button
+            android:id="@+id/bt_vertical_scroll"
+            style="@style/MainBigButton"
+            android:text="垂直滚动"/>
+
+        <Button
+            android:id="@+id/bt_custom_swipe"
+            style="@style/MainBigButton"
+            android:text="自定义Swipe"/>
     </LinearLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:descendantFocusability="blocksDescendants"
-            android:divider="@android:color/transparent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
-
-</com.aitangba.scrollheadview.ScrollHeadView>
+</ScrollView>

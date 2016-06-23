@@ -1,12 +1,17 @@
-package com.aitangba.scrollheadview;
+package com.aitangba.scrollheadview.verticalscroll;
 
 import android.content.Context;
+import android.graphics.Path;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 
 
 /**
@@ -20,6 +25,8 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     private int headerHeight = 0;
     private int offsetY = 0;
 
+    private Scroller mScroller;// 滑动控制
+
     public ScrollHeadView(Context context) {
         this(context, null);
     }
@@ -27,6 +34,7 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     public ScrollHeadView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mParentHelper = new NestedScrollingParentHelper(this);
+        mScroller = new Scroller(context);
     }
 
     public void setHeadView(View headView) {
@@ -37,6 +45,14 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     public void setHeadView(int headViewId) {
         View headView = LayoutInflater.from(getContext()).inflate(headViewId, this, false);
         setHeadView(headView);
+    }
+
+    @Override
+    public void computeScroll() {
+        if (mScroller.computeScrollOffset()) {// 会更新Scroller中的当前x,y位置
+            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
+            postInvalidate();
+        }
     }
 
     @Override
@@ -77,7 +93,7 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
             height = Math.max(heightTemp, sizeHeight);
         }
 
-        height = height + headerHeight;
+//        height = height + offsetY;
         setMeasuredDimension(sizeWidth, height);
     }
 
@@ -164,6 +180,7 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
             View childView = getChildAt(i);
             childView.offsetTopAndBottom(offsetY);
         }
+        requestLayout();
     }
 
     @Override
@@ -177,12 +194,38 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
 
     @Override
     public boolean onNestedPreFling (View target,float velocityX, float velocityY){
+        Log.d(TAG, "onNestedPreFling");
         return false;
     }
 
     @Override
     public boolean onNestedFling (View target,float velocityX, float velocityY,
                                   boolean consumed){
+        Log.d(TAG, "onNestedFling");
         return false;
+    }
+
+    /**
+     * Utility method to check whether a {@link View} can scroll up from it's current position.
+     * Handles platform version differences, providing backwards compatible functionality where
+     * needed.
+     */
+    private static boolean canViewScrollUp(View view) {
+        if (android.os.Build.VERSION.SDK_INT >= 14) {
+            // For ICS and above we can call canScrollVertically() to determine this
+            return ViewCompat.canScrollVertically(view, -1);
+        } else {
+            if (view instanceof AbsListView) {
+                // Pre-ICS we need to manually check the first visible item and the child view's top
+                // value
+                final AbsListView listView = (AbsListView) view;
+                return listView.getChildCount() > 0 &&
+                        (listView.getFirstVisiblePosition() > 0
+                                || listView.getChildAt(0).getTop() < listView.getPaddingTop());
+            } else {
+                // For all other view types we just check the getScrollY() value
+                return view.getScrollY() > 0;
+            }
+        }
     }
 }

@@ -1,29 +1,30 @@
-package com.aitangba.scrollheadview;
+package com.aitangba.scrollheadview.verticalscroll;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import com.aitangba.scrollheadview.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by fhf11991 on 2016/6/7.
+ * Created by fhf11991 on 2016/6/22.
  */
-public class ListViewActivity extends AppCompatActivity{
+public class VerticalScrollActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_listview);
+        setContentView(R.layout.activity_vertical_view);
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -37,15 +38,16 @@ public class ListViewActivity extends AppCompatActivity{
             }
         });
 
-        Adapter adapter = new Adapter(this);
-        ListView recyclerView = (ListView) findViewById(R.id.listView);
+        Adapter adapter = new Adapter();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-        adapter.setData(getData(40));
+        adapter.setData(getData(80));
 
         TextView textView = new TextView(this);
         textView.setText("测试头部");
         ScrollHeadView scrollHeadView = (ScrollHeadView) findViewById(R.id.scrollView);
-        scrollHeadView.setHeadView(textView);
+//        scrollHeadView.setHeadView(textView);
     }
 
     private List<String> getData(int size){
@@ -55,31 +57,22 @@ public class ListViewActivity extends AppCompatActivity{
         }
         return data;
     }
-    private static class Adapter extends BaseAdapter {
+
+    private static class Adapter extends RecyclerView.Adapter {
         private List<String> mList;
-
-        private Context mContext;
-        public Adapter(Context context) {
-            mContext = context;
-        }
-
         public void setData(List<String> list) {
             mList = list;
             notifyDataSetChanged();
         }
 
         @Override
-        public String getItem(int position) {
-            return mList.get(position);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new ViewHolder(new TextView(parent.getContext()));
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if(convertView == null ) {
-                convertView = new TextView(mContext);
-            }
-            ((TextView)convertView).setText(getItem(position));
-            return convertView;
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            ((TextView)holder.itemView).setText(mList.get(holder.getAdapterPosition()));
         }
 
         @Override
@@ -88,8 +81,15 @@ public class ListViewActivity extends AppCompatActivity{
         }
 
         @Override
-        public int getCount() {
+        public int getItemCount() {
             return mList == null ? 0 : mList.size();
+        }
+    }
+
+    private static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }
