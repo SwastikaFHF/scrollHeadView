@@ -18,6 +18,8 @@
         <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
         <activity android:name=".verticalscroll.VerticalScrollActivity"></activity>
         <activity android:name=".customswipe.CustomSwipeActivity"></activity>
+        <activity android:name=".horizonscroll.HorizonScrollTestActivity"></activity>
+        <activity android:name=".multiadapter.MultiAdapterActivity"></activity>
     </application>
 
 </manifest>

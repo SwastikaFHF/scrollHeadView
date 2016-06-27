@@ -7,6 +7,8 @@ import android.view.View;
 
 import com.aitangba.scrollheadview.customswipe.CustomSwipeActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollActivity;
+import com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestActivity;
+import com.aitangba.scrollheadview.multiadapter.MultiAdapterActivity;
 import com.aitangba.scrollheadview.verticalscroll.VerticalScrollActivity;
 
 /**
@@ -31,6 +33,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_custom_swipe:
                 startActivity(CustomSwipeActivity.class);
+                break;
+            case R.id.bt_horizon_scroll_test:
+                startActivity(HorizonScrollTestActivity.class);
+                break;
+            case R.id.bt_multi_adapter:
+                startActivity(MultiAdapterActivity.class);
                 break;
             default:break;
         }

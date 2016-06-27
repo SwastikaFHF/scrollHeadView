@@ -25,8 +25,6 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     private int headerHeight = 0;
     private int offsetY = 0;
 
-    private Scroller mScroller;// 滑动控制
-
     public ScrollHeadView(Context context) {
         this(context, null);
     }
@@ -34,7 +32,6 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     public ScrollHeadView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mParentHelper = new NestedScrollingParentHelper(this);
-        mScroller = new Scroller(context);
     }
 
     public void setHeadView(View headView) {
@@ -45,14 +42,6 @@ public class ScrollHeadView extends LinearLayout implements NestedScrollingParen
     public void setHeadView(int headViewId) {
         View headView = LayoutInflater.from(getContext()).inflate(headViewId, this, false);
         setHeadView(headView);
-    }
-
-    @Override
-    public void computeScroll() {
-        if (mScroller.computeScrollOffset()) {// 会更新Scroller中的当前x,y位置
-            scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-            postInvalidate();
-        }
     }
 
     @Override

@@ -24,5 +24,15 @@
             android:id="@+id/bt_custom_swipe"
             style="@style/MainBigButton"
             android:text="自定义Swipe"/>
+
+        <Button
+            android:id="@+id/bt_horizon_scroll_test"
+            style="@style/MainBigButton"
+            android:text="水平滑动"/>
+
+        <Button
+            android:id="@+id/bt_multi_adapter"
+            style="@style/MainBigButton"
+            android:text="自定义多样式adapter"/>
     </LinearLayout>
 </ScrollView>
