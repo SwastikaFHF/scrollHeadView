@@ -1,9 +1,11 @@
-package com.aitangba.scrollheadview.multiadapter;
+package com.aitangba.scrollheadview.multiadapter.ui;
 
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aitangba.scrollheadview.R;
+import com.aitangba.scrollheadview.multiadapter.ItemType;
+import com.aitangba.scrollheadview.multiadapter.MultiAdapter;
 import com.aitangba.scrollheadview.multiadapter.viewholder.BaseViewHolder;
 import com.aitangba.scrollheadview.multiadapter.viewholder.EmptyViewHolder;
 import com.aitangba.scrollheadview.multiadapter.viewholder.FooterViewHolder;

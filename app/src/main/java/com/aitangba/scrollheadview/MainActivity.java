@@ -8,7 +8,7 @@ import android.view.View;
 import com.aitangba.scrollheadview.customswipe.CustomSwipeActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestActivity;
-import com.aitangba.scrollheadview.multiadapter.MultiAdapterActivity;
+import com.aitangba.scrollheadview.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.scrollheadview.verticalscroll.VerticalScrollActivity;
 
 /**
