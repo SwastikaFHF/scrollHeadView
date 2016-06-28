@@ -1,6 +1,5 @@
 package com.aitangba.scrollheadview.multiadapter;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -36,7 +35,7 @@ public class MultiAdapterActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-        adapter.setData(getData(50));
+        adapter.setData(getData(40));
         adapter.setHeadViewSize(2);
         adapter.setAutoLoadMore(true);
 
@@ -47,8 +46,8 @@ public class MultiAdapterActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.setEmptyViewStatus(EmptyViewHolder.STATUS_NO_DATA, true);
-//                        adapter.setData(getData(0));
+//                        adapter.setEmptyViewStatus(EmptyViewHolder.STATUS_NO_DATA, true);
+                        adapter.setData(getData(9));
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);
@@ -61,8 +60,8 @@ public class MultiAdapterActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        adapter.addToFoot(getData(10));
-                        adapter.setFooterViewStatus(FooterViewHolder.STATUS_NO_MORE, true);
+                        adapter.addToFoot(getData(9));
+//                        adapter.setFooterViewStatus(FooterViewHolder.STATUS_NO_MORE, true);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);
@@ -169,7 +168,7 @@ public class MultiAdapterActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(String s) {
-            mItemView.setText("我是假数据");
+            mItemView.setText("我是样式2");
         }
     }
 }

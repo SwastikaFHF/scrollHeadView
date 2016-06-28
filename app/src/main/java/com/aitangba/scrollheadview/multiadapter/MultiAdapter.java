@@ -82,6 +82,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
            mList.clear();
         }
         mList.addAll(list);
+        setFooterViewStatus(FooterViewHolder.STATUS_NONE);
         notifyDataSetChanged();
     }
 
@@ -90,6 +91,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
             mList = new ArrayList<>();
         }
         mList.addAll(list);
+        setFooterViewStatus(FooterViewHolder.STATUS_NONE);
         notifyDataSetChanged();
     }
 
@@ -148,11 +150,9 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
 
         int itemViewType;
 
-        if(itemType == ItemType.HeaderView) {
-            itemViewType = ItemType.HeaderView.itemType | getViewType(ItemType.HeaderView, position);
-        } else if(itemType == ItemType.CommonView) {
-            itemViewType = ItemType.CommonView.itemType | getViewType(ItemType.CommonView, position);
-        } else {
+        if(itemType == ItemType.HeaderView || itemType == ItemType.CommonView) { //满足多样性要求
+            itemViewType = itemType.itemType | getViewType(itemType, position);
+        } else { //其他样式具有唯一性
             itemViewType = itemType.itemType;
         }
         return itemViewType;
@@ -175,15 +175,19 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
         BaseViewHolder baseViewHolder = null;
         switch (itemType){
             case HeaderView:
+                //HeaderViewHolder 可以具有多样性
                 baseViewHolder = new HeaderViewHolder(new View(parent.getContext()));
                 break;
             case FooterView:
+                // FooterViewHolder 具有唯一性
                 baseViewHolder = new FooterViewHolder(new View(parent.getContext()), mOnLoadMoreListener);
                 break;
             case EmptyView:
+                // EmptyViewHolder 具有唯一性
                 baseViewHolder = new EmptyViewHolder(parent, new View(parent.getContext()));
                 break;
             case CommonView:
+                //CommonViewHolder 具有多样性
                 baseViewHolder = onCreateCommonViewHolder(parent, viewType);
             default:
                 break;
@@ -203,7 +207,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
                 break;
             case FooterView:
                 FooterViewHolder footerViewHolder = (FooterViewHolder) holder;
-                footerViewHolder.dealFooterStatus(mFooterViewStatus);
+                footerViewHolder.onBindViewHolder(mFooterViewStatus, mHeadViewSize);
                 break;
             case EmptyView:
                 EmptyViewHolder emptyViewHolder = (EmptyViewHolder) holder;
