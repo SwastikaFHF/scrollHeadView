@@ -1,4 +1,4 @@
-package com.aitangba.scrollheadview.multiadapter;
+package com.aitangba.scrollheadview.multiadapter.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
