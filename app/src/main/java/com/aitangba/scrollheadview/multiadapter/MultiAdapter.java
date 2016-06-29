@@ -148,13 +148,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
             itemType = ItemType.CommonView;
         }
 
-        int itemViewType;
-
-        if(itemType == ItemType.HeaderView || itemType == ItemType.CommonView) { //满足多样性要求
-            itemViewType = itemType.itemType | getViewType(itemType, position);
-        } else { //其他样式具有唯一性
-            itemViewType = itemType.itemType;
-        }
+        int itemViewType = itemType.itemType | getViewType(itemType, position);
         return itemViewType;
     }
 
