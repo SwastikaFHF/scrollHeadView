@@ -47,8 +47,7 @@ public class MultiAdapterActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        adapter.setEmptyViewStatus(EmptyViewHolder.STATUS_NO_DATA, true);
-                        adapter.setData(getData(9));
+                        adapter.setData(getData(0));
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);
@@ -62,7 +61,6 @@ public class MultiAdapterActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         adapter.addToFoot(getData(9));
-//                        adapter.setFooterViewStatus(FooterViewHolder.STATUS_NO_MORE, true);
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 }, 2000);

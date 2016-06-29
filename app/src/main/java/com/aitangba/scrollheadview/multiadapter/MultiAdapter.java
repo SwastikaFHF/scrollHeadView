@@ -46,6 +46,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
         if(mList != null) {
             mList.clear();
         }
+        setFooterViewStatus(FooterViewHolder.STATUS_LOADING_MORE);
         notifyDataSetChanged();
     }
 
@@ -82,6 +83,9 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
            mList.clear();
         }
         mList.addAll(list);
+        if(mList.size() == 0) {
+            setEmptyViewStatus(EmptyViewHolder.STATUS_NO_DATA);
+        }
         setFooterViewStatus(FooterViewHolder.STATUS_NONE);
         notifyDataSetChanged();
     }
