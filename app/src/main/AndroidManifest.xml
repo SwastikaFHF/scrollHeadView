@@ -20,6 +20,14 @@
         <activity android:name=".customswipe.CustomSwipeActivity"></activity>
         <activity android:name=".horizonscroll.HorizonScrollTestActivity"></activity>
         <activity android:name=".multiadapter.ui.MultiAdapterActivity"></activity>
+        <activity android:name=".viewpager.ViewPageActivity"></activity>
+        <activity android:name=".cornerrectangle.CornerRectangleActivity"></activity>
+        <activity android:name=".slideback.slidingmenu.SlidingMenuActivity"
+                  android:theme="@style/JK.SwipeBack.Transparent.Theme"></activity>
+
+        <activity android:name=".slideback.slidinglayout.SlidingLayoutActivity"></activity>
+        <activity android:name=".slideback.slidinglayout.SlideBackActivity"
+            android:theme="@style/slideBack"></activity>
     </application>
 
 </manifest>

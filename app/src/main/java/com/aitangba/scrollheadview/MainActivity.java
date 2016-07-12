@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.aitangba.scrollheadview.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.scrollheadview.customswipe.CustomSwipeActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.scrollheadview.multiadapter.ui.MultiAdapterActivity;
+import com.aitangba.scrollheadview.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.scrollheadview.verticalscroll.VerticalScrollActivity;
+import com.aitangba.scrollheadview.viewpager.ViewPageActivity;
 
 /**
  * Created by fhf11991 on 2016/6/22.
@@ -39,6 +42,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_multi_adapter:
                 startActivity(MultiAdapterActivity.class);
+                break;
+            case R.id.bt_view_page:
+                startActivity(ViewPageActivity.class);
+                break;
+            case R.id.bt_corner_text:
+                startActivity(CornerRectangleActivity.class);
+                break;
+            case R.id.bt_scroll_activity:
+                startActivity(SlidingMenuActivity.class);
                 break;
             default:break;
         }

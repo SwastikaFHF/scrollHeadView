@@ -22,7 +22,7 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
     private int mHeadViewSize;
 
     protected boolean mIsAutoLoadMore = false;
-    protected boolean mHasEmptyView = true;
+    protected boolean mIsUseEmptyView = true;
     protected OnLoadMoreListener mOnLoadMoreListener;
 
     protected int mEmptyViewStatus = EmptyViewHolder.STATUS_NO_DATA;
@@ -64,8 +64,8 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
         mIsAutoLoadMore = autoLoadMore;
     }
 
-    public void setHasEmptyView(boolean hasEmptyView) {
-        mHasEmptyView = hasEmptyView;
+    public void setUseEmptyView(boolean useEmptyView) {
+        mIsUseEmptyView = useEmptyView;
     }
 
     public int getHeadViewSize() {
@@ -83,10 +83,14 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
            mList.clear();
         }
         mList.addAll(list);
-        if(mList.size() == 0) {
+
+        if(mList.size() == 0 && mIsUseEmptyView) {
             setEmptyViewStatus(EmptyViewHolder.STATUS_NO_DATA);
+        } else if(mList.size() == 0 && !mIsUseEmptyView) {
+            setFooterViewStatus(FooterViewHolder.STATUS_NO_MORE);
+        } else {
+            setFooterViewStatus(FooterViewHolder.STATUS_NONE);
         }
-        setFooterViewStatus(FooterViewHolder.STATUS_NONE);
         notifyDataSetChanged();
     }
 
@@ -105,17 +109,17 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
         final int listSize = mList == null ? 0 : mList.size();
         final int footerViewSize = 1;
         final int emptyViewSize = 1;
-        final boolean hasEmptyView = mHasEmptyView;
-        final boolean needFooterView = mIsAutoLoadMore;
+        final boolean hasEmptyView = mIsUseEmptyView;
+        final boolean hasFooterView = mIsAutoLoadMore;
 
         int count;
-        if(listSize <= 0 && needFooterView && hasEmptyView) {
+        if(listSize <= 0 && hasFooterView && hasEmptyView) {
             count = headViewSize + listSize + emptyViewSize;
-        } else if(listSize <= 0 && needFooterView && !hasEmptyView) {
+        } else if(listSize <= 0 && hasFooterView && !hasEmptyView) {
             count = headViewSize + listSize + footerViewSize;
-        } else if(listSize > 0 && needFooterView) {
+        } else if(listSize > 0 && hasFooterView) {
             count = headViewSize + listSize + footerViewSize;
-        } else if(listSize > 0 && !needFooterView) {
+        } else if(listSize > 0 && !hasFooterView) {
             count = headViewSize + listSize;
         } else {
             count = headViewSize + listSize + footerViewSize;
@@ -127,9 +131,9 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
     public int getItemViewType(int position) {
         ItemType itemType;
 
-        final boolean hasEmptyView = mHasEmptyView;
+        final boolean hasEmptyView = mIsUseEmptyView;
+        final boolean hasFooterView = mIsAutoLoadMore;
         final boolean isLastPosition = position == getItemCount() - 1;
-        final boolean needFooterView = mIsAutoLoadMore;
         final boolean isListEmpty = mList == null ? true : mList.size() == 0;
 
         if(position < mHeadViewSize) {
@@ -139,13 +143,13 @@ public abstract class MultiAdapter<T> extends RecyclerView.Adapter<BaseViewHolde
         } else if(position == mHeadViewSize && isListEmpty && hasEmptyView) {
             itemType = ItemType.EmptyView;
         } else if(position == mHeadViewSize && isListEmpty && !hasEmptyView) {
-            itemType = needFooterView ? ItemType.FooterView : ItemType.CommonView;
+            itemType = hasFooterView ? ItemType.FooterView : ItemType.CommonView;
         } else if(position == mHeadViewSize && !hasEmptyView && isLastPosition) {
-            itemType = needFooterView ? ItemType.FooterView : ItemType.CommonView;
+            itemType = hasFooterView ? ItemType.FooterView : ItemType.CommonView;
         } else if(position == mHeadViewSize && !hasEmptyView && !isLastPosition) {
             itemType = ItemType.CommonView;
         } else if(position > mHeadViewSize && isLastPosition) {
-            itemType = needFooterView ? ItemType.FooterView : ItemType.CommonView;
+            itemType = hasFooterView ? ItemType.FooterView : ItemType.CommonView;
         } else if(position > mHeadViewSize && !isLastPosition) {
             itemType = ItemType.CommonView;
         } else {

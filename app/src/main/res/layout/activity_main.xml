@@ -34,5 +34,20 @@
             android:id="@+id/bt_multi_adapter"
             style="@style/MainBigButton"
             android:text="自定义多样式adapter"/>
+
+        <Button
+            android:id="@+id/bt_view_page"
+            style="@style/MainBigButton"
+            android:text="自定义多样式view_page"/>
+
+        <Button
+            android:id="@+id/bt_corner_text"
+            style="@style/MainBigButton"
+            android:text="自定义圆角背景的TextView"/>
+
+        <Button
+            android:id="@+id/bt_scroll_activity"
+            style="@style/MainBigButton"
+            android:text="可滑动的activity"/>
     </LinearLayout>
 </ScrollView>
