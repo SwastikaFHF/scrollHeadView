@@ -49,5 +49,10 @@
             android:id="@+id/bt_scroll_activity"
             style="@style/MainBigButton"
             android:text="可滑动的activity"/>
+
+        <Button
+            android:id="@+id/bt_horizon_scroll_activity"
+            style="@style/MainBigButton"
+            android:text="水平滑动广告图"/>
     </LinearLayout>
 </ScrollView>

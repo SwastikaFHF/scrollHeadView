@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_scroll_activity:
                 startActivity(SlidingMenuActivity.class);
                 break;
+            case R.id.bt_horizon_scroll_activity:
+                startActivity(com.aitangba.scrollheadview.horizonscrollview.HorizonScrollActivity.class);
+                break;
             default:break;
         }
     }
