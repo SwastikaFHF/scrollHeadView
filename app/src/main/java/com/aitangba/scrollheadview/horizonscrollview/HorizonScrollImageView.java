@@ -53,8 +53,8 @@ public class HorizonScrollImageView extends ViewGroup {
 
 
         mFirstImageView = new ImageView(context);
-        mFirstImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        mFirstImageView.setImageResource(R.mipmap.ic_launcher);
+//        mFirstImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//        mFirstImageView.setImageResource(R.mipmap.ic_launcher);
         mFirstImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
