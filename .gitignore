@@ -8,3 +8,6 @@
 /captures
 /.idea
 /gradle
+gradle.properties
+gradlew
+gradlew.bat
