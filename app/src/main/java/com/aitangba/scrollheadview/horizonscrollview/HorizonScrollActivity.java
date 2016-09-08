@@ -2,6 +2,7 @@ package com.aitangba.scrollheadview.horizonscrollview;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 
 import com.aitangba.scrollheadview.R;
 import com.aitangba.scrollheadview.slideback.slidinglayout.BaseActivity;

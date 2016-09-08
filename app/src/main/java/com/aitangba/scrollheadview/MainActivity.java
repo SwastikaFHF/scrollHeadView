@@ -13,6 +13,7 @@ import com.aitangba.scrollheadview.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.scrollheadview.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.scrollheadview.verticalscroll.VerticalScrollActivity;
 import com.aitangba.scrollheadview.viewpager.ViewPageActivity;
+import com.aitangba.scrollheadview.youtube.YoutubeActivity;
 
 /**
  * Created by fhf11991 on 2016/6/22.
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_horizon_scroll_activity:
                 startActivity(com.aitangba.scrollheadview.horizonscrollview.HorizonScrollActivity.class);
+                break;
+            case R.id.bt_youtube_activity:
+                startActivity(YoutubeActivity.class);
                 break;
             default:break;
         }

@@ -30,6 +30,7 @@
             android:theme="@style/slideBack"></activity>
 
         <activity android:name=".horizonscrollview.HorizonScrollActivity"></activity>
+        <activity android:name=".youtube.YoutubeActivity"></activity>
     </application>
 
 </manifest>

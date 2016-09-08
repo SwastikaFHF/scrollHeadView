@@ -1,10 +1,8 @@
 package com.aitangba.scrollheadview.horizonscrollview;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.aitangba.scrollheadview.R;
 
@@ -29,7 +26,9 @@ public class HorizonScrollImageView extends ViewGroup {
     private static final int DEFAULT_GUTTER_SIZE = 16; // dips
     private int mTouchSlop;
 
-    private ImageView mFirstImageView;
+    private View mFirstChildView;
+    private View mSecondChildView;
+    private View mThirdChildView;
 
     public HorizonScrollImageView(Context context) {
         this(context, null);
@@ -44,6 +43,10 @@ public class HorizonScrollImageView extends ViewGroup {
         init(context);
     }
 
+    private ViewDragHelper mDragHelper;
+    private int mCurrentPosition;
+    private int mLeft;
+
     private void init(Context context) {
 
         final float density = context.getResources().getDisplayMetrics().density;
@@ -51,18 +54,29 @@ public class HorizonScrollImageView extends ViewGroup {
         mDefaultGutterSize = (int) (DEFAULT_GUTTER_SIZE * density);
         mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
 
+        mFirstChildView = createChildView();
+        mSecondChildView = createChildView();
+        mThirdChildView = createChildView();
 
-        mFirstImageView = new ImageView(context);
-        mFirstImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        mFirstImageView.setImageResource(R.mipmap.ic_launcher);
-        mFirstImageView.setOnClickListener(new OnClickListener() {
+        addView(mFirstChildView);
+        addView(mSecondChildView);
+        addView(mThirdChildView);
+
+        mDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragCallback());
+    }
+
+    private View createChildView() {
+        ImageView imageView = new ImageView(getContext());
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setClickable(false);
+        imageView.setImageResource(R.drawable.bg_red);
+        imageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "点击事件-----");
             }
         });
-        addView(mFirstImageView);
-
+        return imageView;
     }
 
     @Override
@@ -75,9 +89,7 @@ public class HorizonScrollImageView extends ViewGroup {
 
         for(int i = 0 ;i < childCount; i ++) {
             View child = getChildAt(i);
-            if(child == mFirstImageView) {
-                child.measure(widthSpec, heightSpec);
-            }
+            child.measure(widthSpec, heightSpec);
         }
         setMeasuredDimension(widthSpec, heightSpec);
 
@@ -88,137 +100,121 @@ public class HorizonScrollImageView extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int childCount = getChildCount();
+        final int curLeft = mLeft;
+        final int width = getMeasuredWidth();
+        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
+        final int nextIndex = (mCurrentPosition + 1) % childCount;
 
         for(int i = 0 ;i < childCount; i ++) {
-            View child = getChildAt(i);
-            if(child == mFirstImageView) {
-                child.layout(l, t, r, b);
-            }
-        }
+            final View child = getChildAt(i);
+            final int childWidth = child.getMeasuredWidth();
+            final int childHeight = child.getMeasuredHeight();
 
+            final int left;
+            if(i == lastIndex && curLeft > 0) {
+                left = - (width - curLeft);
+            } else if(i == mCurrentPosition) {
+                left = curLeft;
+                Log.d(TAG, "onLayout---" + "     left = " + left +", mLeft = " + mLeft);
+            } else if(i == nextIndex && curLeft < 0) {
+                left = width + curLeft;
+            } else {
+                left = width;
+            }
+
+            final int top = t;
+            final int right = left + childWidth;
+            final int bottom = top + childHeight;
+            child.layout(left, top, right, bottom);
+        }
+        Log.d(TAG, "onLayout---");
     }
 
-    private void logActionName(int action) {
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onInterceptTouchEvent =" + "ACTION_DOWN");
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "onInterceptTouchEvent =" + "ACTION_MOVE");
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.d(TAG, "onInterceptTouchEvent =" + "ACTION_UP");
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                Log.d(TAG, "onInterceptTouchEvent =" + "ACTION_CANCEL");
-                break;
+    @Override
+    public void computeScroll() {
+        if (mDragHelper.continueSettling(true)) {
+            ViewCompat.postInvalidateOnAnimation(this);
         }
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        final int action = ev.getAction() & MotionEventCompat.ACTION_MASK;
-        logActionName(action);
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onInterceptTouchEvent -- ACTION_DOWN");
-                mLastMotionX = ev.getX();
-                mLastMotionY = ev.getY();
-                mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
-                return false;
-            case MotionEvent.ACTION_MOVE:
-                final int activePointerId = mActivePointerId;
-                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, activePointerId);
-                final float x = MotionEventCompat.getX(ev, pointerIndex);
-                final float dx = x - mLastMotionX;
-                final float xDiff = Math.abs(dx);
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
-                final float yDiff = Math.abs(y - mLastMotionY);
-
-                if (dx != 0 &&  !isGutterDrag(mLastMotionX, dx)) {
-                    mIsUnableToDrag = true;
-                    return false;
-                }
-
-                if (xDiff > mTouchSlop && xDiff * 0.5f > yDiff) {
-                    mIsBeingDragged = true;
-                } else if (yDiff > mTouchSlop) {
-                    mIsUnableToDrag = true;
-                }
-                break;
-            default:
-                break;
+        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
+        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+            mDragHelper.cancel();
+            return false;
         }
-        Log.d(TAG, "mIsBeingDragged = " + mIsBeingDragged);
-        return mIsBeingDragged;
+        return mDragHelper.shouldInterceptTouchEvent(ev);
     }
 
-    private float mLastMotionX;
-    private float mLastMotionY;
-    private int mActivePointerId;
-    private boolean mIsBeingDragged; //是否正在拖拽中
-
-    private boolean mIsUnableToDrag;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onTouchEvent --");
-        if(mIsUnableToDrag)return false;
-
-        final int action = ev.getAction() & MotionEventCompat.ACTION_MASK;
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "onTouchEvent -- ACTION_DOWN");
-                mLastMotionX = ev.getX();
-                mLastMotionY = ev.getY();
-                mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                final int activePointerId = mActivePointerId;
-                final int pointerIndex = MotionEventCompat.findPointerIndex(ev, activePointerId);
-                final float x = MotionEventCompat.getX(ev, pointerIndex);
-                final float dx = x - mLastMotionX;
-                final float xDiff = Math.abs(dx);
-                final float y = MotionEventCompat.getY(ev, pointerIndex);
-                final float yDiff = Math.abs(y - mLastMotionY);
-
-                Log.d(TAG, "mLastMotionY = " + mLastMotionY);
-
-                if (dx == 0 || isGutterDrag(mLastMotionX, dx)) {
-                    mIsUnableToDrag = true;
-                    return false;
-                }
-
-                if (xDiff > mTouchSlop && xDiff >= yDiff) {  //水平滑动
-                    mIsBeingDragged = true;
-                    mIsUnableToDrag = false;
-                    final float currentX = mFirstImageView.getX();
-                    float targetX = currentX + dx;
-                    ViewCompat.offsetLeftAndRight(mFirstImageView, (int)targetX);
-                    mLastMotionX = x;
-                    mLastMotionY = y;
-                    Log.d(TAG, "currentX = " + currentX + "   dx = " + dx);
-                } else if (xDiff > mTouchSlop && xDiff < yDiff){ //竖直滑动
-                    mIsUnableToDrag = true;
-                    return false;
-                }
-                break;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                mIsBeingDragged = false;
-                return false;
-        }
+        mDragHelper.processTouchEvent(ev);
         return true;
     }
 
-    /**
-     * 是否属于边缘滑动
-     * @param x
-     * @param dx
-     * @return
-     */
-    private boolean isGutterDrag(float x, float dx) {
-        return (x < mGutterSize && dx > 0) || (x > getWidth() - mGutterSize && dx < 0);
+    class ViewDragCallback extends ViewDragHelper.Callback {
+
+        @Override
+        public boolean tryCaptureView(View child, int pointerId) {
+            return true;
+        }
+
+        @Override
+        public int getViewHorizontalDragRange(View child) {
+            return getMeasuredWidth();
+        }
+
+        @Override
+        public int clampViewPositionHorizontal(View child, int left, int dx) {
+            return left;
+        }
+
+        @Override
+        public void onViewDragStateChanged(int state) {
+            super.onViewDragStateChanged(state);
+            if(state == ViewDragHelper.STATE_IDLE) {
+                final int childCount = getChildCount();
+                final int width = getMeasuredWidth();
+                final int left = mLeft;
+                final int diffLeft = Math.abs(left);
+                final int limitWidth = width / 2;
+                if(left < 0 && diffLeft >= limitWidth) {   // <--
+                    final int nextIndex = (mCurrentPosition + 1) % childCount;
+                    mCurrentPosition = nextIndex;
+                } else if (left > 0 && diffLeft >= limitWidth) {             // -->
+                    final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
+                    mCurrentPosition = lastIndex;
+                }
+            }
+        }
+
+        @Override
+        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
+            super.onViewPositionChanged(changedView, left, top, dx, dy);
+            mLeft = left;
+            Log.d(TAG, "changedView.getLeft() = " + changedView.getLeft() + "   ; left = " + left);
+            requestLayout();
+        }
+
+        @Override
+        public void onViewReleased(View releasedChild, float xvel, float yvel) {
+            super.onViewReleased(releasedChild, xvel, yvel);
+            final int width = getMeasuredWidth();
+            final int left = mLeft;
+            final int diffLeft = Math.abs(left);
+            final int limitWidth = width / 2;
+
+            final int finalLeft;
+            if(left < 0 && diffLeft >= limitWidth) {   // <--
+                finalLeft = -width;
+            } else if(left > 0 && diffLeft >= limitWidth)  {   // -->
+                finalLeft = width;
+            } else {
+                finalLeft = 0;
+            }
+            mDragHelper.settleCapturedViewAt(finalLeft, 0);
+            invalidate();
+        }
     }
 }

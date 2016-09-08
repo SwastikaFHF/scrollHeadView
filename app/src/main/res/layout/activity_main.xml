@@ -54,5 +54,10 @@
             android:id="@+id/bt_horizon_scroll_activity"
             style="@style/MainBigButton"
             android:text="水平滑动广告图"/>
+
+        <Button
+            android:id="@+id/bt_youtube_activity"
+            style="@style/MainBigButton"
+            android:text="YouTube"/>
     </LinearLayout>
 </ScrollView>
