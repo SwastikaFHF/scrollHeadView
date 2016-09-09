@@ -1,15 +1,20 @@
 package com.aitangba.scrollheadview.horizonscrollview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 
 import com.aitangba.scrollheadview.R;
@@ -43,9 +48,8 @@ public class HorizonScrollImageView extends ViewGroup {
         init(context);
     }
 
-    private ViewDragHelper mDragHelper;
     private int mCurrentPosition;
-    private int mLeft;
+    private int mLeft; // range from -width to width (currentView.getLeft)
 
     private void init(Context context) {
 
@@ -62,7 +66,6 @@ public class HorizonScrollImageView extends ViewGroup {
         addView(mSecondChildView);
         addView(mThirdChildView);
 
-        mDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragCallback());
     }
 
     private View createChildView() {
@@ -95,6 +98,7 @@ public class HorizonScrollImageView extends ViewGroup {
 
         final int maxGutterSize = width / 10;
         mGutterSize = Math.min(maxGutterSize, mDefaultGutterSize);
+//        new ViewPager()
     }
 
     @Override
@@ -115,7 +119,6 @@ public class HorizonScrollImageView extends ViewGroup {
                 left = - (width - curLeft);
             } else if(i == mCurrentPosition) {
                 left = curLeft;
-                Log.d(TAG, "onLayout---" + "     left = " + left +", mLeft = " + mLeft);
             } else if(i == nextIndex && curLeft < 0) {
                 left = width + curLeft;
             } else {
@@ -127,94 +130,143 @@ public class HorizonScrollImageView extends ViewGroup {
             final int bottom = top + childHeight;
             child.layout(left, top, right, bottom);
         }
-        Log.d(TAG, "onLayout---");
     }
 
-    @Override
-    public void computeScroll() {
-        if (mDragHelper.continueSettling(true)) {
-            ViewCompat.postInvalidateOnAnimation(this);
-        }
-    }
+    private float mLastPointX;  //记录手势在屏幕上的X轴坐标
+    private boolean mIsFirstMoveRight;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
-            mDragHelper.cancel();
-            return false;
+        final int actionIndex = ev.getActionIndex();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                Log.d(TAG, "onInterceptTouchEvent --- ACTION_DOWN");
+                mLastPointX = ev.getRawX();
+                mIsFirstMoveRight = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                final float curPointX = ev.getRawX();
+                final float distanceX = curPointX - mLastPointX;
+                mLastPointX = curPointX;
+                final int tempLeft = mLeft;
+                mLeft = mLeft + (int)distanceX;
+                final boolean hasDiffLeft = tempLeft * mLeft < 0;
+                View curView = getChildAt(mCurrentPosition);
+                final int childCount = getChildCount();
+
+                final View followView;
+
+                int followViewOffset = hasDiffLeft ? tempLeft : (int)distanceX;
+                if(mLeft < 0 ) {
+                    final int nextIndex = (mCurrentPosition + 1) % childCount;
+                    followView = getChildAt(nextIndex);
+                } else {
+                    if (mIsFirstMoveRight) {
+                        mIsFirstMoveRight = false;
+                        final int width = getMeasuredWidth();
+                        final int height = getMeasuredHeight();
+                        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
+                        followView = getChildAt(lastIndex);
+                        followView.layout(-width, 0, 0, height);
+                    } else {
+                        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
+                        followView = getChildAt(lastIndex);
+                    }
+                }
+
+                ViewCompat.offsetLeftAndRight(curView, (int)distanceX);
+                ViewCompat.offsetLeftAndRight(followView, followViewOffset);
+                Log.d(TAG, "onInterceptTouchEvent --- ACTION_MOVE" + "  mLeft = " + mLeft);
+                break;
+            case MotionEvent.ACTION_UP:
+                mIsFirstMoveRight = false;
+                break;
+
+            default:break;
         }
-        return mDragHelper.shouldInterceptTouchEvent(ev);
+//        return new ViewDragHelper().shouldInterceptTouchEvent(ev);
+        return false;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        mDragHelper.processTouchEvent(ev);
+//        mDragHelper.processTouchEvent(ev);
+        Log.d(TAG, "onTouchEvent ===");
         return true;
     }
+    private boolean mIsSlideAnimPlaying; //滑动动画展示过程中
+    private void startSlideAnim() {
+        final int curLeft = mLeft;
+        final View curView = getChildAt(mCurrentPosition);
 
-    class ViewDragCallback extends ViewDragHelper.Callback {
+        final View followView;
 
-        @Override
-        public boolean tryCaptureView(View child, int pointerId) {
-            return true;
+        final int width = getMeasuredWidth();
+        final int diffLeft = Math.abs(curLeft);
+        final int limitWidth = width / 2;
+        final int childCount = getChildCount();
+        final int nextIndex = (mCurrentPosition + 1) % childCount;
+        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
+
+        int curStopX;
+        int followStopX;
+        final int endPositionTemp;
+        if(curLeft < 0 && diffLeft >= limitWidth) {   // <--
+            curStopX = -(width + curLeft);
+            followView = getChildAt(nextIndex);
+            followStopX = -(width + curLeft);
+            endPositionTemp = nextIndex;
+        } else if(curLeft < 0 && diffLeft < limitWidth) {
+            curStopX = curLeft;
+            followView = getChildAt(nextIndex);
+            followStopX = curLeft;
+            endPositionTemp = mCurrentPosition;
+        } else if(curLeft > 0 && diffLeft < limitWidth) {
+            curStopX = -curLeft;
+            followView = getChildAt(lastIndex);
+            followStopX = -curLeft;
+            endPositionTemp = mCurrentPosition;
+        } else {                            // -->
+            curStopX = width - curLeft;
+            followView = getChildAt(lastIndex);
+            followStopX = width - curLeft;
+            endPositionTemp = lastIndex;
         }
 
-        @Override
-        public int getViewHorizontalDragRange(View child) {
-            return getMeasuredWidth();
-        }
+        final Interpolator interpolator = new DecelerateInterpolator(2f);
 
-        @Override
-        public int clampViewPositionHorizontal(View child, int left, int dx) {
-            return left;
-        }
+        ObjectAnimator currentViewAnim = new ObjectAnimator();
+        currentViewAnim.setInterpolator(interpolator);
+        currentViewAnim.setProperty(View.TRANSLATION_X);
+        float preViewStart = 0;
+        float preViewStop = curStopX;
+        currentViewAnim.setFloatValues(preViewStart, preViewStop);
+        currentViewAnim.setTarget(curView);
 
-        @Override
-        public void onViewDragStateChanged(int state) {
-            super.onViewDragStateChanged(state);
-            if(state == ViewDragHelper.STATE_IDLE) {
-                final int childCount = getChildCount();
-                final int width = getMeasuredWidth();
-                final int left = mLeft;
-                final int diffLeft = Math.abs(left);
-                final int limitWidth = width / 2;
-                if(left < 0 && diffLeft >= limitWidth) {   // <--
-                    final int nextIndex = (mCurrentPosition + 1) % childCount;
-                    mCurrentPosition = nextIndex;
-                } else if (left > 0 && diffLeft >= limitWidth) {             // -->
-                    final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
-                    mCurrentPosition = lastIndex;
-                }
+        ObjectAnimator followViewAnim = new ObjectAnimator();
+        followViewAnim.setInterpolator(interpolator);
+        followViewAnim.setProperty(View.TRANSLATION_X);
+        float followViewStart = 0;
+        float followViewEnd = followStopX;
+        followViewAnim.setFloatValues(followViewStart, followViewEnd);
+        followViewAnim.setTarget(followView);
+
+        // play animation together
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.setDuration(3000);
+        animatorSet.playTogether(currentViewAnim, followViewAnim);
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mCurrentPosition = endPositionTemp;
+                mIsSlideAnimPlaying = false;
             }
-        }
-
-        @Override
-        public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
-            super.onViewPositionChanged(changedView, left, top, dx, dy);
-            mLeft = left;
-            Log.d(TAG, "changedView.getLeft() = " + changedView.getLeft() + "   ; left = " + left);
-            requestLayout();
-        }
-
-        @Override
-        public void onViewReleased(View releasedChild, float xvel, float yvel) {
-            super.onViewReleased(releasedChild, xvel, yvel);
-            final int width = getMeasuredWidth();
-            final int left = mLeft;
-            final int diffLeft = Math.abs(left);
-            final int limitWidth = width / 2;
-
-            final int finalLeft;
-            if(left < 0 && diffLeft >= limitWidth) {   // <--
-                finalLeft = -width;
-            } else if(left > 0 && diffLeft >= limitWidth)  {   // -->
-                finalLeft = width;
-            } else {
-                finalLeft = 0;
-            }
-            mDragHelper.settleCapturedViewAt(finalLeft, 0);
-            invalidate();
-        }
+        });
+        animatorSet.start();
+        mIsSlideAnimPlaying = true;
     }
+
 }
