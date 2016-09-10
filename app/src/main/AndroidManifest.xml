@@ -31,6 +31,7 @@
 
         <activity android:name=".horizonscrollview.HorizonScrollActivity"></activity>
         <activity android:name=".youtube.YoutubeActivity"></activity>
+        <activity android:name=".edgeeffect.EffectActivity"></activity>
     </application>
 
 </manifest>

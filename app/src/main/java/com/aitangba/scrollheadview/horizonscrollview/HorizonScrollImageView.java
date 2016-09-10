@@ -49,7 +49,6 @@ public class HorizonScrollImageView extends ViewGroup {
     }
 
     private int mCurrentPosition;
-    private int mLeft; // range from -width to width (currentView.getLeft)
 
     private void init(Context context) {
 
@@ -133,7 +132,7 @@ public class HorizonScrollImageView extends ViewGroup {
     }
 
     private float mLastPointX;  //记录手势在屏幕上的X轴坐标
-    private boolean mIsFirstMoveRight;
+    private int mLeft; // range from -width to width (currentView.getLeft)
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -143,51 +142,83 @@ public class HorizonScrollImageView extends ViewGroup {
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, "onInterceptTouchEvent --- ACTION_DOWN");
                 mLastPointX = ev.getRawX();
-                mIsFirstMoveRight = true;
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                final int currentPosition = mCurrentPosition;
+                final int childCount = getChildCount();
+                final int width = getMeasuredWidth();
                 final float curPointX = ev.getRawX();
                 final float distanceX = curPointX - mLastPointX;
                 mLastPointX = curPointX;
+
                 final int tempLeft = mLeft;
                 mLeft = mLeft + (int)distanceX;
-                final boolean hasDiffLeft = tempLeft * mLeft < 0;
-                View curView = getChildAt(mCurrentPosition);
-                final int childCount = getChildCount();
+                final int curLeft = mLeft;
 
-                final View followView;
-
-                int followViewOffset = hasDiffLeft ? tempLeft : (int)distanceX;
-                if(mLeft < 0 ) {
-                    final int nextIndex = (mCurrentPosition + 1) % childCount;
-                    followView = getChildAt(nextIndex);
+                float nextViewX;
+                float lastViewX;
+                if(tempLeft <= 0 && curLeft >= 0) {  // <--
+                    lastViewX = - width + curLeft;
+                    nextViewX = width;
+                } else if(tempLeft <= 0 && curLeft < 0) {
+                    lastViewX = -width;
+                    nextViewX = width + curLeft;
+                } else if(tempLeft > 0 && curLeft > 0) {  // -->
+                    nextViewX = -width;
+                    lastViewX = distanceX;
                 } else {
-                    if (mIsFirstMoveRight) {
-                        mIsFirstMoveRight = false;
-                        final int width = getMeasuredWidth();
-                        final int height = getMeasuredHeight();
-                        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
-                        followView = getChildAt(lastIndex);
-                        followView.layout(-width, 0, 0, height);
-                    } else {
-                        final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
-                        followView = getChildAt(lastIndex);
-                    }
+                    nextViewX = curLeft;
+                    lastViewX = -tempLeft;
                 }
 
-                ViewCompat.offsetLeftAndRight(curView, (int)distanceX);
-                ViewCompat.offsetLeftAndRight(followView, followViewOffset);
-                Log.d(TAG, "onInterceptTouchEvent --- ACTION_MOVE" + "  mLeft = " + mLeft);
+                final int lastIndex = (currentPosition - 1 + childCount) % childCount;
+                final View lastView = getChildAt(lastIndex);
+                lastView.setX(lastViewX);
+
+                final View curView = getChildAt(currentPosition);
+                curView.setX(curLeft);
+
+                final int nextIndex = (currentPosition + 1) % childCount;
+                final View nextView = getChildAt(nextIndex);
+                nextView.setX(nextViewX);
+
+                Log.d(TAG, "onInterceptTouchEvent --- ACTION_MOVE" + " |  tempLeft = " + tempLeft + "  curLeft = " + curLeft);
                 break;
             case MotionEvent.ACTION_UP:
-                mIsFirstMoveRight = false;
+//                startSlideAnim();
+//                resetLastView(mCurrentPosition);
                 break;
 
             default:break;
         }
-//        return new ViewDragHelper().shouldInterceptTouchEvent(ev);
         return false;
+    }
+
+    private View prepareLastView(int currentPosition) {
+        final int childCount = getChildCount();
+        final int width = getMeasuredWidth();
+        final int lastIndex = (currentPosition - 1 + childCount) % childCount;
+        final View lastView = getChildAt(lastIndex);
+        final int lastViewLeft = lastView.getLeft();
+        final boolean needMove = lastViewLeft >= width;
+        if(needMove) {
+            final int height = getMeasuredHeight();
+            lastView.layout(-width, 0, 0, height);
+        }
+        return lastView;
+    }
+
+    private void resetLastView(int currentPosition) {
+        final int childCount = getChildCount();
+        final int width = getMeasuredWidth();
+        final int height = getMeasuredHeight();
+        final int lastIndex = (currentPosition - 1 + childCount) % childCount;
+        final View lastView = getChildAt(lastIndex);
+        final int lastViewLeft = lastView.getLeft();
+        final boolean isMoved = lastViewLeft <= 0;
+        if(isMoved) {
+            lastView.layout(width, 0, width + lastView.getMeasuredWidth(), height);
+        }
     }
 
     @Override
@@ -210,8 +241,8 @@ public class HorizonScrollImageView extends ViewGroup {
         final int nextIndex = (mCurrentPosition + 1) % childCount;
         final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
 
-        int curStopX;
-        int followStopX;
+        final float curStopX;
+        final float followStopX;
         final int endPositionTemp;
         if(curLeft < 0 && diffLeft >= limitWidth) {   // <--
             curStopX = -(width + curLeft);
@@ -240,9 +271,9 @@ public class HorizonScrollImageView extends ViewGroup {
         ObjectAnimator currentViewAnim = new ObjectAnimator();
         currentViewAnim.setInterpolator(interpolator);
         currentViewAnim.setProperty(View.TRANSLATION_X);
-        float preViewStart = 0;
+        float currentViewStart = 0;
         float preViewStop = curStopX;
-        currentViewAnim.setFloatValues(preViewStart, preViewStop);
+        currentViewAnim.setFloatValues(currentViewStart, preViewStop);
         currentViewAnim.setTarget(curView);
 
         ObjectAnimator followViewAnim = new ObjectAnimator();
@@ -263,6 +294,9 @@ public class HorizonScrollImageView extends ViewGroup {
             public void onAnimationEnd(Animator animation) {
                 mCurrentPosition = endPositionTemp;
                 mIsSlideAnimPlaying = false;
+                mLeft = 0;
+//                resetLastView(mCurrentPosition);
+                curView.setX(0);
             }
         });
         animatorSet.start();

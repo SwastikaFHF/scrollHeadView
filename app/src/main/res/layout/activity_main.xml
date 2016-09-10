@@ -59,5 +59,10 @@
             android:id="@+id/bt_youtube_activity"
             style="@style/MainBigButton"
             android:text="YouTube"/>
+
+        <Button
+            android:id="@+id/bt_effect_activity"
+            style="@style/MainBigButton"
+            android:text="边缘效应"/>
     </LinearLayout>
 </ScrollView>

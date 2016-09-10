@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.aitangba.scrollheadview.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.scrollheadview.customswipe.CustomSwipeActivity;
+import com.aitangba.scrollheadview.edgeeffect.EffectActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.scrollheadview.multiadapter.ui.MultiAdapterActivity;
@@ -58,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_youtube_activity:
                 startActivity(YoutubeActivity.class);
+                break;
+            case R.id.bt_effect_activity:
+                startActivity(EffectActivity.class);
                 break;
             default:break;
         }
