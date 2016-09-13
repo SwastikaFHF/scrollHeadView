@@ -6,5 +6,10 @@
 
     <com.aitangba.scrollheadview.horizonscrollview.HorizonScrollImageView
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="200dp"
+        android:visibility="gone"/>
+    
+    <com.aitangba.scrollheadview.horizonscrollview.BannerView
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
 </LinearLayout>

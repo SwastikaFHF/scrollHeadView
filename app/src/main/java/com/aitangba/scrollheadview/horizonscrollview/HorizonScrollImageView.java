@@ -65,6 +65,17 @@ public class HorizonScrollImageView extends ViewGroup {
         addView(mSecondChildView);
         addView(mThirdChildView);
 
+        addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                Log.d(TAG, "addOnAttachStateChangeListener -----> onViewAttachedToWindow ");
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Log.d(TAG, "addOnAttachStateChangeListener -----> onViewDetachedFromWindow ");
+            }
+        });
     }
 
     private View createChildView() {
@@ -303,4 +314,16 @@ public class HorizonScrollImageView extends ViewGroup {
         mIsSlideAnimPlaying = true;
     }
 
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Log.d(TAG, "--->  onAttachedToWindow ");
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        Log.d(TAG, "---> onDetachedFromWindow ");
+        super.onDetachedFromWindow();
+    }
 }
