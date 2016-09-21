@@ -64,5 +64,10 @@
             android:id="@+id/bt_effect_activity"
             style="@style/MainBigButton"
             android:text="边缘效应"/>
+
+        <Button
+            android:id="@+id/bt_progressbar_activity"
+            style="@style/MainBigButton"
+            android:text="自定义progressbar"/>
     </LinearLayout>
 </ScrollView>
