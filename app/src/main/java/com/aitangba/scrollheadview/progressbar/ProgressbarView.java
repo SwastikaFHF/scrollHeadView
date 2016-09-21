@@ -23,6 +23,18 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
     private int mDeepColorId = Color.parseColor("#91E13D");
     private int mLightColorId = Color.parseColor("#B9EC83");
+    private int mBackgroundColor = Color.WHITE;
+
+    private boolean mIsPlaying;
+
+    private int mDistance; //px 0 <--> 2 * mLineWidth
+    private int mLineWidth = 20; //px
+    private double mAngle = 60; //
+    private double mProgress = (double) 3  / 4;
+
+    public void setProgress(double progress) {
+        mProgress = progress;
+    }
 
     public ProgressbarView(Context context) {
         this(context, null);
@@ -66,22 +78,15 @@ public class ProgressbarView extends SurfaceView implements SurfaceHolder.Callba
 
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mIsPlaying = true;
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         mIsPlaying = false;
         super.onDetachedFromWindow();
-    }
-
-    private boolean mIsPlaying;
-    private int mDistance; //px 0 <--> 40
-
-    private int mLineWidth = 20; //px
-    private double mAngle = 60; //
-
-    private double mProgress = (double) 3  / 4;
-    private int mBackgroundColor = Color.WHITE;
-
-    public void setProgress(double progress) {
-        mProgress = progress;
     }
 
     @Override
