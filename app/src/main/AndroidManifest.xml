@@ -33,6 +33,8 @@
         <activity android:name=".youtube.YoutubeActivity"></activity>
         <activity android:name=".edgeeffect.EffectActivity"></activity>
         <activity android:name=".progressbar.ProgressbarActivity"></activity>
+        <activity android:name=".path.PathActivity"></activity>
+        <activity android:name=".wheelview.WheelViewActivity"></activity>
     </application>
 
 </manifest>

@@ -11,6 +11,16 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/bt_wheel_view"
+            style="@style/MainBigButton"
+            android:text="WheelView"/>
+
+        <Button
+            android:id="@+id/bt_path_activity"
+            style="@style/MainBigButton"
+            android:text="自定义Path"/>
+
+        <Button
             android:id="@+id/bt_horizon_scroll"
             style="@style/MainBigButton"
             android:text="水平滚动"/>

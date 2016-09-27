@@ -11,10 +11,12 @@ import com.aitangba.scrollheadview.edgeeffect.EffectActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollActivity;
 import com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.scrollheadview.multiadapter.ui.MultiAdapterActivity;
+import com.aitangba.scrollheadview.path.PathActivity;
 import com.aitangba.scrollheadview.progressbar.ProgressbarActivity;
 import com.aitangba.scrollheadview.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.scrollheadview.verticalscroll.VerticalScrollActivity;
 import com.aitangba.scrollheadview.viewpager.ViewPageActivity;
+import com.aitangba.scrollheadview.wheelview.WheelViewActivity;
 import com.aitangba.scrollheadview.youtube.YoutubeActivity;
 
 /**
@@ -66,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_progressbar_activity:
                 startActivity(ProgressbarActivity.class);
+                break;
+            case R.id.bt_path_activity:
+                startActivity(PathActivity.class);
+                break;
+            case R.id.bt_wheel_view:
+                startActivity(WheelViewActivity.class);
                 break;
             default:break;
         }
