@@ -239,8 +239,11 @@ public class BannerView extends FrameLayout implements ViewPager.OnPageChangeLis
     private Handler mAutoPlayHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(mIsInTouchEvent) return;
             final int childViewSize = mViewPagerAdapter.getCount();
+            if(mIsInTouchEvent || childViewSize == 0) {
+                stopAutoPlay();
+                return;
+            }
             mCurrentPosition  = (mCurrentPosition + 1) % childViewSize;
             mViewPager.setCurrentItem(mCurrentPosition, true);
             mAutoPlayHandler.sendEmptyMessageDelayed(WHAT_AUTO_PLAY, mAutoPlayTime);
@@ -268,8 +271,14 @@ public class BannerView extends FrameLayout implements ViewPager.OnPageChangeLis
     }
 
     @Override
-    protected void onDetachedFromWindow() {
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
         startAutoPlay();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        stopAutoPlay();
         super.onDetachedFromWindow();
     }
 }
