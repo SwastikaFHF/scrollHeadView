@@ -1,6 +1,7 @@
 package com.aitangba.scrollheadview.wheelview;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -8,10 +9,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.Scroller;
-import android.widget.TextView;
-
-import java.util.List;
 
 /**
  * Created by fhf11991 on 2016/3/28.
@@ -23,10 +22,36 @@ public class WheelView extends ViewGroup {
     private int ITEM_HEIGHT_DEFAULT = 200;
     private int mItemHeight;
     private Scroller mScroller;
-    private List<String> mList;
+    private ListAdapter mAdapter;
+    private DataSetObserver mDataSetObserver;
 
-    public void setList(List<String> list) {
-        mList = list;
+    public void setAdapter(ListAdapter adapter) {
+        if (mAdapter != null && mDataSetObserver != null) {
+            mAdapter.unregisterDataSetObserver(mDataSetObserver);
+        }
+
+        mAdapter = adapter;
+        if(mAdapter != null) {
+            mDataSetObserver = new AdapterDataSetObserver();
+            mAdapter.registerDataSetObserver(mDataSetObserver);
+            makeAndAddChild();
+        }
+    }
+
+    private void makeAndAddChild() {
+        if(mAdapter == null)return;
+
+        final int childCount = 4;
+        mOffset = 0;
+        mDataOffset = 0;
+
+        if(getChildCount() == 0 && mAdapter.getCount() > 0) {
+            for(int i = 0; i< childCount; i++) {
+                addView(mAdapter.getView(i, null, this));
+            }
+        } else {
+            requestLayout();
+        }
     }
 
     public WheelView(Context context) {
@@ -62,8 +87,8 @@ public class WheelView extends ViewGroup {
         setMeasuredDimension(widthSize, mItemHeight * 3);
     }
 
-    private int mOffset;
-    private int mDataOffset;
+    private int mOffset;  //-count * itemHeight <--> count * itemHeight
+    private int mDataOffset; //最大值 = 数据长度 * itemHeight
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -71,31 +96,38 @@ public class WheelView extends ViewGroup {
         final int itemHeight = mItemHeight;
         final int count = getChildCount();
         final int totalHeight = count * itemHeight;
-        int viewCycleCount = mDataOffset / (count - 1) * itemHeight;
 
         int tempViewTop = mOffset;
-        for(int i = 0  ; i < getChildCount() ; i ++) {
+        for(int i = 0  ; i < count ; i ++) {
             View child = getChildAt(i);
-            if(tempViewTop >= height) { // 向下
+            if(tempViewTop >= height) {             // 向下
                 tempViewTop = tempViewTop - totalHeight;
-                viewCycleCount = viewCycleCount - 1;
             } else if(tempViewTop <= -itemHeight) {  //向上
                 tempViewTop = tempViewTop + totalHeight;
-                viewCycleCount = viewCycleCount + 1;
             }
             child.layout(l, tempViewTop, r, tempViewTop + itemHeight);
-            int position = viewCycleCount * (count - 1) + i % count;
-            setViewData(child, position);
-
             tempViewTop += itemHeight;
+        }
 
+        final int size = mAdapter == null ? 0 : mAdapter.getCount();
+        final int dataTotalHeight = size * itemHeight;
+        final int dataStartIndex = Math.abs((mDataOffset <= 0 ? mDataOffset : dataTotalHeight - mDataOffset)/ itemHeight);
+        final int viewStartIndex = Math.abs((mOffset <= 0 ? mOffset : totalHeight - mOffset)/ itemHeight);
+
+        int dataIndex = dataStartIndex;
+        int viewIndex = viewStartIndex;
+        for(int i = 0  ; i < count ; i ++) {
+            View child = getChildAt(viewIndex);
+            setViewData(child, dataIndex);
+
+            dataIndex = (dataIndex + 1) % size;
+            viewIndex = (viewIndex + 1) % count;
         }
     }
 
     private void setViewData(View child, int position) {
-        if(child instanceof TextView) {
-            TextView textView = (TextView) child;
-//            textView.setText(mList.get(position));
+        if(mAdapter != null) {
+            mAdapter.getView(position, child, this);
         }
     }
 
@@ -103,7 +135,7 @@ public class WheelView extends ViewGroup {
         final int itemHeight = mItemHeight;
         final int count = getChildCount();
         final int totalHeight = count * itemHeight;
-        final int listTotalHeight = mList.size() * itemHeight;
+        final int listTotalHeight = (mAdapter == null ? 0 : mAdapter.getCount()) * itemHeight;
 
         mOffset = (mOffset + delta) % totalHeight;
         mDataOffset = (mDataOffset + delta) % listTotalHeight;
@@ -173,6 +205,18 @@ public class WheelView extends ViewGroup {
             mScroller.fling(0, lastScrollY, 0, (int) -velocityY / 2, 0, 0, minY, maxY);
             WheelView.this.doFling();
             return true;
+        }
+    }
+
+    private class AdapterDataSetObserver extends DataSetObserver {
+
+        public void onChanged() {
+            clearFocus();
+            makeAndAddChild();
+        }
+
+        public void onInvalidated() {
+            requestLayout();
         }
     }
 }
