@@ -81,13 +81,13 @@ public class WheelViewActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(WheelViewActivity.this).inflate(R.layout.item_wheel, parent, false);
             }
 
-            TextView textView = (TextView) convertView;
+            TextView textView = (TextView) convertView.findViewById(R.id.text);
             textView.setText(getItem(position));
-            if(position % 4 == 0) {
-                convertView.setBackgroundColor(ContextCompat.getColor(WheelViewActivity.this, R.color.colorAccent));
-            } else {
-                convertView.setBackgroundColor(ContextCompat.getColor(WheelViewActivity.this, android.R.color.white));
-            }
+//            if(position % 4 == 0) {
+//                convertView.setBackgroundColor(ContextCompat.getColor(WheelViewActivity.this, R.color.colorAccent));
+//            } else {
+//                convertView.setBackgroundColor(ContextCompat.getColor(WheelViewActivity.this, android.R.color.white));
+//            }
 
             return convertView;
         }
