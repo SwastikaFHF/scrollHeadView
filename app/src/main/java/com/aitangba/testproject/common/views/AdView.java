@@ -1,4 +1,4 @@
-package com.aitangba.testproject.views;
+package com.aitangba.testproject.common.views;
 
 import android.content.Context;
 import android.os.Handler;

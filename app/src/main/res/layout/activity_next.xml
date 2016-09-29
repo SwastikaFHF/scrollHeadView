@@ -10,7 +10,7 @@
     tools:context=".slideback.slidingmenu.SlidingMenuActivity">
 
 
-    <com.aitangba.testproject.views.AdView
+    <com.aitangba.testproject.common.views.AdView
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 
