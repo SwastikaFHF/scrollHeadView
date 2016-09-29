@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.scrollheadview.cornerrectangle.CornerTextView
+    <com.aitangba.testproject.cornerrectangle.CornerTextView
         android:text="测试了方法了发了\n订单对对对"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestView
+    <com.aitangba.testproject.horizonscroll.HorizonScrollTestView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,5 +17,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="你好2"/>
-    </com.aitangba.scrollheadview.horizonscroll.HorizonScrollTestView>
+    </com.aitangba.testproject.horizonscroll.HorizonScrollTestView>
 </LinearLayout>

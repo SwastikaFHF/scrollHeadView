@@ -5,13 +5,13 @@
               android:layout_height="match_parent">
 
 
-    <com.aitangba.scrollheadview.viewpager.WrapContentHeightViewPager
+    <com.aitangba.testproject.viewpager.WrapContentHeightViewPager
         android:id="@+id/view_page"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"/>
 
-    <com.aitangba.scrollheadview.viewpager.GridViewGroup
+    <com.aitangba.testproject.viewpager.GridViewGroup
         android:id="@+id/grid_view_group"
         android:visibility="gone"
         android:layout_width="match_parent"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.aitangba.scrollheadview">
+          package="com.aitangba.testproject">
 
     <application
         android:allowBackup="true"
@@ -8,33 +8,33 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.aitangba.testproject.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
-        <activity android:name=".verticalscroll.VerticalScrollActivity"></activity>
-        <activity android:name=".customswipe.CustomSwipeActivity"></activity>
-        <activity android:name=".horizonscroll.HorizonScrollTestActivity"></activity>
-        <activity android:name=".multiadapter.ui.MultiAdapterActivity"></activity>
-        <activity android:name=".viewpager.ViewPageActivity"></activity>
-        <activity android:name=".cornerrectangle.CornerRectangleActivity"></activity>
-        <activity android:name=".slideback.slidingmenu.SlidingMenuActivity"
+        <activity android:name="com.aitangba.testproject.horizonscroll.HorizonScrollActivity"></activity>
+        <activity android:name="com.aitangba.testproject.verticalscroll.VerticalScrollActivity"></activity>
+        <activity android:name="com.aitangba.testproject.customswipe.CustomSwipeActivity"></activity>
+        <activity android:name="com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity"></activity>
+        <activity android:name="com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity"></activity>
+        <activity android:name="com.aitangba.testproject.viewpager.ViewPageActivity"></activity>
+        <activity android:name="com.aitangba.testproject.cornerrectangle.CornerRectangleActivity"></activity>
+        <activity android:name="com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity"
                   android:theme="@style/JK.SwipeBack.Transparent.Theme"></activity>
 
-        <activity android:name=".slideback.slidinglayout.SlidingLayoutActivity"></activity>
-        <activity android:name=".slideback.slidinglayout.SlideBackActivity"
+        <activity android:name="com.aitangba.testproject.slideback.slidinglayout.SlidingLayoutActivity"></activity>
+        <activity android:name="com.aitangba.testproject.slideback.slidinglayout.SlideBackActivity"
             android:theme="@style/slideBack"></activity>
 
-        <activity android:name=".horizonscrollview.HorizonScrollActivity"></activity>
-        <activity android:name=".youtube.YoutubeActivity"></activity>
-        <activity android:name=".edgeeffect.EffectActivity"></activity>
-        <activity android:name=".progressbar.ProgressbarActivity"></activity>
-        <activity android:name=".path.PathActivity"></activity>
-        <activity android:name=".wheelview.WheelViewActivity"></activity>
+        <activity android:name="com.aitangba.testproject.horizonscrollview.HorizonScrollActivity"></activity>
+        <activity android:name="com.aitangba.testproject.youtube.YoutubeActivity"></activity>
+        <activity android:name="com.aitangba.testproject.edgeeffect.EffectActivity"></activity>
+        <activity android:name="com.aitangba.testproject.progressbar.ProgressbarActivity"></activity>
+        <activity android:name="com.aitangba.testproject.path.PathActivity"></activity>
+        <activity android:name="com.aitangba.testproject.wheelview.WheelViewActivity"></activity>
     </application>
 
 </manifest>

@@ -19,7 +19,7 @@
         android:onClick="preScreen"
         android:text="上一页" />
 
-    <com.aitangba.scrollheadview.horizonscroll.MultiViewGroup
+    <com.aitangba.testproject.horizonscroll.MultiViewGroup
         android:id="@+id/screenParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,6 +57,6 @@
                 android:layout_height="wrap_content"
                 android:text="第三页" />
         </LinearLayout>
-    </com.aitangba.scrollheadview.horizonscroll.MultiViewGroup>
+    </com.aitangba.testproject.horizonscroll.MultiViewGroup>
 
 </RelativeLayout>

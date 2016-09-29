@@ -4,12 +4,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.scrollheadview.horizonscrollview.HorizonScrollImageView
+    <com.aitangba.testproject.horizonscrollview.HorizonScrollImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:visibility="gone"/>
     
-    <com.aitangba.scrollheadview.horizonscrollview.BannerView
+    <com.aitangba.testproject.horizonscrollview.BannerView
         android:layout_width="match_parent"
         android:layout_height="200dp" />
 </LinearLayout>

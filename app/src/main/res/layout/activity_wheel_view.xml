@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.scrollheadview.wheelview.WheelView
+    <com.aitangba.testproject.wheelview.WheelView
         android:id="@+id/view_wheel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

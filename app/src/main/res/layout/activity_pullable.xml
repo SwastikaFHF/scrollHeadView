@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.scrollheadview.pullable.PullToRefreshLayout
+    <com.aitangba.testproject.pullable.PullToRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -12,5 +12,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
-    </com.aitangba.scrollheadview.pullable.PullToRefreshLayout>
+    </com.aitangba.testproject.pullable.PullToRefreshLayout>
 </LinearLayout>
