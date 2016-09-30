@@ -32,7 +32,8 @@
 滑动返回Activity 
 
 ## verticalscroll
-竖直方向嵌套滑动的解决方案
+竖直方向嵌套滑动的解决方案  
+添加nestedscroll包，用于解决滑动冲突，但是fling事件还无法做到完美
 
 ## viewpager
 一个高度自适应的viewpager
@@ -43,4 +44,4 @@
 ## youtube
 模拟youtube APP的一个酷炫效果
 
-
+## 

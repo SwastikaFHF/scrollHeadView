@@ -15,6 +15,8 @@ import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.verticalscroll.VerticalScrollActivity;
+import com.aitangba.testproject.verticalscroll.listview.ListViewActivity;
+import com.aitangba.testproject.verticalscroll.nestedscroll.NestedScrollActivity;
 import com.aitangba.testproject.viewpager.ViewPageActivity;
 import com.aitangba.testproject.wheelview.WheelViewActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(HorizonScrollActivity.class);
                 break;
             case R.id.bt_vertical_scroll:
-                startActivity(VerticalScrollActivity.class);
+                startActivity(ListViewActivity.class);
                 break;
             case R.id.bt_custom_swipe:
                 startActivity(CustomSwipeActivity.class);
@@ -74,6 +76,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_wheel_view:
                 startActivity(WheelViewActivity.class);
+                break;
+            case R.id.bt_nested_scroll:
+                startActivity(NestedScrollActivity.class);
                 break;
             default:break;
         }
