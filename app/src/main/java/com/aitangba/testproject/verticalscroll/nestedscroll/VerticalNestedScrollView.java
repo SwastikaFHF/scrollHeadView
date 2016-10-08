@@ -22,6 +22,7 @@ public class VerticalNestedScrollView extends ViewGroup implements NestedScrolli
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
     private int headerHeight = 0;
     private int offsetY = 0;
+    private final int[] mParentOffsetInWindow = new int[2];
 
     public VerticalNestedScrollView(Context context) {
         this(context, null);
@@ -156,7 +157,6 @@ public class VerticalNestedScrollView extends ViewGroup implements NestedScrolli
             }
         }
     }
-    private final int[] mParentOffsetInWindow = new int[2];
 
     @Override
     public void onNestedScroll (View target,int dxConsumed, int dyConsumed, int dxUnconsumed,
