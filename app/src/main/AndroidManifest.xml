@@ -15,7 +15,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
-        <activity android:name=".verticalscroll.VerticalScrollActivity"></activity>
+        <activity android:name=".verticalnestedscroll.VerticalScrollActivity"></activity>
         <activity android:name=".customswipe.CustomSwipeActivity"></activity>
         <activity android:name=".horizonscroll.HorizonScrollTestActivity"></activity>
         <activity android:name=".multiadapter.ui.MultiAdapterActivity"></activity>
@@ -34,8 +34,8 @@
         <activity android:name=".progressbar.ProgressbarActivity"></activity>
         <activity android:name=".path.PathActivity"></activity>
         <activity android:name=".wheelview.WheelViewActivity"></activity>
-        <activity android:name=".verticalscroll.listview.ListViewActivity"></activity>
-        <activity android:name=".verticalscroll.nestedscroll.NestedScrollActivity"></activity>
+        <activity android:name=".verticalnestedscroll.listview.ListViewActivity"></activity>
+        <activity android:name=".verticalnestedscroll.nestedscrollview.NestedScrollActivity"></activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.aitangba.testproject.verticalscroll.listview;
+package com.aitangba.testproject.verticalnestedscroll.listview;
 
 import android.annotation.TargetApi;
 import android.content.Context;

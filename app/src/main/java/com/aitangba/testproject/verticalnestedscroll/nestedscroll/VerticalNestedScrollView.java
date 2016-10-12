@@ -1,4 +1,4 @@
-package com.aitangba.testproject.verticalscroll.nestedscroll;
+package com.aitangba.testproject.verticalnestedscroll.nestedscroll;
 
 import android.content.Context;
 import android.support.v4.view.NestedScrollingChild;

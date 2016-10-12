@@ -1,4 +1,4 @@
-package com.aitangba.testproject.verticalscroll;
+package com.aitangba.testproject.verticalnestedscroll.nestedscroll;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,37 +16,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by fhf11991 on 2016/6/22.
+ * Created by fhf11991 on 2016/9/30.
  */
-public class VerticalScrollActivity extends AppCompatActivity {
+
+public class NestedScrollActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vertical_view);
+        setContentView(R.layout.activity_nested_scroll);
         final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 2000);
-            }
-        });
+        if(swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                    }, 2000);
+                }
+            });
+        }
 
-        Adapter adapter = new Adapter();
+
+        ListAdapter listAdapter = new ListAdapter();
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        adapter.setData(getData(80));
+        recyclerView.setAdapter(listAdapter);
+        listAdapter.setData(getData(80));
 
         TextView textView = new TextView(this);
         textView.setText("测试头部");
-        ScrollHeadView scrollHeadView = (ScrollHeadView) findViewById(R.id.scrollView);
-//        scrollHeadView.setHeadView(textView);
     }
 
     private List<String> getData(int size){
@@ -57,7 +59,7 @@ public class VerticalScrollActivity extends AppCompatActivity {
         return data;
     }
 
-    private static class Adapter extends RecyclerView.Adapter {
+    private class ListAdapter extends RecyclerView.Adapter {
         private List<String> mList;
         public void setData(List<String> list) {
             mList = list;

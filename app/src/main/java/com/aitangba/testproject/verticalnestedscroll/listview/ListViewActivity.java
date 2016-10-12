@@ -1,4 +1,4 @@
-package com.aitangba.testproject.verticalscroll.listview;
+package com.aitangba.testproject.verticalnestedscroll.listview;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.verticalscroll.ScrollHeadView;
+import com.aitangba.testproject.verticalnestedscroll.ScrollHeadView;
 
 import java.util.ArrayList;
 import java.util.List;

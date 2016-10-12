@@ -1,4 +1,4 @@
-package com.aitangba.testproject.verticalscroll;
+package com.aitangba.testproject.verticalnestedscroll;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
