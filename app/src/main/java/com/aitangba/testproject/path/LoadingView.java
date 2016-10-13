@@ -179,7 +179,6 @@ public class LoadingView extends View {
 
                 break;
             case Failed:
-
                 Path failedPath = new Path();
                 failedPath.moveTo(halfWidth, halfHeight - radius * 3 / 8);
                 failedPath.lineTo(halfWidth, halfHeight + radius * 3 / 16);

@@ -10,6 +10,7 @@ import com.aitangba.testproject.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.edgeeffect.EffectActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
+import com.aitangba.testproject.lightadapter.ui.LightAdapterActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_nested_scroll:
                 startActivity(NestedScrollActivity.class);
+                break;
+            case R.id.bt_light_adapter:
+                startActivity(LightAdapterActivity.class);
                 break;
             default:break;
         }
