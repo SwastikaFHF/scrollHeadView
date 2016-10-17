@@ -2,8 +2,12 @@ package com.aitangba.testproject.lightadapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,19 +31,20 @@ public class BaseAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             mSparseArray = new SparseArray<>();
         }
         Item t = mItems.get(position);
-        int type = t.getType();
+        int type = t.getItemViewId();
         mSparseArray.append(type, t);
         return type;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return mSparseArray.get(viewType).onCreateViewHolder(parent, viewType);
+        final Item item = mSparseArray.get(viewType);
+        return item.onCreateViewHolder(parent, viewType);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        mItems.get(position).onBindViewHolder(holder);
+        mItems.get(position).onBindViewHolder(this, holder);
     }
 
     @Override
@@ -50,13 +55,12 @@ public class BaseAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public interface Item<VH extends RecyclerView.ViewHolder> {
 
-        int getType();
-
         int getItemViewId();
 
-        VH onCreateViewHolder(ViewGroup viewGroup, int viewType);
+        VH onCreateViewHolder(ViewGroup parent, int viewType);
 
-        void onBindViewHolder(VH viewHolder);
+        void onBindViewHolder(BaseAdapter baseAdapter, VH viewHolder);
+
     }
 
     public static class Items extends ArrayList<Item> {

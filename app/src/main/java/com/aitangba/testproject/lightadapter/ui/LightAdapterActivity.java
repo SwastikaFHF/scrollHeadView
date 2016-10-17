@@ -44,11 +44,10 @@ public class LightAdapterActivity extends AppCompatActivity {
         CatViewModel cat = new CatViewModel();
         cat.legs = "猫腿";
 
-        BaseAdapter.Items items = new BaseAdapter.Items();
-        items.addAll(mouses);
-        items.add(cat);
+//        items.add(cat);
 
-        mAdapter.setData(items);
+        mAdapter.setData(mouses);
+
     }
 
     private List<Anim> getData(int size) {
@@ -71,10 +70,6 @@ public class LightAdapterActivity extends AppCompatActivity {
 
     private static class Mouse extends Anim implements BaseAdapter.Item<ViewHolder> {
 
-        @Override
-        public int getType() {
-            return getItemViewId();
-        }
 
         @Override
         public int getItemViewId() {
@@ -82,12 +77,12 @@ public class LightAdapterActivity extends AppCompatActivity {
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            return new ViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(getItemViewId(), viewGroup, false));
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View contentView = LayoutInflater.from(parent.getContext()).inflate(getItemViewId(), parent, false);
+            return new ViewHolder(contentView);
         }
 
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder) {
+        public void onBindViewHolder(BaseAdapter baseAdapter, ViewHolder catViewHolder) {
 
         }
     }
@@ -102,23 +97,32 @@ public class LightAdapterActivity extends AppCompatActivity {
     private static class CatViewModel extends Cat implements BaseAdapter.Item<CatViewHolder> {
 
         @Override
-        public int getType() {
-            return getItemViewId();
-        }
-
-        @Override
         public int getItemViewId() {
             return R.layout.item_light_adapter_cat;
         }
 
         @Override
-        public CatViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            return new CatViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(getItemViewId(), viewGroup, false));
+        public CatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View contentView = LayoutInflater.from(parent.getContext()).inflate(getItemViewId(), parent, false);
+            return new CatViewHolder(contentView);
         }
 
-        @Override
-        public void onBindViewHolder(CatViewHolder viewHolder) {
+        public void onBindViewHolder(BaseAdapter baseAdapter, CatViewHolder catViewHolder) {
 
+        }
+    }
+
+    public interface Model{
+
+    }
+
+    private class ViewModel implements Model {
+        ViewModel() {
+
+        }
+
+        int getViewType() {
+            return  0;
         }
     }
 }
