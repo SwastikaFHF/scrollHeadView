@@ -28,15 +28,18 @@ public class LoadingView extends View {
     private PathMeasure mMeasure;
     private ValueAnimator mLoadingAnimator;
     private ValueAnimator mResultAnimator;
-    private int mLoadingDuration = 2000;
-    private int mResultDuration = 1000;
+    private int mLoadingDuration = 1000;
+    private int mResultDuration = 1500;
 
     // 动效过程监听器
     private float mLoadingAnimatorValue = 0;
     private float mResultAnimatorValue = 0;
 
     private boolean mIsResultAnimatorStart;
-    private int mStrokeWidth = 10;
+    private int mStrokeWidth = 5;
+
+    private int mLoadingColor = Color.parseColor("#293685");
+    private int mLoadingSuccessColor = Color.parseColor("#11c876");
 
     public LoadingView(Context context) {
         this(context, null);
@@ -55,7 +58,7 @@ public class LoadingView extends View {
     private void initView() {
         mPaint = new Paint();
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(mLoadingColor);
         mPaint.setStrokeWidth(mStrokeWidth);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setAntiAlias(true);
@@ -79,7 +82,14 @@ public class LoadingView extends View {
             public void onAnimationRepeat(Animator animation) {
                 final Status status = mStatus;
                 if(mStatus == Status.Loading) {
-                } else if(status == Status.Success || status == Status.Failed) {
+                } else if(status == Status.Success) {
+                    mPaint.setColor(mLoadingSuccessColor);
+                    invalidate();
+                    mLoadingAnimator.cancel();
+                    mResultAnimator.start();
+                } else if(status == Status.Failed) {
+                    mPaint.setColor(Color.RED);
+                    invalidate();
                     mLoadingAnimator.cancel();
                     mResultAnimator.start();
                 } else {
@@ -109,9 +119,11 @@ public class LoadingView extends View {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 if(mStatus == Status.Failed) {
-                    mPaint.setColor(Color.RED);
-                    invalidate();
                     shakeWarning(LoadingView.this);
+                } else {
+                    if(mProgressListener != null) {
+                        mProgressListener.onStop(LoadingView.this);
+                    }
                 }
             }
         });
@@ -161,13 +173,13 @@ public class LoadingView extends View {
 
         switch (mStatus) {
             case Success:
-                final float correctDiff = -15;
+                final float correctDiff = -4;
                 final float quarterRadius = radius / 4;
 
                 Path hookPath = new Path();
                 hookPath.moveTo(halfWidth - quarterRadius + correctDiff, halfHeight);
                 hookPath.lineTo(halfWidth + correctDiff, halfHeight + quarterRadius);
-                hookPath.lineTo(halfWidth + radius / 2 + correctDiff, halfHeight - quarterRadius);
+                hookPath.lineTo(halfWidth + radius * 7 / 16 + correctDiff, halfHeight - quarterRadius);
 
                 final Path hookPartPath = getPartPath();
 
@@ -210,7 +222,7 @@ public class LoadingView extends View {
 
         if(mStatus == Status.Loading) {
             mIsResultAnimatorStart = false;
-            mPaint.setColor(Color.BLUE);
+            mPaint.setColor(mLoadingColor);
             mLoadingAnimator.start();
         } else if(mStatus == Status.Cancel) {
             mLoadingAnimator.cancel();
@@ -227,5 +239,33 @@ public class LoadingView extends View {
         animation.setInterpolator(new CycleInterpolator(4));
         animation.setDuration(1300);
         shakeView.startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if(mProgressListener != null) {
+                    mProgressListener.onStop(LoadingView.this);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private ProgressListener mProgressListener;
+
+    public void setProgressListener(ProgressListener progressListener) {
+        mProgressListener = progressListener;
+    }
+
+    public interface ProgressListener {
+        void onStop(LoadingView loadingView);
     }
 }
