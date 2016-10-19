@@ -116,12 +116,13 @@ public class LightAdapterActivity extends AppCompatActivity {
 
     }
 
-    private class ViewModel implements Model {
-        ViewModel() {
+    private class AnimViewModel implements Model {
+
+        public AnimViewModel(Anim anim) {
 
         }
 
-        int getViewType() {
+        public int getViewType() {
             return  0;
         }
     }

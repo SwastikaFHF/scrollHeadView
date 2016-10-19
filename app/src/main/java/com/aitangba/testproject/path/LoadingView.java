@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
@@ -40,6 +41,7 @@ public class LoadingView extends View {
 
     private int mLoadingColor = Color.parseColor("#293685");
     private int mLoadingSuccessColor = Color.parseColor("#11c876");
+    private Paint mLoadingErrorPaint;
 
     public LoadingView(Context context) {
         this(context, null);
@@ -65,6 +67,13 @@ public class LoadingView extends View {
 
         path_circle = new Path();
         mMeasure = new PathMeasure();
+
+        mLoadingErrorPaint = new Paint();
+        mLoadingErrorPaint.setStyle(Paint.Style.STROKE);
+        mLoadingErrorPaint.setColor(Color.RED);
+        mLoadingErrorPaint.setStrokeWidth(mStrokeWidth);
+        mLoadingErrorPaint.setStrokeCap(Paint.Cap.ROUND);
+        mLoadingErrorPaint.setAntiAlias(true);
     }
 
     private void initAnimator() {
@@ -97,11 +106,11 @@ public class LoadingView extends View {
                 }
             }
         });
-        mLoadingAnimator.start();
         mLoadingAnimator.setRepeatCount(ValueAnimator.INFINITE);
 
         mResultAnimator = ValueAnimator.ofFloat(0, 1).setDuration(mResultDuration);
         mResultAnimator.setInterpolator(new AccelerateInterpolator(4f));
+        mResultAnimator.setRepeatCount(0);
         mResultAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -170,7 +179,6 @@ public class LoadingView extends View {
         final float halfHeight = height / 2;
 
         final float radius = mRadius * 0.8f;
-
         switch (mStatus) {
             case Success:
                 final float correctDiff = -4;
@@ -191,19 +199,16 @@ public class LoadingView extends View {
 
                 break;
             case Failed:
+                float totalLength = radius * 11 / 16 + 1;
+                float startY = halfHeight - radius * 3 / 8;
+                float currentLength = resultValue * totalLength;
+
                 Path failedPath = new Path();
-                failedPath.moveTo(halfWidth, halfHeight - radius * 3 / 8);
-                failedPath.lineTo(halfWidth, halfHeight + radius * 3 / 16);
-                final Path failedPartPath = getPartPath();
+                failedPath.moveTo(halfWidth, startY);
+                failedPath.lineTo(halfWidth, startY + currentLength);
 
-                mMeasure.setPath(failedPath, false);
-                final float failedLength = mMeasure.getLength();
-                mMeasure.getSegment(0, failedLength * resultValue, failedPartPath, true);
-
-                canvas.drawPath(failedPartPath, mPaint);
-                if(resultValue == 1) {
-                    canvas.drawPoint(halfWidth, halfHeight + radius * 3 / 8, mPaint);
-                }
+                mLoadingErrorPaint.setPathEffect(new DashPathEffect(new float[]{radius * 8 / 16, radius * 3 / 16}, 0));
+                canvas.drawPath(failedPath, mLoadingErrorPaint);
                 break;
             default:break;
         }

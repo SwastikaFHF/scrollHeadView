@@ -12,8 +12,8 @@
 
     <com.aitangba.testproject.path.LoadingView
         android:id="@+id/loading_view"
-        android:layout_width="28dp"
-        android:layout_height="28dp"/>
+        android:layout_width="60dp"
+        android:layout_height="60dp"/>
 
 
     <LinearLayout
