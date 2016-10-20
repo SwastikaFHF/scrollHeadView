@@ -36,7 +36,8 @@
         <activity android:name=".wheelview.WheelViewActivity"></activity>
         <activity android:name=".verticalnestedscroll.listview.ListViewActivity"></activity>
         <activity android:name=".verticalnestedscroll.nestedscrollview.NestedScrollActivity"></activity>
-        <activity android:name=".lightadapter.ui.LightAdapterActivity"></activity>
+        <activity android:name=".lightadapter.ui.BaseAdapterActivity"></activity>
+        <activity android:name=".lightadapter.viewmodel.LightAdapterActivity"></activity>
     </application>
 
 </manifest>

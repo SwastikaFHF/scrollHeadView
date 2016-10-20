@@ -21,7 +21,7 @@ import java.util.List;
  * Created by fhf11991 on 2016/10/13.
  */
 
-public class LightAdapterActivity extends AppCompatActivity {
+public class BaseAdapterActivity extends AppCompatActivity {
 
     private BaseAdapter mAdapter;
 
@@ -36,10 +36,10 @@ public class LightAdapterActivity extends AppCompatActivity {
 
         String json = JSON.toJSONString(getData(20));
 
-        Log.d("LightAdapterActivity", "json ==  " + json);
+        Log.d("BaseAdapterActivity", "json ==  " + json);
 
         List<Mouse> mouses = JSON.parseArray(json, Mouse.class);
-        Log.d("LightAdapterActivity", "mouses ==  " + JSON.toJSONString(mouses));
+        Log.d("BaseAdapterActivity", "mouses ==  " + JSON.toJSONString(mouses));
 
         CatViewModel cat = new CatViewModel();
         cat.legs = "猫腿";
