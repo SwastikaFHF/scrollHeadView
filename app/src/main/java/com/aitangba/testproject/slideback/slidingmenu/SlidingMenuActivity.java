@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
+import com.aitangba.testproject.common.views.AdView;
 import com.aitangba.testproject.slideback.slidingmenu.lib.BaseSwipeBackActivity;
 
 import java.util.Random;
@@ -33,6 +34,9 @@ public class SlidingMenuActivity extends BaseSwipeBackActivity {
 
         TextView textView = (TextView) findViewById(R.id.tv_content);
         textView.setText("这是第" + mCurrentIndex + "页");
+
+        AdView adView = (AdView) findViewById(R.id.adView);
+        adView.initView(4);
 
     }
 

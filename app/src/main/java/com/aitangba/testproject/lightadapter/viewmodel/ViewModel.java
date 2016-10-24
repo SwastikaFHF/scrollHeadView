@@ -1,16 +1,17 @@
 package com.aitangba.testproject.lightadapter.viewmodel;
 
-import android.support.v7.widget.RecyclerView;
+import android.databinding.ViewDataBinding;
+import android.view.ViewGroup;
 
 /**
  * Created by fhf11991 on 2016/10/20.
  */
 
-public interface ViewModel<VH extends RecyclerView.ViewHolder> {
+public interface ViewModel<Ad extends LightAdapter, T extends ViewDataBinding> {
 
-    abstract int getViewType();
+    int getViewType();
 
-    abstract VH onCreateViewHolder();
+    LightViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType);
 
-    abstract void onBindViewHolder(VH viewHolder);
+    void onBindViewHolder(Ad lightAdapter, T dataBinding);
 }

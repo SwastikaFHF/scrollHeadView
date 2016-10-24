@@ -1,5 +1,7 @@
 package com.aitangba.testproject.lightadapter;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -64,5 +66,16 @@ public class BaseAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class Items extends ArrayList<Item> {
+    }
+
+
+    private static class LightViewHolder<T extends ViewDataBinding> extends RecyclerView.ViewHolder {
+
+        public T mBinding;
+
+        public LightViewHolder(View itemView) {
+            super(itemView);
+            mBinding = DataBindingUtil.bind(itemView);
+        }
     }
 }

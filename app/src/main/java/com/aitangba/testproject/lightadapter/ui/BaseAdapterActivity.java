@@ -28,7 +28,7 @@ public class BaseAdapterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_adapter);
+        setContentView(R.layout.item_light_adapter);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

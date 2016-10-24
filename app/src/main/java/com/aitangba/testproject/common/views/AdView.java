@@ -1,11 +1,14 @@
 package com.aitangba.testproject.common.views;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.PagerAdapter;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -13,122 +16,215 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.aitangba.testproject.R;
+import com.aitangba.testproject.horizonscrollview.ViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by zhangfei on 2015/6/14.
+ * Created by fhf11991 on 2016/8/8.
  */
 public class AdView extends FrameLayout implements ViewPager.OnPageChangeListener {
-    private static final int STATUS_RUN = 1;
-    private static final int STATUS_STOP = 2;
-    private static final int STATUS_RESET = 3;
-    private static final int AUTO_RUN_SPACE_TIME = 4000;
+
+    private static final int WHAT_AUTO_PLAY = 1000; //
+    private final int mAutoPlayTime = 4000;  //ms 自动播放时间
 
     private ViewPager mViewPager;
+    private ViewPagerAdapter mViewPagerAdapter;
     private LinearLayout mDotLayout;
+    private ImageView mImageDefault;
 
-    private List<ImageView> mDotViews = new ArrayList<>();
-    private int currentPosition = 0;
-    private String mEventId;
+    private boolean mIsInTouchEvent;          //是否正在点击中，正在点击中需要暂停自动播放
+    private boolean mAutoPlayAble = true;     //是否可以自动播放
+    private boolean mIsAutoPlaying;           //是否正在自动播放
+    private boolean mIsRecyclable = true;     //是否可以循环
 
-    private String mEvenId;
+    private int mDefaultImageResource = R.mipmap.ic_launcher;
+    private int mCurrentPosition = 0;
+    private PageIndicatorView mPageIndicatorView;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case STATUS_STOP:
-                    break;
-                case STATUS_RUN:
-                    if (mDotViews == null || mDotViews.size() == 0) {
-                        return;
-                    }
-                    currentPosition = (currentPosition + 1) % mDotViews.size();
-                    mViewPager.setCurrentItem(currentPosition);
-                    mHandler.sendEmptyMessageDelayed(STATUS_RUN, AUTO_RUN_SPACE_TIME);
-                    break;
-                case STATUS_RESET:
-                    currentPosition = 0;
-                    mViewPager.setCurrentItem(currentPosition);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    public void setDefaultImageResource(@DrawableRes int imageResourceDefault) {
+        mDefaultImageResource = imageResourceDefault;
+    }
 
     public AdView(Context context) {
-        super(context);
-        initView(context);
+        this(context, null);
     }
 
     public AdView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        initView(context);
+        this(context, attrs, 0);
     }
 
     public AdView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(context);
+        onPostInitView();
     }
 
     private void initView(Context context) {
         inflate(context, R.layout.view_advertisement, this);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager.setAdapter(mViewPagerAdapter = new ViewPagerAdapter());
+        mViewPager.addOnPageChangeListener(this);
+
         mDotLayout = (LinearLayout) findViewById(R.id.ll_dots);
-        initAdvViews(4);
+        mImageDefault = (ImageView) findViewById(R.id.iv_default);
+
+        mPageIndicatorView = (PageIndicatorView) findViewById(R.id.pageIndicator);
+        mPageIndicatorView.setBackgroundColor(Color.RED);
+        mPageIndicatorView.setupWithViewPager(mViewPager);
     }
 
-    private void initAdvViews(int size) {
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
+    protected void onPostInitView() {}
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        final int actionMasked = ev.getAction() & MotionEvent.ACTION_MASK;
+        switch (actionMasked) {
+            case MotionEvent.ACTION_DOWN:
+                mIsInTouchEvent = true;
+                if(mAutoPlayAble) {
+                    stopAutoPlay();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mIsInTouchEvent = false;
+                if(mAutoPlayAble) {
+                    startAutoPlay();
+                }
+                break;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public void initView(int size) {
+        List<String> adPictures = new ArrayList<>();
+
+        for(int i = 0;i < size ; i++) {
+            adPictures.add("size = " + i);
+        }
+
+        initAdvViews(adPictures);
+    }
+
+    private void initAdvViews(List<String> adPictures) {
+        // data size == 0
+        if (adPictures == null || adPictures.size() == 0) {
+            mImageDefault.setVisibility(VISIBLE);
+            return;
+        }
+        mImageDefault.setVisibility(GONE);
+        initDotViews(adPictures.size());
+
+        final int dataSize = adPictures.size();
+        final List<View> adViews = new ArrayList<>();
+        final ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
-        List<ImageView> adViews = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            ImageView adView = new ImageView(getContext());
-            adView.setImageResource(R.mipmap.ic_launcher);
-            adView.setLayoutParams(params);
-            adView.setScaleType(ImageView.ScaleType.FIT_XY);
-            adViews.add(adView);
+        final boolean isRecyclable = mIsRecyclable && dataSize > 1;
+        final int maxIndex = isRecyclable ? dataSize + 2 : dataSize;
+        for (int i = 0; i < maxIndex; i++) {
+            final int index;
+            if(isRecyclable) {
+                //cache the first imageView
+                if (i == 0) {   //first index is the last view
+                    index = dataSize - 1;
+                } else if(i == maxIndex - 1) {  //last index is the first view
+                    index = 0;
+                } else {
+                    final int FIRST_INDEX = 1; //every common view must sub a first index
+                    index = i - FIRST_INDEX;
+                }
+            } else {
+                index = i;
+            }
+
+            final String data = adPictures.get(index);
+
+            // load adv image
+            if (!TextUtils.isEmpty(data)) {
+                ImageView adView = new ImageView(getContext());
+                adView.setLayoutParams(params);
+                adView.setScaleType(ImageView.ScaleType.FIT_XY);
+                adView.setImageResource(R.drawable.bg_red);
+                adViews.add(adView);
+            }
+        }
+        mViewPagerAdapter.setData(adViews);
+        mViewPager.setCurrentItem(isRecyclable ? 1 : 0);
+    }
+
+    private void initDotViews(int count) {
+        mPageIndicatorView.initView(count);
+        mDotLayout.removeAllViews();
+
+        // hide dot view if less than one
+        if (count <= 1) {
+            return;
         }
 
-        mViewPager.setAdapter(new ViewPagerAdapter(adViews));
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(0);
+        final float scale = getResources().getDisplayMetrics().density;
+        final int margin = (int)(10 * scale + 0.5F);
+        for (int i = 0; i < count; i++) {
+            final LinearLayout.LayoutParams params =
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+            if(i == 0) {
+                params.setMargins(margin, 0, margin / 2, 0);
+            } else if(i == count - 1) {
+                params.setMargins(margin / 2, 0, margin, 0);
+            } else {
+                params.setMargins(margin / 2, 0, margin / 2, 0);
+            }
+
+            final ImageView dotView = new ImageView(getContext());
+            dotView.setScaleType(ImageView.ScaleType.CENTER);
+            dotView.setLayoutParams(params);
+
+            setDotViewStatus(dotView, i == 0);
+            mDotLayout.addView(dotView);
+        }
     }
 
     @Override
     public void onPageSelected(int position) {
-        if (mDotViews == null || mDotViews.size() == 0) {
+        mCurrentPosition = position;
+        final int dataSize = getDataSize();
+        if (dataSize <= 1) {
             return;
         }
-        int selectedItem = position % mDotViews.size();
-        for (int i = 0; i < mDotViews.size(); i++) {
-//            ImageView image = mDotViews.get(i);
-//            if (i == selectedItem) {
-//                image.setBackgroundResource(R.drawable.ic_ad_dot_focused);
-//            } else {
-//                image.setBackgroundResource(R.drawable.ic_ad_dot_unfocused);
-//            }
+
+        final boolean isRecyclable = mIsRecyclable;
+        final int index;
+        if(isRecyclable) {
+            final int childViewSize = mViewPagerAdapter.getCount();
+            //cache the first imageView
+            if (position == 0) {   //first index is the last view
+                index = dataSize - 1;
+            } else if(position == childViewSize - 1) {  //last index is the first view
+                index = 0;
+            } else {
+                final int FIRST_INDEX = 1; //every common view must sub a first index
+                index = position - FIRST_INDEX;
+            }
+        } else {
+            index = position;
+        }
+
+        for (int i = 0; i < dataSize; i++) {
+            View childView = mDotLayout.getChildAt(i);
+            if(childView instanceof ImageView) {
+                ImageView image = (ImageView) mDotLayout.getChildAt(i);
+                setDotViewStatus(image, i == index);
+            }
         }
     }
 
-    private void startAutoRun() {
-        mHandler.sendEmptyMessageDelayed(STATUS_RUN, AUTO_RUN_SPACE_TIME);
+    private void setDotViewStatus(ImageView imageView, boolean isFocused) {
+        imageView.setBackgroundResource(isFocused ? R.drawable.ic_ad_dot_focused : R.drawable.ic_ad_dot_unfocused);
     }
-
-    public void stopAutoRun() {
-        mHandler.sendEmptyMessage(STATUS_STOP);
-    }
-
-    public void resetAutoRun() {
-        mHandler.sendEmptyMessage(STATUS_RESET);
-    }
-
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -136,37 +232,67 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
 
     @Override
     public void onPageScrollStateChanged(int state) {
-    }
-
-    public static class ViewPagerAdapter extends PagerAdapter {
-        private List<ImageView> mAdvViews;
-
-        public ViewPagerAdapter(List<ImageView> advViews) {
-            if (advViews == null || advViews.size() == 0) {
-                throw new IllegalArgumentException("advViews cannot be empty or null");
+        final int dataSize = getDataSize();
+        if(state == ViewPager.SCROLL_STATE_IDLE && mIsRecyclable && dataSize > 1) {
+            final int currentItem = mViewPager.getCurrentItem();
+            final int childViewSize = mViewPagerAdapter.getCount();
+            if(currentItem == 0) {
+                mViewPager.setCurrentItem(childViewSize - 1 - 1, false);
+            } else if(currentItem == childViewSize - 1) {
+                mViewPager.setCurrentItem(1, false);
             }
-            mAdvViews = advViews;
-        }
-
-        @Override
-        public int getCount() {
-            return mAdvViews.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(mAdvViews.get(position % mAdvViews.size()), 0);
-            return mAdvViews.get(position % mAdvViews.size());
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(mAdvViews.get(position % mAdvViews.size()));
         }
     }
+
+    private int getDataSize() {
+        return mDotLayout.getChildCount();
+    }
+
+    private Handler mAutoPlayHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            final int childViewSize = mViewPagerAdapter.getCount();
+            if(mIsInTouchEvent || childViewSize == 0) { // no data
+                stopAutoPlay();
+                return;
+            }
+            mCurrentPosition  = (mCurrentPosition + 1) % childViewSize;
+            mViewPager.setCurrentItem(mCurrentPosition, true);
+            mAutoPlayHandler.sendEmptyMessageDelayed(WHAT_AUTO_PLAY, mAutoPlayTime);
+        }
+    };
+
+    /**
+     * 开始播放
+     */
+    public void startAutoPlay() {
+        if (mAutoPlayAble && !mIsAutoPlaying) {
+            mIsAutoPlaying = true;
+            mAutoPlayHandler.sendEmptyMessageDelayed(WHAT_AUTO_PLAY, mAutoPlayTime);
+        }
+    }
+
+    /**
+     * 停止播放
+     */
+    public void stopAutoPlay() {
+        if (mAutoPlayAble && mIsAutoPlaying) {
+            mIsAutoPlaying = false;
+            mAutoPlayHandler.removeMessages(WHAT_AUTO_PLAY);
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        startAutoPlay();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        stopAutoPlay();
+        super.onDetachedFromWindow();
+    }
+
 }
+

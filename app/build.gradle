@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
+    dataBinding.enabled = true
 
     defaultConfig {
         applicationId "com.aitangba.testproject"
@@ -24,5 +25,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.+'
+    compile 'com.android.databinding:library:1.1'
     compile group: 'com.alibaba', name: 'fastjson', version: '1.1.54.android'
 }
