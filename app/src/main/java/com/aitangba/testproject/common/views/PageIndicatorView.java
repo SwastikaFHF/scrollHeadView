@@ -1,9 +1,11 @@
 package com.aitangba.testproject.common.views;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +16,8 @@ import com.aitangba.testproject.R;
  * Created by fhf11991 on 2016/10/24.
  */
 public class PageIndicatorView extends ViewGroup{
+
+    private static final String TAG = "PageIndicatorView";
 
     private ImageView mFocusedView;
 
@@ -81,25 +85,31 @@ public class PageIndicatorView extends ViewGroup{
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int unFocusedViewIndex = 0;
         for(int i = 0 ; i < getChildCount() ; i++) {
             final View view = getChildAt(i);
             final int childWidth = view.getMeasuredWidth();
 
             if(view == mFocusedView) {
                 if(mViewPager != null) {
-                    int position = mViewPager.getCurrentItem();
-                    int left = mMargin / 2 + position * childWidth;
+                    int left = (int) mFocusedViewX;
                     view.layout(left, t, left + childWidth, b);
                 }
             } else {
-                int position = i - 1;
+                int position = unFocusedViewIndex;
                 int left = mMargin / 2 + position * (childWidth + mMargin);
                 view.layout(left, t, left + childWidth, b);
+                unFocusedViewIndex ++;
             }
         }
     }
 
-    public void initView(int size) {
+    private int mSize;
+
+    private void setSize(int size) {
+        if(size < 0 ) return;
+        mSize = Math.max(0, mIsRecyclable ? size - 2 : size);
+
         //remove all childView except focusedView
         for(int i = 0 ; i < getChildCount() ; i++) {
             final View view = getChildAt(i);
@@ -108,13 +118,14 @@ public class PageIndicatorView extends ViewGroup{
             }
         }
 
-        if(size <= 1) {
+        if(mSize <= 1) {
             setVisibility(View.GONE);
             return;
         } else {
             setVisibility(View.VISIBLE);
         }
-        for (int i = 0; i < size; i++) {
+
+        for (int i = 0; i < mSize; i++) {
             final ImageView dotView = new ImageView(getContext());
             dotView.setScaleType(ImageView.ScaleType.CENTER);
             dotView.setImageResource(R.drawable.ic_ad_dot_unfocused);
@@ -122,30 +133,67 @@ public class PageIndicatorView extends ViewGroup{
         }
     }
 
-    public void setupWithViewPager(ViewPager viewPager) {
+    private boolean mIsRecyclable;
+    private int mPositon;
+    private float mFocusedViewX;
+
+    public void setupWithViewPager(ViewPager viewPager, boolean recyclable) {
+        mIsRecyclable = recyclable;
+
         if (mViewPager != null) {
             return;
         }
-
         mViewPager = viewPager;
         mViewPager.setCurrentItem(0);
+        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
 
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        setSize(mViewPager.getAdapter().getCount());
+        mViewPager.getAdapter().registerDataSetObserver(new DataSetObserver() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                mFocusedView.bringToFront();
-                mFocusedView.offsetLeftAndRight(positionOffsetPixels);
+            public void onChanged() {
+                super.onChanged();
+                setSize(mViewPager.getAdapter().getCount());
             }
 
             @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+            public void onInvalidated() {
+                super.onInvalidated();
             }
         });
     }
+
+    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+
+        private int mOriginPosition;
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            Log.d(TAG, "onPageScrolled ------"
+                    + "    mOriginPosition = " + mOriginPosition
+                    + "    position = " +  position
+                    + "    positionOffsetPixels = " + positionOffsetPixels);
+
+            final int recycleDistance = mMargin + mFocusedView.getMeasuredWidth();
+            final int movedX = positionOffsetPixels * recycleDistance / getMeasuredWidth();
+
+            if(position < mOriginPosition) { //turn left
+                if(position <= 1 && mOriginPosition != mSize)return;
+                mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
+            } else {   //turn right
+                if(position >= mSize) return;
+                mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
+            }
+            mFocusedView.bringToFront();
+            requestLayout();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            Log.d(TAG, "onPageScrollStateChanged -----------  state = " + state);
+
+            if(state == ViewPager.SCROLL_STATE_DRAGGING) { // start scroll state
+                mOriginPosition = mViewPager.getCurrentItem();
+            }
+        }
+    };
 }

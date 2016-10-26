@@ -35,7 +35,7 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
     private ImageView mImageDefault;
 
     private boolean mIsInTouchEvent;          //是否正在点击中，正在点击中需要暂停自动播放
-    private boolean mAutoPlayAble = true;     //是否可以自动播放
+    private boolean mAutoPlayAble = false;     //是否可以自动播放
     private boolean mIsAutoPlaying;           //是否正在自动播放
     private boolean mIsRecyclable = true;     //是否可以循环
 
@@ -72,7 +72,7 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
 
         mPageIndicatorView = (PageIndicatorView) findViewById(R.id.pageIndicator);
         mPageIndicatorView.setBackgroundColor(Color.RED);
-        mPageIndicatorView.setupWithViewPager(mViewPager);
+        mPageIndicatorView.setupWithViewPager(mViewPager, mIsRecyclable);
     }
 
     protected void onPostInitView() {}
@@ -157,7 +157,6 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
     }
 
     private void initDotViews(int count) {
-        mPageIndicatorView.initView(count);
         mDotLayout.removeAllViews();
 
         // hide dot view if less than one
