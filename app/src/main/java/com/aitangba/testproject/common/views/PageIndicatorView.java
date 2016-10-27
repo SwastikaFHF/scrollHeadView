@@ -5,7 +5,6 @@ import android.database.DataSetObserver;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,9 +19,12 @@ public class PageIndicatorView extends ViewGroup{
     private static final String TAG = "PageIndicatorView";
 
     private ImageView mFocusedView;
-
     private ViewPager mViewPager;
+
     private int mMargin;
+    private int mSize;
+    private boolean mIsRecyclable;
+    private int mFocusedViewX;
 
     public PageIndicatorView(Context context) {
         this(context, null);
@@ -62,7 +64,6 @@ public class PageIndicatorView extends ViewGroup{
 
         measureChildren(widthMeasureSpec, heightMeasureSpec);
 
-
         final int childCount = getChildCount();
         final int FOCUSED_VIEW_COUNT = 1;
 
@@ -89,22 +90,21 @@ public class PageIndicatorView extends ViewGroup{
         for(int i = 0 ; i < getChildCount() ; i++) {
             final View view = getChildAt(i);
             final int childWidth = view.getMeasuredWidth();
+            final int childHeight = view.getMeasuredHeight();
 
             if(view == mFocusedView) {
                 if(mViewPager != null) {
-                    int left = (int) mFocusedViewX;
-                    view.layout(left, t, left + childWidth, b);
+                    int left = mFocusedViewX;
+                    view.layout(left, 0, left + childWidth, childHeight);
                 }
             } else {
                 int position = unFocusedViewIndex;
                 int left = mMargin / 2 + position * (childWidth + mMargin);
-                view.layout(left, t, left + childWidth, b);
+                view.layout(left, 0, left + childWidth, childHeight);
                 unFocusedViewIndex ++;
             }
         }
     }
-
-    private int mSize;
 
     private void setSize(int size) {
         if(size < 0 ) return;
@@ -132,10 +132,6 @@ public class PageIndicatorView extends ViewGroup{
             addView(dotView);
         }
     }
-
-    private boolean mIsRecyclable;
-    private int mPositon;
-    private float mFocusedViewX;
 
     public void setupWithViewPager(ViewPager viewPager, boolean recyclable) {
         mIsRecyclable = recyclable;
@@ -168,29 +164,27 @@ public class PageIndicatorView extends ViewGroup{
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            Log.d(TAG, "onPageScrolled ------"
-                    + "    mOriginPosition = " + mOriginPosition
-                    + "    position = " +  position
-                    + "    positionOffsetPixels = " + positionOffsetPixels);
-
             final int recycleDistance = mMargin + mFocusedView.getMeasuredWidth();
-            final int movedX = positionOffsetPixels * recycleDistance / getMeasuredWidth();
+            final int movedX = recycleDistance * positionOffsetPixels  / mViewPager.getMeasuredWidth();
 
-            if(position < mOriginPosition) { //turn left
-                if(position <= 1 && mOriginPosition != mSize)return;
-                mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
-            } else {   //turn right
-                if(position >= mSize) return;
-                mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
+            if(mIsRecyclable) {
+                if(position < mOriginPosition) { //turn left
+                    if(position <= 1 && mOriginPosition <= 1)return;
+                    mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
+                } else {   //turn right
+                    if(position >= mSize && !(mOriginPosition == 1 && position == mSize)) return;
+                    mFocusedViewX = mMargin / 2 + recycleDistance * (position - 1) + movedX;
+                }
+            } else {
+                mFocusedViewX = mMargin / 2 + recycleDistance * position + movedX;
             }
+
             mFocusedView.bringToFront();
             requestLayout();
         }
 
         @Override
         public void onPageScrollStateChanged(int state) {
-            Log.d(TAG, "onPageScrollStateChanged -----------  state = " + state);
-
             if(state == ViewPager.SCROLL_STATE_DRAGGING) { // start scroll state
                 mOriginPosition = mViewPager.getCurrentItem();
             }

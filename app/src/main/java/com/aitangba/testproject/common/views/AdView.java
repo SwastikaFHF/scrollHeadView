@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.horizonscrollview.ViewPagerAdapter;
@@ -31,7 +30,6 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
 
     private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
-    private LinearLayout mDotLayout;
     private ImageView mImageDefault;
 
     private boolean mIsInTouchEvent;          //是否正在点击中，正在点击中需要暂停自动播放
@@ -42,6 +40,7 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
     private int mDefaultImageResource = R.mipmap.ic_launcher;
     private int mCurrentPosition = 0;
     private PageIndicatorView mPageIndicatorView;
+    private int mDataSize;
 
     public void setDefaultImageResource(@DrawableRes int imageResourceDefault) {
         mDefaultImageResource = imageResourceDefault;
@@ -67,7 +66,6 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
         mViewPager.setAdapter(mViewPagerAdapter = new ViewPagerAdapter());
         mViewPager.addOnPageChangeListener(this);
 
-        mDotLayout = (LinearLayout) findViewById(R.id.ll_dots);
         mImageDefault = (ImageView) findViewById(R.id.iv_default);
 
         mPageIndicatorView = (PageIndicatorView) findViewById(R.id.pageIndicator);
@@ -115,7 +113,7 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
             return;
         }
         mImageDefault.setVisibility(GONE);
-        initDotViews(adPictures.size());
+        mDataSize = adPictures.size();
 
         final int dataSize = adPictures.size();
         final List<View> adViews = new ArrayList<>();
@@ -156,73 +154,10 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
         mViewPager.setCurrentItem(isRecyclable ? 1 : 0);
     }
 
-    private void initDotViews(int count) {
-        mDotLayout.removeAllViews();
-
-        // hide dot view if less than one
-        if (count <= 1) {
-            return;
-        }
-
-        final float scale = getResources().getDisplayMetrics().density;
-        final int margin = (int)(10 * scale + 0.5F);
-        for (int i = 0; i < count; i++) {
-            final LinearLayout.LayoutParams params =
-                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-            if(i == 0) {
-                params.setMargins(margin, 0, margin / 2, 0);
-            } else if(i == count - 1) {
-                params.setMargins(margin / 2, 0, margin, 0);
-            } else {
-                params.setMargins(margin / 2, 0, margin / 2, 0);
-            }
-
-            final ImageView dotView = new ImageView(getContext());
-            dotView.setScaleType(ImageView.ScaleType.CENTER);
-            dotView.setLayoutParams(params);
-
-            setDotViewStatus(dotView, i == 0);
-            mDotLayout.addView(dotView);
-        }
-    }
 
     @Override
     public void onPageSelected(int position) {
         mCurrentPosition = position;
-        final int dataSize = getDataSize();
-        if (dataSize <= 1) {
-            return;
-        }
-
-        final boolean isRecyclable = mIsRecyclable;
-        final int index;
-        if(isRecyclable) {
-            final int childViewSize = mViewPagerAdapter.getCount();
-            //cache the first imageView
-            if (position == 0) {   //first index is the last view
-                index = dataSize - 1;
-            } else if(position == childViewSize - 1) {  //last index is the first view
-                index = 0;
-            } else {
-                final int FIRST_INDEX = 1; //every common view must sub a first index
-                index = position - FIRST_INDEX;
-            }
-        } else {
-            index = position;
-        }
-
-        for (int i = 0; i < dataSize; i++) {
-            View childView = mDotLayout.getChildAt(i);
-            if(childView instanceof ImageView) {
-                ImageView image = (ImageView) mDotLayout.getChildAt(i);
-                setDotViewStatus(image, i == index);
-            }
-        }
-    }
-
-    private void setDotViewStatus(ImageView imageView, boolean isFocused) {
-        imageView.setBackgroundResource(isFocused ? R.drawable.ic_ad_dot_focused : R.drawable.ic_ad_dot_unfocused);
     }
 
     @Override
@@ -244,7 +179,7 @@ public class AdView extends FrameLayout implements ViewPager.OnPageChangeListene
     }
 
     private int getDataSize() {
-        return mDotLayout.getChildCount();
+        return mDataSize;
     }
 
     private Handler mAutoPlayHandler = new Handler() {
