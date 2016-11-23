@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.aitangba.testproject.numberpicker.NumberPickerView
+        android:id="@+id/picker_hour"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="picker_hour"
+        app:npv_HintText="@string/hour_hint"
+        app:npv_ItemPaddingHorizontal="5dp"
+        app:npv_ItemPaddingVertical="5dp"
+        app:npv_RespondChangeInMainThread="false"
+        app:npv_ShowCount="3"
+        app:npv_TextSizeNormal="16sp"
+        app:npv_TextSizeSelected="20sp"
+        app:npv_WrapSelectorWheel="true"/>
+
+</RelativeLayout>

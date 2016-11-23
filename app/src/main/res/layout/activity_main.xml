@@ -11,6 +11,16 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/bt_loading_view_activity"
+            style="@style/MainBigButton"
+            android:text="自定义加载View"/>
+
+        <Button
+            android:id="@+id/bt_number_picker_activity"
+            style="@style/MainBigButton"
+            android:text="选择数字"/>
+
+        <Button
             android:id="@+id/bt_light_adapter"
             style="@style/MainBigButton"
             android:text="lightAdapter"/>

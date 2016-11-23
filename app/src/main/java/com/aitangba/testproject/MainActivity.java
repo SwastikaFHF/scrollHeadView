@@ -11,7 +11,9 @@ import com.aitangba.testproject.edgeeffect.EffectActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
+import com.aitangba.testproject.loadingview.LoadViewActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
+import com.aitangba.testproject.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.bt_number_picker_activity:
+                startActivity(NumberPickerActivity.class);
+                break;
             case R.id.bt_horizon_scroll:
                 startActivity(HorizonScrollActivity.class);
                 break;
@@ -82,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_light_adapter:
                 startActivity(LightAdapterActivity.class);
+                break;
+            case R.id.bt_loading_view_activity:
+                startActivity(LoadViewActivity.class);
                 break;
             default:break;
         }
