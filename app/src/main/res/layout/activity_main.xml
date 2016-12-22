@@ -11,6 +11,11 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/bt_ubb_activity"
+            style="@style/MainBigButton"
+            android:text="ubb转换"/>
+
+        <Button
             android:id="@+id/bt_loading_view_activity"
             style="@style/MainBigButton"
             android:text="自定义加载View"/>
