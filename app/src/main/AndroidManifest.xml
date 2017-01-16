@@ -9,6 +9,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".login.CustomApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -43,6 +44,14 @@
         <activity android:name=".numberpicker.NumberPickerActivity"></activity>
         <activity android:name=".loadingview.LoadViewActivity"></activity>
         <activity android:name=".ubb.UbbActivity"></activity>
+
+        <!-- login test -->
+        <activity android:name=".login.MainActivity"></activity>
+        <activity android:name=".login.LoginActivity"></activity>
+        <activity android:name=".login.LoginRequestActivity"></activity>
+
+        <activity android:name=".removeitem.RemoveItemActivity"></activity>
+
     </application>
 
 </manifest>

@@ -11,6 +11,16 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/bt_remove_item_activity"
+            style="@style/MainBigButton"
+            android:text="删除动画测试"/>
+
+        <Button
+            android:id="@+id/bt_login_activity"
+            style="@style/MainBigButton"
+            android:text="登录测试"/>
+
+        <Button
             android:id="@+id/bt_ubb_activity"
             style="@style/MainBigButton"
             android:text="ubb转换"/>

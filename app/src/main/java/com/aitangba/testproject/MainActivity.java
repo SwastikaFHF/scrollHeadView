@@ -16,6 +16,7 @@ import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
+import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
@@ -94,6 +95,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_ubb_activity:
                 startActivity(UbbActivity.class);
+                break;
+            case R.id.bt_login_activity:
+                startActivity(com.aitangba.testproject.login.MainActivity.class);
+                break;
+            case R.id.bt_remove_item_activity:
+                startActivity(RemoveItemActivity.class);
                 break;
             default:break;
         }
