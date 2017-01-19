@@ -10,6 +10,7 @@ import com.aitangba.testproject.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.edgeeffect.EffectActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
+import com.aitangba.testproject.irregularview.IrregularViewActivity;
 import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loadingview.LoadViewActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
@@ -101,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_remove_item_activity:
                 startActivity(RemoveItemActivity.class);
+                break;
+            case R.id.bt_irregular_view_activity:
+                startActivity(IrregularViewActivity.class);
                 break;
             default:break;
         }

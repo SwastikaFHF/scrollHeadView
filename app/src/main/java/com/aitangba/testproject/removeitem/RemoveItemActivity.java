@@ -1,6 +1,5 @@
 package com.aitangba.testproject.removeitem;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +28,12 @@ public class RemoveItemActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        //设置默认动画
+        CustomItemAnimator animator = new CustomItemAnimator(recyclerView);
+        animator.setAddDuration(1000);
+        animator.setRemoveDuration(1000);
+        recyclerView.setItemAnimator(animator);
 
         CustomAdapter adapter = new CustomAdapter();
         recyclerView.setAdapter(adapter);
