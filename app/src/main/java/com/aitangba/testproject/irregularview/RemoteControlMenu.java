@@ -2,12 +2,12 @@ package com.aitangba.testproject.irregularview;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,38 +16,43 @@ import android.view.View;
  */
 
 public class RemoteControlMenu extends View {
-    Path up_p, down_p, left_p, right_p, center_p;
-    Region up, down, left, right, center;
 
-    Matrix mMapMatrix = null;
+    private static final int AREA_BLANK = -1;
+    private static final int AREA_CENTER = 0;
+    private static final int AREA_UP = 1;
+    private static final int AREA_RIGHT = 2;
+    private static final int AREA_DOWN = 3;
+    private static final int AREA_LEFT = 4;
 
-    int CENTER = 0;
-    int UP = 1;
-    int RIGHT = 2;
-    int DOWN = 3;
-    int LEFT = 4;
-    int touchFlag = -1;
-    int currentFlag = -1;
+    private Path upPath, downPath, leftPath, rightPath, centerPath;
+    private Region up, down, left, right, center;
 
-    MenuListener mListener = null;
+    private int touchFlag = -1;
+    private int currentFlag = -1;
 
-    int mDefaultColor = 0xFF4E5268;
-    int mTouchedColor = 0xFFDF9C81;
+    private MenuListener mListener = null;
 
+    private static final int mDefaultColor = 0xFF4E5268;
+    private static final int mTouchedColor = 0xFFDF9C81;
+
+    private Paint mDefaultPaint;
+    private SparseArray<Path> mPaths;
 
     public RemoteControlMenu(Context context) {
         this(context, null);
     }
-    Paint mDefaultPaint;
 
     public RemoteControlMenu(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
 
-        up_p = new Path();
-        down_p = new Path();
-        left_p = new Path();
-        right_p = new Path();
-        center_p = new Path();
+    public RemoteControlMenu(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        upPath = new Path();
+        downPath = new Path();
+        leftPath = new Path();
+        rightPath = new Path();
+        centerPath = new Path();
 
         up = new Region();
         down = new Region();
@@ -59,16 +64,20 @@ public class RemoteControlMenu extends View {
         mDefaultPaint.setColor(mDefaultColor);
         mDefaultPaint.setAntiAlias(true);
 
-        mMapMatrix = new Matrix();
+        mPaths = new SparseArray<>();
+        mPaths.append(AREA_CENTER, centerPath);
+        mPaths.append(AREA_LEFT, leftPath);
+        mPaths.append(AREA_UP, upPath);
+        mPaths.append(AREA_RIGHT, rightPath);
+        mPaths.append(AREA_DOWN, downPath);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mMapMatrix.reset();
 
         // 注意这个区域的大小
-        Region globalRegion = new Region(-w, -h, w, h);
+        Region globalRegion = new Region(-w / 2, -h / 2, w / 2, h / 2);
         int minWidth = w > h ? h : w;
         minWidth *= 0.8;
 
@@ -82,40 +91,36 @@ public class RemoteControlMenu extends View {
         float smallSweepAngle = -80;
 
         // 根据视图大小，初始化 Path 和 Region
-        center_p.addCircle(0, 0, 0.2f * minWidth, Path.Direction.CW);
-        center.setPath(center_p, globalRegion);
+        centerPath.addCircle(0, 0, 0.2f * minWidth, Path.Direction.CW);
+        center.setPath(centerPath, globalRegion);
 
-        right_p.addArc(bigCircle, -40, bigSweepAngle);
-        right_p.arcTo(smallCircle, 40, smallSweepAngle);
-        right_p.close();
-        right.setPath(right_p, globalRegion);
+        rightPath.addArc(bigCircle, -40, bigSweepAngle);
+        rightPath.arcTo(smallCircle, 40, smallSweepAngle);
+        rightPath.close();
+        right.setPath(rightPath, globalRegion);
 
-        down_p.addArc(bigCircle, 50, bigSweepAngle);
-        down_p.arcTo(smallCircle, 130, smallSweepAngle);
-        down_p.close();
-        down.setPath(down_p, globalRegion);
+        downPath.addArc(bigCircle, 50, bigSweepAngle);
+        downPath.arcTo(smallCircle, 130, smallSweepAngle);
+        downPath.close();
+        down.setPath(downPath, globalRegion);
 
-        left_p.addArc(bigCircle, 140, bigSweepAngle);
-        left_p.arcTo(smallCircle, 220, smallSweepAngle);
-        left_p.close();
-        left.setPath(left_p, globalRegion);
+        leftPath.addArc(bigCircle, 140, bigSweepAngle);
+        leftPath.arcTo(smallCircle, 220, smallSweepAngle);
+        leftPath.close();
+        left.setPath(leftPath, globalRegion);
 
-        up_p.addArc(bigCircle, 230, bigSweepAngle);
-        up_p.arcTo(smallCircle, 310, smallSweepAngle);
-        up_p.close();
-        up.setPath(up_p, globalRegion);
+        upPath.addArc(bigCircle, 230, bigSweepAngle);
+        upPath.arcTo(smallCircle, 310, smallSweepAngle);
+        upPath.close();
+        up.setPath(upPath, globalRegion);
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float[] pts = new float[2];
-        pts[0] = event.getRawX();
-        pts[1] = event.getRawY();
-        mMapMatrix.mapPoints(pts);
 
-        int x = (int) pts[0];
-        int y = (int) pts[1];
+        float x = event.getX();
+        float y = event.getY();
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -129,15 +134,15 @@ public class RemoteControlMenu extends View {
                 currentFlag = getTouchedPath(x, y);
                 // 如果手指按下区域和抬起区域相同且不为空，则判断点击事件
                 if (currentFlag == touchFlag && currentFlag != -1 && mListener != null) {
-                    if (currentFlag == CENTER) {
+                    if (currentFlag == AREA_CENTER) {
                         mListener.onCenterCliched();
-                    } else if (currentFlag == UP) {
+                    } else if (currentFlag == AREA_UP) {
                         mListener.onUpCliched();
-                    } else if (currentFlag == RIGHT) {
+                    } else if (currentFlag == AREA_RIGHT) {
                         mListener.onRightCliched();
-                    } else if (currentFlag == DOWN) {
+                    } else if (currentFlag == AREA_DOWN) {
                         mListener.onDownCliched();
-                    } else if (currentFlag == LEFT) {
+                    } else if (currentFlag == AREA_LEFT) {
                         mListener.onLeftCliched();
                     }
                 }
@@ -152,20 +157,24 @@ public class RemoteControlMenu extends View {
         return true;
     }
 
-    // 获取当前触摸点在哪个区域
-    int getTouchedPath(int x, int y) {
+    /**
+     * 获取当前触摸点在哪个区域
+     */
+    private int getTouchedPath(float xf, float yf) {
+        int x = (int) (xf - getMeasuredWidth() / 2);
+        int y = (int) (yf - getMeasuredHeight() / 2);
         if (center.contains(x, y)) {
-            return 0;
+            return AREA_CENTER;
         } else if (up.contains(x, y)) {
-            return 1;
+            return AREA_UP;
         } else if (right.contains(x, y)) {
-            return 2;
+            return AREA_RIGHT;
         } else if (down.contains(x, y)) {
-            return 3;
+            return AREA_DOWN;
         } else if (left.contains(x, y)) {
-            return 4;
+            return AREA_LEFT;
         }
-        return -1;
+        return AREA_BLANK;
     }
 
     @Override
@@ -173,30 +182,31 @@ public class RemoteControlMenu extends View {
         super.onDraw(canvas);
         canvas.translate(getMeasuredWidth() / 2, getMeasuredHeight() / 2);
 
-        // 获取测量矩阵(逆矩阵)
-        if (mMapMatrix.isIdentity()) {
-            canvas.getMatrix().invert(mMapMatrix);
+        Path pressedPath = mPaths.get(currentFlag);
+        if(pressedPath != null) {
+            canvas.drawPath(pressedPath, mDefaultPaint);
         }
 
+
         // 绘制默认颜色
-        canvas.drawPath(center_p, mDefaultPaint);
-        canvas.drawPath(up_p, mDefaultPaint);
-        canvas.drawPath(right_p, mDefaultPaint);
-        canvas.drawPath(down_p, mDefaultPaint);
-        canvas.drawPath(left_p, mDefaultPaint);
+        canvas.drawPath(centerPath, mDefaultPaint);
+        canvas.drawPath(upPath, mDefaultPaint);
+        canvas.drawPath(rightPath, mDefaultPaint);
+        canvas.drawPath(downPath, mDefaultPaint);
+        canvas.drawPath(leftPath, mDefaultPaint);
 
         // 绘制触摸区域颜色
         mDefaultPaint.setColor(mTouchedColor);
-        if (currentFlag == CENTER) {
-            canvas.drawPath(center_p, mDefaultPaint);
-        } else if (currentFlag == UP) {
-            canvas.drawPath(up_p, mDefaultPaint);
-        } else if (currentFlag == RIGHT) {
-            canvas.drawPath(right_p, mDefaultPaint);
-        } else if (currentFlag == DOWN) {
-            canvas.drawPath(down_p, mDefaultPaint);
-        } else if (currentFlag == LEFT) {
-            canvas.drawPath(left_p, mDefaultPaint);
+        if (currentFlag == AREA_CENTER) {
+            canvas.drawPath(centerPath, mDefaultPaint);
+        } else if (currentFlag == AREA_UP) {
+            canvas.drawPath(upPath, mDefaultPaint);
+        } else if (currentFlag == AREA_RIGHT) {
+            canvas.drawPath(rightPath, mDefaultPaint);
+        } else if (currentFlag == AREA_DOWN) {
+            canvas.drawPath(downPath, mDefaultPaint);
+        } else if (currentFlag == AREA_LEFT) {
+            canvas.drawPath(leftPath, mDefaultPaint);
         }
         mDefaultPaint.setColor(mDefaultColor);
     }
