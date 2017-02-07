@@ -7,7 +7,6 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,19 +23,17 @@ public class RemoteControlMenu extends View {
     private static final int AREA_DOWN = 3;
     private static final int AREA_LEFT = 4;
 
-    private Path upPath, downPath, leftPath, rightPath, centerPath;
+    private static final int COLOR_DEFAULT = 0xFF4E5268;
+    private static final int COLOR_TOUCHED = 0xFFDF9C81;
+
+    private CustomPath upPath, downPath, leftPath, rightPath, centerPath;
     private Region up, down, left, right, center;
+    private Paint mPaint;
+    private CustomPath[] mPaths;
+    private MenuListener mListener;
 
     private int touchFlag = -1;
     private int currentFlag = -1;
-
-    private MenuListener mListener = null;
-
-    private static final int mDefaultColor = 0xFF4E5268;
-    private static final int mTouchedColor = 0xFFDF9C81;
-
-    private Paint mDefaultPaint;
-    private SparseArray<Path> mPaths;
 
     public RemoteControlMenu(Context context) {
         this(context, null);
@@ -48,11 +45,11 @@ public class RemoteControlMenu extends View {
 
     public RemoteControlMenu(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        upPath = new Path();
-        downPath = new Path();
-        leftPath = new Path();
-        rightPath = new Path();
-        centerPath = new Path();
+        upPath = new CustomPath(AREA_UP);
+        downPath = new CustomPath(AREA_DOWN);
+        leftPath = new CustomPath(AREA_LEFT);
+        rightPath = new CustomPath(AREA_RIGHT);
+        centerPath = new CustomPath(AREA_CENTER);
 
         up = new Region();
         down = new Region();
@@ -60,16 +57,11 @@ public class RemoteControlMenu extends View {
         right = new Region();
         center = new Region();
 
-        mDefaultPaint = new Paint();
-        mDefaultPaint.setColor(mDefaultColor);
-        mDefaultPaint.setAntiAlias(true);
+        mPaint = new Paint();
+        mPaint.setColor(COLOR_DEFAULT);
+        mPaint.setAntiAlias(true);
 
-        mPaths = new SparseArray<>();
-        mPaths.append(AREA_CENTER, centerPath);
-        mPaths.append(AREA_LEFT, leftPath);
-        mPaths.append(AREA_UP, upPath);
-        mPaths.append(AREA_RIGHT, rightPath);
-        mPaths.append(AREA_DOWN, downPath);
+        mPaths = new CustomPath[]{centerPath, leftPath, upPath, rightPath, downPath};
     }
 
     @Override
@@ -129,6 +121,11 @@ public class RemoteControlMenu extends View {
                 break;
             case MotionEvent.ACTION_MOVE:
                 currentFlag = getTouchedPath(x, y);
+                if(currentFlag != touchFlag) { //cancel the TouchEvent
+                    touchFlag = currentFlag = AREA_BLANK;
+                    invalidate();
+                    return false;
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 currentFlag = getTouchedPath(x, y);
@@ -146,10 +143,10 @@ public class RemoteControlMenu extends View {
                         mListener.onLeftCliched();
                     }
                 }
-                touchFlag = currentFlag = -1;
+                touchFlag = currentFlag = AREA_BLANK;
                 break;
             case MotionEvent.ACTION_CANCEL:
-                touchFlag = currentFlag = -1;
+                touchFlag = currentFlag = AREA_BLANK;
                 break;
         }
 
@@ -182,33 +179,14 @@ public class RemoteControlMenu extends View {
         super.onDraw(canvas);
         canvas.translate(getMeasuredWidth() / 2, getMeasuredHeight() / 2);
 
-        Path pressedPath = mPaths.get(currentFlag);
-        if(pressedPath != null) {
-            canvas.drawPath(pressedPath, mDefaultPaint);
+        for(CustomPath path : mPaths) {
+            if(path.areaType == currentFlag) {
+                mPaint.setColor(COLOR_TOUCHED);
+            } else {
+                mPaint.setColor(COLOR_DEFAULT);
+            }
+            canvas.drawPath(path, mPaint);
         }
-
-
-        // 绘制默认颜色
-        canvas.drawPath(centerPath, mDefaultPaint);
-        canvas.drawPath(upPath, mDefaultPaint);
-        canvas.drawPath(rightPath, mDefaultPaint);
-        canvas.drawPath(downPath, mDefaultPaint);
-        canvas.drawPath(leftPath, mDefaultPaint);
-
-        // 绘制触摸区域颜色
-        mDefaultPaint.setColor(mTouchedColor);
-        if (currentFlag == AREA_CENTER) {
-            canvas.drawPath(centerPath, mDefaultPaint);
-        } else if (currentFlag == AREA_UP) {
-            canvas.drawPath(upPath, mDefaultPaint);
-        } else if (currentFlag == AREA_RIGHT) {
-            canvas.drawPath(rightPath, mDefaultPaint);
-        } else if (currentFlag == AREA_DOWN) {
-            canvas.drawPath(downPath, mDefaultPaint);
-        } else if (currentFlag == AREA_LEFT) {
-            canvas.drawPath(leftPath, mDefaultPaint);
-        }
-        mDefaultPaint.setColor(mDefaultColor);
     }
 
     public void setListener(MenuListener listener) {
@@ -226,5 +204,14 @@ public class RemoteControlMenu extends View {
         void onDownCliched();
 
         void onLeftCliched();
+    }
+
+    private static class CustomPath extends Path {
+
+        public int areaType;
+
+        public CustomPath(int areaType) {
+            this.areaType = areaType;
+        }
     }
 }
