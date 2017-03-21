@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@drawable/bg_loading_frame"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingLeft="15dip"
+              android:paddingRight="15dip"
+              android:paddingTop="5dp"
+              android:paddingBottom="5dp">
+
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dip"
+        android:src="@drawable/ic_loading_progress"/>
+
+    <TextView
+        android:id="@+id/loading_tip_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="#ffffff"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="20dp"
+        android:text="加载中" />
+
+    <ImageView
+        android:id="@+id/close_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:layout_gravity="center_vertical"
+        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+
+</LinearLayout>

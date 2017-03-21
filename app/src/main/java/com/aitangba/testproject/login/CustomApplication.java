@@ -13,4 +13,5 @@ public class CustomApplication extends Application {
         super.onCreate();
         getMainLooper().setMessageLogging(new LooperMonitor());
     }
+
 }

@@ -11,6 +11,11 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/bt_loading_activity"
+            style="@style/MainBigButton"
+            android:text="加载测试"/>
+
+        <Button
             android:id="@+id/bt_irregular_view_activity"
             style="@style/MainBigButton"
             android:text="不规则图形测试"/>
