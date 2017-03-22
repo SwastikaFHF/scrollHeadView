@@ -9,19 +9,13 @@ import android.support.v4.app.Fragment;
 
 public class BaseFragment extends Fragment{
 
-    protected DialogManager dialogManager;
+    protected LoadingDialogHelper mLoadingDialogHelper;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof DialogManager) {
-            dialogManager = (DialogManager)context;
+        if(context instanceof BaseActivity) {
+            mLoadingDialogHelper = ((BaseActivity)context).mLoadingDialogHelper;
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        dialogManager = null;
     }
 }

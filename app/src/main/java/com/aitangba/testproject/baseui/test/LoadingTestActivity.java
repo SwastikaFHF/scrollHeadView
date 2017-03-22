@@ -7,7 +7,7 @@ import android.view.View;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.baseui.BaseActivity;
-import com.aitangba.testproject.baseui.StatefulHelper;
+import com.aitangba.testproject.baseui.StatefulViewHelper;
 import com.aitangba.testproject.databinding.LayoutCommonViewBinding;
 
 /**
@@ -16,7 +16,7 @@ import com.aitangba.testproject.databinding.LayoutCommonViewBinding;
 
 public class LoadingTestActivity extends BaseActivity {
 
-    private StatefulHelper mStatefulHelper;
+    private StatefulViewHelper mStatefulHelper;
     private LayoutCommonViewBinding mBinding;
 
     @Override
@@ -24,8 +24,7 @@ public class LoadingTestActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.layout_common_view);
 
-        mStatefulHelper = new StatefulHelper();
-        mStatefulHelper.attachView(mBinding.view);
+        mStatefulHelper = new StatefulViewHelper(mBinding.view);
 
         mBinding.firstButton.setOnClickListener(new View.OnClickListener() {
             @Override
