@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.view;
+package com.aitangba.testproject.paging.helper;
 
 import android.app.Activity;
 

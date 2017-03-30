@@ -1,6 +1,6 @@
 package com.aitangba.testproject.paging.effect;
 
-import com.aitangba.testproject.paging.view.LoadingDialogHelper;
+import com.aitangba.testproject.paging.helper.LoadingDialogHelper;
 
 /**
  * Created by fhf11991 on 2017/3/28.

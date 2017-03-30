@@ -1,10 +1,11 @@
-package com.aitangba.testproject.paging.view;
+package com.aitangba.testproject.paging.helper;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -22,6 +23,7 @@ public class StatefulViewHelper {
     private FrameLayout mFrameLayout;
     private View mChildView;
     private View mCoverView;
+    private int currentSize;
 
     public StatefulViewHelper(View childView) {
         mChildView = childView;
@@ -91,5 +93,14 @@ public class StatefulViewHelper {
             }
         });
         animatorSet.start();
+    }
+
+    public void setCurrentSize(int currentSize) {
+        this.currentSize = currentSize;
+
+        if(this.currentSize == 0) {
+            Log.d("StatefulViewHelper", "无数据----");
+            showLoading();
+        }
     }
 }

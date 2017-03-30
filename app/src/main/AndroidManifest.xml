@@ -55,6 +55,7 @@
         <activity android:name=".irregularview.IrregularViewActivity"></activity>
         <activity android:name=".baseui.test.LoadingTestActivity"></activity>
         <service android:name=".baseui.test.CustomService"></service>
+        <activity android:name=".paging.PagingListViewActivity"></activity>
 
     </application>
 

@@ -1,8 +1,9 @@
 package com.aitangba.testproject.paging.effect;
 
 import com.aitangba.testproject.paging.OnDataChangeListener;
+import com.aitangba.testproject.paging.PageBean;
 import com.aitangba.testproject.paging.view.PagingManager;
-import com.aitangba.testproject.paging.view.StatefulViewHelper;
+import com.aitangba.testproject.paging.helper.StatefulViewHelper;
 
 /**
  * Created by fhf11991 on 2017/3/28.
@@ -38,10 +39,8 @@ public class PagingEffectImpl implements UIEffect {
     public void bindStatefulUI(final StatefulViewHelper statefulViewHelper) {
         mPagingManager.setOnDataChangedListener(new OnDataChangeListener() {
             @Override
-            public void onChanged(int originSize, int currentSize) {
-                if(originSize == 0) {
-                    statefulViewHelper.showLoading();
-                }
+            public void onChanged(int currentSize, int oldSize) {
+                statefulViewHelper.setCurrentSize(currentSize);
             }
         });
     }

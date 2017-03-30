@@ -13,13 +13,14 @@ import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.OnDataChangeListener;
+import com.aitangba.testproject.paging.PageBean;
 
 
 /**
  * Created by XBeats on 2017/3/26.
  */
 
-public class PagingListView extends ListView implements AbsListView.OnScrollListener, PagingManager {
+public class PagingListView extends ListView implements PagingManager {
 
     private OnLoadMoreListener mLoadMoreListener;
     private boolean isLoading = false;// 是否正在加载
@@ -27,10 +28,9 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
     private String noDataTips;
     private View progressBar;
     private TextView loadTisText;
-
-    public void setNoDataTips(String noDataTips) {
-        this.noDataTips = noDataTips;
-    }
+    private OnScrollListener mOnScrollListener;
+    private volatile int originSize = 0;
+    private boolean hasTouchedScrollView = false; // 是否有触发滑动机制
 
     public PagingListView(Context context) {
         this(context, null);
@@ -42,7 +42,52 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
         progressBar = footerView.findViewById(R.id.footer_view_progressbar);
         loadTisText = (TextView) footerView.findViewById(R.id.footer_view_tv);
         addFooterView(footerView);
-        setOnScrollListener(this);
+        super.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(mOnScrollListener != null) {
+                    mOnScrollListener.onScrollStateChanged(view, scrollState);
+                }
+
+                if(scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    hasTouchedScrollView = true;
+                }
+
+                if (scrollState != OnScrollListener.SCROLL_STATE_IDLE) {
+                    return;
+                }
+
+                if(!canLoadMore()) return;
+
+                if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
+                    scrollLoadMore();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if(mOnScrollListener != null) {
+                    mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+                }
+
+                if(!hasTouchedScrollView) return;
+
+                if(!canLoadMore()) return;
+
+                if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
+                    scrollLoadMore();
+                }
+            }
+        });
+    }
+
+    public void setNoDataTips(String noDataTips) {
+        this.noDataTips = noDataTips;
+    }
+
+    @Override
+    public void setOnScrollListener(OnScrollListener l) {
+        mOnScrollListener = l;
     }
 
     private void notifyFooterView() {
@@ -61,36 +106,6 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
 
     public boolean isLoading() {
         return isLoading;
-    }
-
-    private boolean hasTouchedScrollView = false; // 是否有触发滑动机制
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        if(scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-            hasTouchedScrollView = true;
-        }
-
-        if (scrollState != OnScrollListener.SCROLL_STATE_IDLE) {
-            return;
-        }
-
-        if(!canLoadMore()) return;
-
-        if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
-            scrollLoadMore();
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if(!hasTouchedScrollView) return;
-
-        if(!canLoadMore()) return;
-
-        if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
-            scrollLoadMore();
-        }
     }
 
     private boolean canLoadMore() {
@@ -117,8 +132,6 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
         notifyFooterView();
     }
 
-    private volatile int originSize = 0;
-
     @Override
     public void setAdapter(final ListAdapter adapter) {
         super.setAdapter(adapter);
@@ -126,9 +139,16 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
             @Override
             public void onChanged() {
                 super.onChanged();
-                if(mOnDataChangeListener != null) {
-                    mOnDataChangeListener.onChanged(adapter.getCount());
+                if(adapter.getCount() - originSize < PageBean.PAGE_SIZE) {
+                    setNeverLoadMore(true);
+                } else {
+                    setNeverLoadMore(false);
                 }
+
+                if(mOnDataChangeListener != null) {
+                    mOnDataChangeListener.onChanged(adapter.getCount(), originSize);
+                }
+                originSize = adapter.getCount();
             }
         });
     }
@@ -140,11 +160,6 @@ public class PagingListView extends ListView implements AbsListView.OnScrollList
         mOnDataChangeListener = onDataChangeListener;
     }
 
-    /**
-     * 设置加载监听
-     *
-     * @param mOnLoadMoreListener
-     */
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
         this.mLoadMoreListener = mOnLoadMoreListener;
     }

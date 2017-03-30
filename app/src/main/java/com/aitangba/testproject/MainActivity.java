@@ -16,6 +16,7 @@ import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loadingview.LoadViewActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.numberpicker.NumberPickerActivity;
+import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(IrregularViewActivity.class);
                 break;
             case R.id.bt_loading_activity:
-                startActivity(LoadingTestActivity.class);
+//                startActivity(LoadingTestActivity.class);
+                startActivity(PagingListViewActivity.class);
                 break;
             default:break;
         }

@@ -6,5 +6,6 @@ package com.aitangba.testproject.paging;
 
 public interface OnDataChangeListener {
 
-    void onChanged(int currentSize);
+    void onChanged(int currentSize, int oldSize);
+
 }

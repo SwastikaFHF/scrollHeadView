@@ -1,6 +1,6 @@
 package com.aitangba.testproject.paging.effect;
 
-import com.aitangba.testproject.paging.view.StatefulViewHelper;
+import com.aitangba.testproject.paging.helper.StatefulViewHelper;
 
 /**
  * Created by fhf11991 on 2017/3/28.
@@ -23,7 +23,7 @@ public class StatefulEffectImpl implements UIEffect {
 
     @Override
     public void onSuccess() {
-        mStatefulViewHelper.dismiss();
+//        mStatefulViewHelper.dismiss();
     }
 
     @Override

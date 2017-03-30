@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.LayoutFooterViewBinding;
 import com.aitangba.testproject.paging.OnDataChangeListener;
+import com.aitangba.testproject.paging.PageBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public abstract class BasePagingAdapter<T> extends RecyclerView.Adapter<Recycler
     protected List<T> mList = new ArrayList<>();
 
     private boolean canAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
+
+    private volatile int originSize = 0;
 
     @Override
     public void setNeverLoadMore(boolean neverLoadMore) {
@@ -211,18 +214,26 @@ public abstract class BasePagingAdapter<T> extends RecyclerView.Adapter<Recycler
     public void addData(List<T> list, boolean refresh) {
         if(refresh) {
             mList.clear();
+            originSize = 0;
             mList.addAll(list);
             notifyDataSetChanged();
         } else {
             final int size = mList.size();
+            originSize = size;
             mList.addAll(list);
             notifyItemInserted(size);
         }
 
         final int currentSize = mList.size();
-        if(mOnDataChangeListener != null) {
-            mOnDataChangeListener.onChanged(currentSize);
+        if(currentSize - originSize < PageBean.PAGE_SIZE) {
+            setNeverLoadMore(true);
+        } else {
+            setNeverLoadMore(false);
         }
+        if(mOnDataChangeListener != null) {
+            mOnDataChangeListener.onChanged(currentSize, originSize);
+        }
+        originSize = currentSize;
     }
 
     private OnDataChangeListener mOnDataChangeListener;
