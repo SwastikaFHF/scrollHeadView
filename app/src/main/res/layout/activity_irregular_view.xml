@@ -4,10 +4,26 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="#F44336">
+
+        <com.aitangba.testproject.HeaderTabLayout.HeaderTabLayout
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+
     <com.aitangba.testproject.irregularview.IrregularView android:layout_width="match_parent"
                                                           android:visibility="gone"
                                                           android:layout_height="match_parent"/>
 
     <com.aitangba.testproject.irregularview.RemoteControlMenu
+        android:visibility="gone"
         android:layout_height="match_parent" android:layout_width="match_parent"/>
 </FrameLayout>
