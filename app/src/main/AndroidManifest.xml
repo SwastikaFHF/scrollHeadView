@@ -3,6 +3,8 @@
           package="com.aitangba.testproject">
 
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -56,6 +58,15 @@
         <activity android:name=".baseui.test.LoadingTestActivity"></activity>
         <service android:name=".baseui.test.CustomService"></service>
         <activity android:name=".paging.PagingListViewActivity"></activity>
+        <activity android:name=".threadpool.ThreadPoolActivity"></activity>
+
+
+        <!-- 图片选择 -->
+        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
+                  android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
     </application>
 

@@ -28,5 +28,9 @@ dependencies {
     compile 'com.android.databinding:library:1.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.17'
 //    compile 'com.github.bumptech.glide:glide:3.7.0'
+
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'me.iwf.photopicker:PhotoPicker:0.9.5@aar'
     compile group: 'com.alibaba', name: 'fastjson', version: '1.1.54.android'
 }

@@ -21,6 +21,7 @@ import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
+import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
@@ -110,7 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_loading_activity:
 //                startActivity(LoadingTestActivity.class);
-                startActivity(PagingListViewActivity.class);
+//                startActivity(PagingListViewActivity.class);
+                startActivity(ThreadPoolActivity.class);
                 break;
             default:break;
         }
