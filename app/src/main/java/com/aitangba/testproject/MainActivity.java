@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
+import com.aitangba.testproject.calendarview.CalendarActivity;
 import com.aitangba.testproject.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.edgeeffect.EffectActivity;
@@ -112,7 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_loading_activity:
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
-                startActivity(ThreadPoolActivity.class);
+//                startActivity(ThreadPoolActivity.class);
+                startActivity(CalendarActivity.class);
                 break;
             default:break;
         }
