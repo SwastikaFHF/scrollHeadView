@@ -30,6 +30,14 @@ public class UploadManager extends Handler {
     private static final int MSG_SUCCESS = 101;
     private static final int MSG_FAILED = 102;
 
+    private static final int STATUS_INIT = 0;
+    private static final int STATUS_PROGRESSING = 1;
+    private static final int STATUS_SUCCESS = 2;
+    private static final int STATUS_FAILED = 3;
+    private static final int STATUS_CANCELED = 4;
+
+    private int status = STATUS_INIT;
+
     public ThreadPoolExecutor mExecutorService;
     private List<String> mTaskList = new ArrayList<>();
     private List<String> mResultList = new ArrayList<>();
@@ -50,6 +58,7 @@ public class UploadManager extends Handler {
             mExecutorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(CORE_POOL_SIZE);
         }
 
+        status = STATUS_PROGRESSING;
         runnableList.clear();
         for (int i = 0; i < size; i++) {
             mExecutorService.submit(new WalkRunnable(this, mTaskList.get(i), size));
@@ -59,11 +68,15 @@ public class UploadManager extends Handler {
     @Override
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
+        if(status == STATUS_FAILED || status == STATUS_CANCELED) return;
+
         if(msg.what == MSG_SUCCESS) {
+            status = STATUS_SUCCESS;
             if(mCallback != null) {
                 mCallback.onSuccess(mResultList);
             }
         } else if(msg.what == MSG_FAILED) {
+            status = STATUS_FAILED;
             if(mCallback != null) {
                 mCallback.onFail(msg.getData().getString("task", ""));
             }
@@ -71,6 +84,7 @@ public class UploadManager extends Handler {
     }
 
     public void stop() {
+        status = STATUS_CANCELED;
         if (mExecutorService != null) {
             mExecutorService.shutdownNow();
         }

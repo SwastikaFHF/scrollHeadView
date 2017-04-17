@@ -113,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_loading_activity:
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
-//                startActivity(ThreadPoolActivity.class);
-                startActivity(CalendarActivity.class);
+                startActivity(ThreadPoolActivity.class);
+//                startActivity(CalendarActivity.class);
                 break;
             default:break;
         }
