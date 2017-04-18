@@ -31,17 +31,27 @@ public class BaseViewStub extends View {
         setWillNotDraw(true);
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-
-        if(mInflatedViewRef == null || mInflatedViewRef.get() == null) {
-            inflate();
-        }
+    /**
+     * Whether create view automatic .
+     * @return
+     */
+    protected boolean createViewAutomatic() {
+        return true;
     }
 
     protected View onCreateView(LayoutInflater inflater, ViewGroup parent) {
         return null;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        if(createViewAutomatic()) {
+            if(mInflatedViewRef == null || mInflatedViewRef.get() == null) {
+                inflate();
+            }
+        }
     }
 
     private WeakReference<View> mInflatedViewRef;
