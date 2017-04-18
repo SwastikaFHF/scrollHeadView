@@ -60,6 +60,7 @@
         <activity android:name=".paging.PagingListViewActivity"></activity>
         <activity android:name=".threadpool.ThreadPoolActivity"></activity>
         <activity android:name=".calendarview.CalendarActivity"></activity>
+        <activity android:name=".stub.StubActivity"></activity>
 
 
         <!-- 图片选择 -->

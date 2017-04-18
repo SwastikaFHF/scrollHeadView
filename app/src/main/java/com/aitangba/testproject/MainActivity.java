@@ -22,6 +22,7 @@ import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
+import com.aitangba.testproject.stub.StubActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
@@ -113,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bt_loading_activity:
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
-                startActivity(ThreadPoolActivity.class);
+//                startActivity(ThreadPoolActivity.class);
+                startActivity(StubActivity.class);
 //                startActivity(CalendarActivity.class);
                 break;
             default:break;
