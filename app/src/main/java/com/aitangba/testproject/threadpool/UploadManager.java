@@ -1,6 +1,5 @@
 package com.aitangba.testproject.threadpool;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -27,31 +26,39 @@ public class UploadManager extends Handler {
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = CPU_COUNT * 2;
+
     private static final int MSG_SUCCESS = 101;
     private static final int MSG_FAILED = 102;
 
     private static final int STATUS_INIT = 0;
     private static final int STATUS_PROGRESSING = 1;
-    private static final int STATUS_SUCCESS = 2;
-    private static final int STATUS_FAILED = 3;
-    private static final int STATUS_CANCELED = 4;
+    private static final int STATUS_FINISHED = 2;
 
     private int status = STATUS_INIT;
 
     public ThreadPoolExecutor mExecutorService;
-    private List<String> mTaskList = new ArrayList<>();
-    private List<String> mResultList = new ArrayList<>();
+    private List<WalkRunnable> mRunnableList = new ArrayList<>(); //所有任务
+    private List<String> mResultList = new ArrayList<>(); //返回数据列表
 
-    private List<WalkRunnable> runnableList = new ArrayList<>();
+    private Callback mCallback;
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
+    }
 
     public UploadManager addTasks(List<String> taskList) {
-        mTaskList.clear();
-        mTaskList.addAll(taskList);
+        final int size = taskList.size();
+        mRunnableList.clear();
+        WalkRunnable walkRunnable;
+        for (int i = 0; i < size; i++) {
+            walkRunnable = new WalkRunnable(this, taskList.get(i), size);
+            mRunnableList.add(walkRunnable);
+        }
         return this;
     }
 
     public void start() {
-        final int size = mTaskList.size();
+        final int size = mRunnableList.size();
         if (size == 0) return;
 
         if (mExecutorService == null) {
@@ -59,44 +66,49 @@ public class UploadManager extends Handler {
         }
 
         status = STATUS_PROGRESSING;
-        runnableList.clear();
+
         for (int i = 0; i < size; i++) {
-            mExecutorService.submit(new WalkRunnable(this, mTaskList.get(i), size));
+            mExecutorService.submit(mRunnableList.get(i));
         }
     }
 
-    @Override
-    public void handleMessage(Message msg) {
-        super.handleMessage(msg);
-        if(status == STATUS_FAILED || status == STATUS_CANCELED) return;
-
-        if(msg.what == MSG_SUCCESS) {
-            status = STATUS_SUCCESS;
-            if(mCallback != null) {
-                mCallback.onSuccess(mResultList);
-            }
-        } else if(msg.what == MSG_FAILED) {
-            status = STATUS_FAILED;
-            if(mCallback != null) {
-                mCallback.onFail(msg.getData().getString("task", ""));
-            }
-        }
-    }
-
-    public void stop() {
-        status = STATUS_CANCELED;
+    private void stop() {
         if (mExecutorService != null) {
             mExecutorService.shutdownNow();
         }
 
+        // stop all runnable
         if(!mExecutorService.isTerminated()) {
-            Iterator<WalkRunnable> threadIterator = runnableList.iterator();
+            Iterator<WalkRunnable> threadIterator = mRunnableList.iterator();
             while(threadIterator.hasNext()){
                 WalkRunnable walkRunnable = threadIterator.next();
                 walkRunnable.stop();
             }
         }
-        runnableList.clear();
+        mRunnableList.clear();
+    }
+
+    public void cancel() {
+        sendEmptyMessage(MSG_FAILED);
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        if(status == STATUS_FINISHED) return;
+
+        if(msg.what == MSG_SUCCESS) {
+            status = STATUS_FINISHED;
+            if(mCallback != null) {
+                mCallback.onSuccess(mResultList);
+            }
+        } else if(msg.what == MSG_FAILED) {
+            status = STATUS_FINISHED;
+            stop();
+            if(mCallback != null) {
+                mCallback.onFail();
+            }
+        }
     }
 
     private static class WalkRunnable implements Runnable {
@@ -119,12 +131,6 @@ public class UploadManager extends Handler {
 
         @Override
         public void run() {
-            synchronized (mUploadManager.runnableList) {
-                if(!mUploadManager.runnableList.contains(this)) {
-                    mUploadManager.runnableList.add(this);
-                }
-            }
-
             File file = new File(task);
 
             String result = null;
@@ -178,25 +184,16 @@ public class UploadManager extends Handler {
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
-                Message message = mUploadManager.obtainMessage();
-                message.what = MSG_FAILED;
-                Bundle bundle = new Bundle();
-                bundle.putString("task", task);
-                message.setData(bundle);
-                mUploadManager.sendMessage(message);
+                mUploadManager.sendEmptyMessage(MSG_FAILED);
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
-                Message message = mUploadManager.obtainMessage();
-                message.what = MSG_FAILED;
-                Bundle bundle = new Bundle();
-                bundle.putString("task", task);
-                message.setData(bundle);
-                mUploadManager.sendMessage(message);
+                mUploadManager.sendEmptyMessage(MSG_FAILED);
                 return;
+            } finally {
+                mConn = null;
             }
 
-            mUploadManager.runnableList.remove(this);
             synchronized (mUploadManager.mResultList) {
                 mUploadManager.mResultList.add(result);
                 if (mUploadManager.mResultList.size() == taskSize) {
@@ -213,14 +210,8 @@ public class UploadManager extends Handler {
         }
     }
 
-    private Callback mCallback;
-
-    public void setCallback(Callback callback) {
-        mCallback = callback;
-    }
-
     public interface Callback {
         void onSuccess(List<String> resultList);
-        void onFail(String task);
+        void onFail();
     }
 }

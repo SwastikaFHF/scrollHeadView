@@ -56,7 +56,7 @@ public class ThreadPoolActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFail(String task) {
+                    public void onFail() {
                         Log.d("ThreadPoolActivity", "取消上传");
                         mTextView.setText("取消上传");
                         Toast.makeText(getApplicationContext(), "取消上传", Toast.LENGTH_SHORT).show();
@@ -69,7 +69,7 @@ public class ThreadPoolActivity extends AppCompatActivity {
         findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadManager.stop();
+                uploadManager.cancel();
             }
         });
 

@@ -60,7 +60,7 @@ public class CalendarAdapter extends BaseCalendarAdapter {
 
                 if(rangType == BaseCalendarAdapter.START || rangType == BaseCalendarAdapter.END) {
                     binding.getRoot().setBackgroundColor(ContextCompat.getColor(binding.getRoot().getContext(), R.color.colorPrimaryDark));
-                } else if(rangType == BaseCalendarAdapter.RANG) {
+                } else if(rangType == BaseCalendarAdapter.RANGE) {
                     binding.getRoot().setBackgroundColor(ContextCompat.getColor(binding.getRoot().getContext(), R.color.colorPrimary));
                 } else {
                     binding.getRoot().setBackgroundDrawable(null);
