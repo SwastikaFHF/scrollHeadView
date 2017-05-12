@@ -11,7 +11,7 @@ public class CustomApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        getMainLooper().setMessageLogging(new LooperMonitor());
+//        getMainLooper().setMessageLogging(new LooperMonitor());
     }
 
 }

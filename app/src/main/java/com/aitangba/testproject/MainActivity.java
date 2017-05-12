@@ -18,6 +18,7 @@ import com.aitangba.testproject.loadingview.LoadViewActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
+import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
 import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
 //                startActivity(ThreadPoolActivity.class);
-                startActivity(StubActivity.class);
+                startActivity(PagingRecyclerViewActivity.class);
 //                startActivity(CalendarActivity.class);
                 break;
             default:break;

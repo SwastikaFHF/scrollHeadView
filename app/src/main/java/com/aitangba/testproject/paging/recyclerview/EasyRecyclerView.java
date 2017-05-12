@@ -7,10 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.view.OnLoadMoreListener;
 
 /**
@@ -23,6 +24,15 @@ public class EasyRecyclerView extends RecyclerView {
     private EasyAdapter mAdapter;
     private boolean hasTouchedScrollView = false; // 是否有触发滑动机制
 
+    private boolean isLoadingMore = false;// 是否正在加载更多
+    private boolean canAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
+
+    private OnLoadMoreListener mLoadMoreListener;
+
+    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
+        mLoadMoreListener = loadMoreListener;
+    }
+
     public EasyRecyclerView(Context context) {
         this(context, null);
     }
@@ -31,24 +41,18 @@ public class EasyRecyclerView extends RecyclerView {
         this(context, attrs, 0);
     }
 
-    private OnLoadMoreListener mLoadMoreListener;
-    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
-        mLoadMoreListener = loadMoreListener;
-    }
-
     public EasyRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         mOnBindFooterListener = new OnBindFooterListener() {
             @Override
             public ViewHolder onCreate(ViewGroup parent, int viewType) {
-                TextView textView = new TextView(parent.getContext());
-                textView.setText("测试数据");
-                return new FooterViewHolder(textView);
+                View footerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_footer_view, null);
+                return new ViewHolder(footerView) {};
             }
 
             @Override
-            public void onBind(ViewHolder holder, int position) {
+            public void onBind(View itemView, int position) {
 
             }
         };
@@ -77,9 +81,6 @@ public class EasyRecyclerView extends RecyclerView {
             }
         });
     }
-
-    private boolean isLoadingMore = false;// 是否正在加载更多
-    private boolean canAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
 
     private boolean canLoadMore() {
         return mLoadMoreListener != null && !isLoadingMore && canAutoLoadMore;
@@ -152,8 +153,8 @@ public class EasyRecyclerView extends RecyclerView {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            if(holder instanceof FooterViewHolder) {
-                mOnBindFooterListener.onBind(holder, position);
+            if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
+                mOnBindFooterListener.onBind(holder.itemView, position);
             }else {
                 mAdapter.onBindViewHolder(holder, position);
             }
@@ -198,17 +199,10 @@ public class EasyRecyclerView extends RecyclerView {
         }
     }
 
-    private class FooterViewHolder extends ViewHolder {
-
-        public FooterViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
     private OnBindFooterListener mOnBindFooterListener;
 
     public interface OnBindFooterListener {
         ViewHolder onCreate(ViewGroup parent, int viewType);
-        void onBind(ViewHolder holder, int position);
+        void onBind(View itemView, int position);
     }
 }
