@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging;
+package com.aitangba.testproject.paging.view.adpater;
 
 /**
  * Created by fhf11991 on 2017/3/28.

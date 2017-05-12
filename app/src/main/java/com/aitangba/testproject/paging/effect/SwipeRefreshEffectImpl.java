@@ -2,6 +2,8 @@ package com.aitangba.testproject.paging.effect;
 
 import android.support.v4.widget.SwipeRefreshLayout;
 
+import com.aitangba.testproject.paging.HttpTask;
+
 /**
  * Created by fhf11991 on 2017/3/28.
  */
@@ -15,7 +17,7 @@ public class SwipeRefreshEffectImpl implements UIEffect{
     }
 
     @Override
-    public void onPreExecute() {
+    public void onPreExecute(HttpTask httpTask) {
 
     }
 

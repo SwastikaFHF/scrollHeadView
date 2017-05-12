@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.paging.recyclerview.EasyRecyclerView;
+import com.aitangba.testproject.paging.view.PagingRecyclerView;
 import com.aitangba.testproject.paging.view.OnLoadMoreListener;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paging_recycler_view);
-        EasyRecyclerView recyclerView = (EasyRecyclerView) findViewById(R.id.recyclerView);
+        PagingRecyclerView recyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(boolean isReload) {
@@ -41,10 +41,10 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter = new Adapter());
         View view = findViewById(R.id.emptyView);
-        recyclerView.setEmptyView(view, new EasyRecyclerView.OnStateChangeListener() {
+        recyclerView.setEmptyView(view, new PagingRecyclerView.OnStateChangeListener() {
             @Override
-            public void onBind(View view, @EasyRecyclerView.State int state) {
-                if(state == EasyRecyclerView.STATE_NO_DATA) {
+            public void onBind(View view, @PagingRecyclerView.State int state) {
+                if(state == PagingRecyclerView.STATE_NO_DATA) {
                     view.setVisibility(View.VISIBLE);
                 } else {
                     view.setVisibility(View.GONE);

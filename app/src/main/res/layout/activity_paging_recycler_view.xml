@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="测试emptyView"/>
 
-    <com.aitangba.testproject.paging.recyclerview.EasyRecyclerView
+    <com.aitangba.testproject.paging.view.PagingRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

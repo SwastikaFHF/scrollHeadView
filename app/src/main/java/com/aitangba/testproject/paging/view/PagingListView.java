@@ -1,7 +1,6 @@
 package com.aitangba.testproject.paging.view;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.paging.OnDataChangeListener;
 import com.aitangba.testproject.paging.PageBean;
 
 
@@ -23,14 +21,15 @@ import com.aitangba.testproject.paging.PageBean;
 public class PagingListView extends ListView implements PagingManager {
 
     private OnLoadMoreListener mLoadMoreListener;
-    private boolean isLoading = false;// 是否正在加载
-    private boolean canAutoLoadMore = true;
+    private boolean isLoadingMore = false;// 是否正在加载
+    private boolean mHasMoreData = true;
     private String noDataTips;
     private View progressBar;
     private TextView loadTisText;
     private OnScrollListener mOnScrollListener;
-    private volatile int originSize = 0;
     private boolean hasTouchedScrollView = false; // 是否有触发滑动机制
+
+    private final PageBean mPageBean = new PageBean();
 
     public PagingListView(Context context) {
         this(context, null);
@@ -42,6 +41,7 @@ public class PagingListView extends ListView implements PagingManager {
         progressBar = footerView.findViewById(R.id.footer_view_progressbar);
         loadTisText = (TextView) footerView.findViewById(R.id.footer_view_tv);
         addFooterView(footerView);
+
         super.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -51,16 +51,6 @@ public class PagingListView extends ListView implements PagingManager {
 
                 if(scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     hasTouchedScrollView = true;
-                }
-
-                if (scrollState != OnScrollListener.SCROLL_STATE_IDLE) {
-                    return;
-                }
-
-                if(!canLoadMore()) return;
-
-                if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
-                    scrollLoadMore();
                 }
             }
 
@@ -72,10 +62,19 @@ public class PagingListView extends ListView implements PagingManager {
 
                 if(!hasTouchedScrollView) return;
 
-                if(!canLoadMore()) return;
+                if(isLoadingMore) { //
+                    return;
+                }
+
+                if(!mHasMoreData) {
+                    return;
+                }
 
                 if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
-                    scrollLoadMore();
+                    if (mLoadMoreListener != null) {
+                        isLoadingMore = true;
+                        mLoadMoreListener.onLoadMore(false);
+                    }
                 }
             }
         });
@@ -91,7 +90,7 @@ public class PagingListView extends ListView implements PagingManager {
     }
 
     private void notifyFooterView() {
-        if(canAutoLoadMore) {
+        if(mHasMoreData) {
             loadTisText.setText("加载更多数据中");
             progressBar.setVisibility(VISIBLE);
         } else {
@@ -104,60 +103,35 @@ public class PagingListView extends ListView implements PagingManager {
         }
     }
 
-    public boolean isLoading() {
-        return isLoading;
+    @Override
+    public void setAdapter(ListAdapter adapter) {
+        super.setAdapter(adapter);
     }
 
-    private boolean canLoadMore() {
-        return mLoadMoreListener != null && !isLoading && canAutoLoadMore;
-    }
 
     @Override
-    public void setNeverLoadMore(boolean neverLoadMore) {
-        canAutoLoadMore = !neverLoadMore;
-        notifyFooterView();
-    }
-
-    @Override
-    public void scrollLoadMore() {
-        isLoading = true;
-        if (mLoadMoreListener != null) {
-            mLoadMoreListener.onLoadMore(false);
+    public void startLoad(boolean refresh) {
+        if(refresh) {
+            mPageBean.reset();
+        } else {
+            mPageBean.increase();
         }
     }
 
     @Override
-    public void finishLoadMore() {
-        isLoading = false;
+    public void finishLoadMore(boolean hasMoreData) {
+        isLoadingMore = false;
         notifyFooterView();
     }
 
     @Override
-    public void setAdapter(final ListAdapter adapter) {
-        super.setAdapter(adapter);
-        adapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                if(adapter.getCount() - originSize < PageBean.PAGE_SIZE) {
-                    setNeverLoadMore(true);
-                } else {
-                    setNeverLoadMore(false);
-                }
-
-                if(mOnDataChangeListener != null) {
-                    mOnDataChangeListener.onChanged(adapter.getCount(), originSize);
-                }
-                originSize = adapter.getCount();
-            }
-        });
+    public void checkPaging(int size) {
+        finishLoadMore(size == PageBean.PAGE_SIZE);
     }
 
-    private OnDataChangeListener mOnDataChangeListener;
-
     @Override
-    public void setOnDataChangedListener(OnDataChangeListener onDataChangeListener) {
-        mOnDataChangeListener = onDataChangeListener;
+    public int getPageIndex() {
+        return mPageBean.currentPage;
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {

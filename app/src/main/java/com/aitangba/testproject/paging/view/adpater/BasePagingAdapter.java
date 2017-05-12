@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.view;
+package com.aitangba.testproject.paging.view.adpater;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.LayoutFooterViewBinding;
-import com.aitangba.testproject.paging.OnDataChangeListener;
 import com.aitangba.testproject.paging.PageBean;
+import com.aitangba.testproject.paging.view.OnLoadMoreListener;
 
 import java.util.ArrayList;
 import java.util.List;

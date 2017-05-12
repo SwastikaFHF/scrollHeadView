@@ -1,9 +1,8 @@
 package com.aitangba.testproject.paging.effect;
 
-import com.aitangba.testproject.paging.OnDataChangeListener;
-import com.aitangba.testproject.paging.PageBean;
+
+import com.aitangba.testproject.paging.HttpTask;
 import com.aitangba.testproject.paging.view.PagingManager;
-import com.aitangba.testproject.paging.helper.StatefulViewHelper;
 
 /**
  * Created by fhf11991 on 2017/3/28.
@@ -11,44 +10,39 @@ import com.aitangba.testproject.paging.helper.StatefulViewHelper;
 
 public class PagingEffectImpl implements UIEffect {
 
+    private boolean mRefresh;
     private PagingManager mPagingManager;
 
-    private PagingEffectImpl(PagingManager pagingManager) {
+    private PagingEffectImpl(PagingManager pagingManager, boolean refresh) {
         mPagingManager = pagingManager;
+        mRefresh = refresh;
     }
 
     @Override
-    public void onPreExecute() {
+    public void onPreExecute(HttpTask httpTask) {
+        mPagingManager.startLoad(mRefresh);
+        httpTask.setPageIndex(mPagingManager.getPageIndex());
     }
 
     @Override
     public void onSuccess() {
-        mPagingManager.finishLoadMore();
+        mPagingManager.checkPaging(0);
     }
 
     @Override
     public void onError() {
-        mPagingManager.finishLoadMore();
+        mPagingManager.finishLoadMore(true);
     }
 
     @Override
     public void onCancel() {
-        mPagingManager.finishLoadMore();
+        mPagingManager.finishLoadMore(true);
     }
 
-    public void bindStatefulUI(final StatefulViewHelper statefulViewHelper) {
-        mPagingManager.setOnDataChangedListener(new OnDataChangeListener() {
-            @Override
-            public void onChanged(int currentSize, int oldSize) {
-                statefulViewHelper.setCurrentSize(currentSize);
-            }
-        });
-    }
-
-    public static PagingEffectImpl build(PagingManager pagingManager) {
+    public static PagingEffectImpl build(PagingManager pagingManager, boolean refresh) {
         if(pagingManager == null) {
             throw new RuntimeException("pagingManager can be null !!!!");
         }
-        return new PagingEffectImpl(pagingManager);
+        return new PagingEffectImpl(pagingManager, refresh);
     }
 }

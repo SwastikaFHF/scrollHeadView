@@ -77,13 +77,12 @@ public class PagingListViewActivity extends AppCompatActivity {
         final DialogEffectImpl dialogEffect = DialogEffectImpl.build(mLoadingDialogHelper, needDialog);
         final StatefulEffectImpl statefulEffect = StatefulEffectImpl.build(mStatefulViewHelper, needState);
         final SwipeRefreshEffectImpl swipeRefreshEffect = SwipeRefreshEffectImpl.build(mSwipeRefreshLayout);
-        final PagingEffectImpl pagingEffect = PagingEffectImpl.build(mListView);
-        pagingEffect.bindStatefulUI(mStatefulViewHelper);
+        final PagingEffectImpl pagingEffect = PagingEffectImpl.build(mListView, refresh);
 
-        swipeRefreshEffect.onPreExecute();
-        dialogEffect.onPreExecute();
-        statefulEffect.onPreExecute();
-        pagingEffect.onPreExecute();
+//        swipeRefreshEffect.onPreExecute();
+//        dialogEffect.onPreExecute();
+//        statefulEffect.onPreExecute();
+//        pagingEffect.onPreExecute();
         mListView.postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.recyclerview;
+package com.aitangba.testproject.paging.view;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.paging.view.OnLoadMoreListener;
+import com.aitangba.testproject.paging.PageBean;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by fhf11991 on 2017/5/11.
  */
 
-public class EasyRecyclerView extends RecyclerView {
+public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
     private static final int TYPE_HEADER_VIEW = 1001;//header类型 Item
     private static final int TYPE_FOOTER_VIEW = 1002;//footer类型 Item
@@ -43,19 +43,21 @@ public class EasyRecyclerView extends RecyclerView {
     private OnStateChangeListener mEmptyStateChangeListener;
     private OnLoadMoreListener mLoadMoreListener;
 
+    private final PageBean mPageBean = new PageBean();
+
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         mLoadMoreListener = loadMoreListener;
     }
 
-    public EasyRecyclerView(Context context) {
+    public PagingRecyclerView(Context context) {
         this(context, null);
     }
 
-    public EasyRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public PagingRecyclerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EasyRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public PagingRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         View footerView = LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null);
@@ -100,13 +102,34 @@ public class EasyRecyclerView extends RecyclerView {
         });
     }
 
-    public void finishLoad(boolean hasMoreData) {
+    @Override
+    public void startLoad(boolean refresh) {
+        if(refresh) {
+            mPageBean.reset();
+        } else {
+            mPageBean.increase();
+        }
+    }
+
+    @Override
+    public void finishLoadMore(boolean hasMoreData) {
         isLoadingMore = false;
         mHasMoreData = hasMoreData;
 
+        updateEmptyStatus();
         if(mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void checkPaging(int size) {
+        finishLoadMore(size == PageBean.PAGE_SIZE);
+    }
+
+    @Override
+    public int getPageIndex() {
+        return mPageBean.currentPage;
     }
 
     public void setEmptyView(View emptyView, OnStateChangeListener onStateChangeListener) {
