@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.recyclerview.EasyRecyclerView;
@@ -39,7 +40,30 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter = new Adapter());
-        mAdapter.setData(getData(40));
+        View view = findViewById(R.id.emptyView);
+        recyclerView.setEmptyView(view, new EasyRecyclerView.OnStateChangeListener() {
+            @Override
+            public void onBind(View view, @EasyRecyclerView.State int state) {
+                if(state == EasyRecyclerView.STATE_NO_DATA) {
+                    view.setVisibility(View.VISIBLE);
+                } else {
+                    view.setVisibility(View.GONE);
+                }
+            }
+        });
+        TextView textView = new TextView(this);
+        textView.setText("title");
+        recyclerView.addHeaderView(textView);
+
+        mAdapter.setData(getData(2));
+
+        findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAdapter.mList.clear();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private List<String> getData(int size) {
