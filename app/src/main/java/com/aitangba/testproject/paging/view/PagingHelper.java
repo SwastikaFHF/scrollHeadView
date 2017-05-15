@@ -1,10 +1,5 @@
 package com.aitangba.testproject.paging.view;
 
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
 
 /**
@@ -18,7 +13,6 @@ public class PagingHelper {
     private boolean mIsAutoLoadEnabled = true;  //是否使用自动加载
 
     private final PageBean mPageBean = new PageBean();
-
 
     public void setAutoLoadEnabled(boolean enable) {
         mIsAutoLoadEnabled = enable;
