@@ -21,12 +21,10 @@ public class PagingEffectImpl implements UIEffect {
     @Override
     public void onPreExecute(HttpTask httpTask) {
         mPagingManager.startLoad(mRefresh);
-        httpTask.setPageIndex(mPagingManager.getPageIndex());
     }
 
     @Override
     public void onSuccess() {
-        mPagingManager.checkPaging(0);
     }
 
     @Override

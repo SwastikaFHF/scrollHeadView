@@ -1,13 +1,14 @@
 package com.aitangba.testproject.paging.view;
 
 import android.content.Context;
-import android.text.TextUtils;
+import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
@@ -20,16 +21,10 @@ import com.aitangba.testproject.paging.PageBean;
 
 public class PagingListView extends ListView implements PagingManager {
 
-    private OnLoadMoreListener mLoadMoreListener;
-    private boolean isLoadingMore = false;// 是否正在加载
-    private boolean mHasMoreData = true;
-    private String noDataTips;
-    private View progressBar;
-    private TextView loadTisText;
     private OnScrollListener mOnScrollListener;
-    private boolean hasTouchedScrollView = false; // 是否有触发滑动机制
-
-    private final PageBean mPageBean = new PageBean();
+    private View mFooterView;
+    private FooterViewHolder holder;
+    private PagingHelper mPagingHelper = new PagingHelper();
 
     public PagingListView(Context context) {
         this(context, null);
@@ -37,20 +32,14 @@ public class PagingListView extends ListView implements PagingManager {
 
     public PagingListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        View footerView = LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null);
-        progressBar = footerView.findViewById(R.id.footer_view_progressbar);
-        loadTisText = (TextView) footerView.findViewById(R.id.footer_view_tv);
-        addFooterView(footerView);
+        mFooterView = LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null);
+        addFooterView(mFooterView);
 
         super.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if(mOnScrollListener != null) {
                     mOnScrollListener.onScrollStateChanged(view, scrollState);
-                }
-
-                if(scrollState == OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    hasTouchedScrollView = true;
                 }
             }
 
@@ -60,28 +49,9 @@ public class PagingListView extends ListView implements PagingManager {
                     mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 }
 
-                if(!hasTouchedScrollView) return;
-
-                if(isLoadingMore) { //
-                    return;
-                }
-
-                if(!mHasMoreData) {
-                    return;
-                }
-
-                if (view.getLastVisiblePosition() + 1 ==  view.getCount()) {
-                    if (mLoadMoreListener != null) {
-                        isLoadingMore = true;
-                        mLoadMoreListener.onLoadMore(false);
-                    }
-                }
+                mPagingHelper.onScrolled(view.getLastVisiblePosition() + 1 ==  view.getCount());
             }
         });
-    }
-
-    public void setNoDataTips(String noDataTips) {
-        this.noDataTips = noDataTips;
     }
 
     @Override
@@ -89,52 +59,61 @@ public class PagingListView extends ListView implements PagingManager {
         mOnScrollListener = l;
     }
 
-    private void notifyFooterView() {
-        if(mHasMoreData) {
-            loadTisText.setText("加载更多数据中");
-            progressBar.setVisibility(VISIBLE);
-        } else {
-            if(!TextUtils.isEmpty(noDataTips)) {
-                loadTisText.setText(noDataTips);
-            } else {
-                loadTisText.setText("暂无更多信息");
+    @Override
+    public void setAdapter(final ListAdapter adapter) {
+        super.setAdapter(adapter);
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                finishLoadMore(mPagingHelper.onChanged(adapter.getCount()));
             }
-            progressBar.setVisibility(GONE);
-        }
+        });
     }
 
     @Override
-    public void setAdapter(ListAdapter adapter) {
-        super.setAdapter(adapter);
+    public void setAutoLoadEnabled(boolean enable) {
+        mPagingHelper.setAutoLoadEnabled(enable);
     }
-
 
     @Override
     public void startLoad(boolean refresh) {
-        if(refresh) {
-            mPageBean.reset();
-        } else {
-            mPageBean.increase();
-        }
+        mPagingHelper.startLoad(refresh);
     }
 
     @Override
     public void finishLoadMore(boolean hasMoreData) {
-        isLoadingMore = false;
-        notifyFooterView();
+        mPagingHelper.finishLoadMore(hasMoreData);
+
+        updateFooterStatus(hasMoreData);
     }
 
     @Override
-    public void checkPaging(int size) {
-        finishLoadMore(size == PageBean.PAGE_SIZE);
+    public PageBean getPageBean() {
+        return mPagingHelper.getPageBean();
     }
 
-    @Override
-    public int getPageIndex() {
-        return mPageBean.currentPage;
+    public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
+        mPagingHelper.setOnLoadMoreListener(onLoadMoreListener);
     }
 
-    public void setOnLoadMoreListener(OnLoadMoreListener mOnLoadMoreListener) {
-        this.mLoadMoreListener = mOnLoadMoreListener;
+    private void updateFooterStatus(boolean hasMoreData) {
+        if(mFooterView == null) {
+            return;
+        }
+
+        if(holder == null) {
+            holder = new FooterViewHolder();
+            holder.mProgressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_view_progressbar);
+            holder.mTextView = (TextView) mFooterView.findViewById(R.id.footer_view_tv);
+        }
+
+        if(hasMoreData) {
+            holder.mProgressBar.setVisibility(View.VISIBLE);
+            holder.mTextView.setText("加载更多数据中");
+        } else {
+            holder.mProgressBar.setVisibility(View.GONE);
+            holder.mTextView.setText("没有更多数据了");
+        }
     }
 }

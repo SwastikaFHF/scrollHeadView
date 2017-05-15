@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
@@ -35,27 +36,18 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
             @Override
             public void onLoadMore(boolean isReload) {
                 Log.d("TAG", "onLoadMore ---");
+                loadData();
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(mAdapter = new Adapter());
+
         View view = findViewById(R.id.emptyView);
-        recyclerView.setEmptyView(view, new PagingRecyclerView.OnStateChangeListener() {
-            @Override
-            public void onBind(View view, @PagingRecyclerView.State int state) {
-                if(state == PagingRecyclerView.STATE_NO_DATA) {
-                    view.setVisibility(View.VISIBLE);
-                } else {
-                    view.setVisibility(View.GONE);
-                }
-            }
-        });
+        recyclerView.setEmptyView(view);
+
         TextView textView = new TextView(this);
         textView.setText("title");
-        recyclerView.addHeaderView(textView);
-
-        mAdapter.setData(getData(2));
+        recyclerView.setHeaderView(textView);
 
         findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,21 +56,40 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
                 mAdapter.notifyDataSetChanged();
             }
         });
+
+        loadData();
     }
 
     private List<String> getData(int size) {
         List<String> list = new ArrayList<>(size);
         for(int i= 0; i< size ; i++) {
-            list.add( "名字" + i);
+            list.add( "名字" + (i + page * 10));
         }
         return list;
+    }
+
+    private int page = 0;
+    private void loadData() {
+        page = page + 1;
+
+        if(page > 3) return;
+        findViewById(Window.ID_ANDROID_CONTENT).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(page == 1 || page == 2) {
+                    mAdapter.setData(getData(10));
+                } else if (page == 3) {
+                    mAdapter.setData(getData(2));
+                }
+
+            }
+        }, 2000);
     }
 
     static class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
         private List<String> mList = new ArrayList<>();
 
-        private int position;
         public void setData(List<String> items) {
             mList.addAll(items);
             notifyDataSetChanged();
@@ -86,13 +97,22 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Log.d("Adapter", "-- onCreateViewHolder  position = " + position ++);
             View view  = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_light_adapter, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            holder.mTextView.setText(mList.get(position));
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mList.remove(position);
+                    notifyDataSetChanged();
+                    return false;
+                }
+            });
         }
 
         @Override
@@ -103,8 +123,11 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        TextView mTextView;
+
         public ViewHolder(View itemView) {
             super(itemView);
+            mTextView = (TextView) itemView.findViewById(R.id.name_text);
         }
     }
 }
