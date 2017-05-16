@@ -11,6 +11,7 @@ public class PagingHelper {
     private boolean isLoadingMore = false;  // 是否正在加载更多
     private boolean mHasMoreData = true;  //是否有更多数据，当没有更多数据时，不能进行自动加载更多
     private boolean mIsAutoLoadEnabled = true;  //是否使用自动加载
+    private OnLoadMoreListener mLoadMoreListener;
 
     private final PageBean mPageBean = new PageBean();
 
@@ -20,6 +21,10 @@ public class PagingHelper {
 
     public boolean isAutoLoadEnabled() {
         return mIsAutoLoadEnabled;
+    }
+
+    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
+        mLoadMoreListener = loadMoreListener;
     }
 
     public void onScrolled(boolean isLastPosition) {
@@ -71,9 +76,4 @@ public class PagingHelper {
         return mPageBean;
     }
 
-    private OnLoadMoreListener mLoadMoreListener;
-
-    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
-        mLoadMoreListener = loadMoreListener;
-    }
 }
