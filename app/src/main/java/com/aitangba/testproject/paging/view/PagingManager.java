@@ -2,17 +2,21 @@ package com.aitangba.testproject.paging.view;
 
 import com.aitangba.testproject.paging.PageBean;
 
+import java.util.List;
+
 /**
- * Created by XBeats on 2017/3/26.
+ * Created by fhf11991 on 2017/3/16.
  */
 
 public interface PagingManager {
 
     void setAutoLoadEnabled(boolean enable);
 
+    void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener);
+
     void startLoad(boolean refresh);
 
-    void finishLoadMore(boolean hasMoreData);
+    <T> List<T> checkPaging(List<T> list);
 
     PageBean getPageBean();
 

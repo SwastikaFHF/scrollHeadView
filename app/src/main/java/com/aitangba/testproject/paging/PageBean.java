@@ -31,7 +31,7 @@ public class PageBean {
         currentPage = currentPage + 1;
     }
 
-    public void Decline() {
+    public void decline() {
         currentPage = Math.max(ORIGIN_PAGE, currentPage - 1);
     }
 }

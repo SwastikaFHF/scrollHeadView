@@ -26,28 +26,29 @@ import java.util.List;
 public class PagingRecyclerViewActivity extends AppCompatActivity {
 
     private Adapter mAdapter;
+    private PagingRecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paging_recycler_view);
-        PagingRecyclerView recyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+        mRecyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
+        mRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(boolean isReload) {
                 Log.d("TAG", "onLoadMore ---");
                 loadData();
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mAdapter = new Adapter());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter = new Adapter());
 
         View view = findViewById(R.id.emptyView);
-        recyclerView.setEmptyView(view);
+        mRecyclerView.setEmptyView(view);
 
         TextView textView = new TextView(this);
         textView.setText("title");
-        recyclerView.setHeaderView(textView);
+        mRecyclerView.setHeaderView(textView);
 
         findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +78,9 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if(page == 1 || page == 2) {
-                    mAdapter.setData(getData(10));
+                    mAdapter.setData(mRecyclerView.checkPaging(getData(10)));
                 } else if (page == 3) {
-                    mAdapter.setData(getData(2));
+                    mAdapter.setData(mRecyclerView.checkPaging(getData(2)));
                 }
 
             }

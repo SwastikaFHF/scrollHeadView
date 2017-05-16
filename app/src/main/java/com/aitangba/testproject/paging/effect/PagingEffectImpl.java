@@ -29,12 +29,12 @@ public class PagingEffectImpl implements UIEffect {
 
     @Override
     public void onError() {
-        mPagingManager.finishLoadMore(true);
+        mPagingManager.checkPaging(null);
     }
 
     @Override
     public void onCancel() {
-        mPagingManager.finishLoadMore(true);
+        mPagingManager.checkPaging(null);
     }
 
     public static PagingEffectImpl build(PagingManager pagingManager, boolean refresh) {

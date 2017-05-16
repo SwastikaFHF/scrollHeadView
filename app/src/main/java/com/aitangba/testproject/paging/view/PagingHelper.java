@@ -53,44 +53,22 @@ public class PagingHelper {
         }
     }
 
-    public void finishLoadMore(boolean hasMoreData) {
+    public boolean finishLoadMore(int dataSize) {
+        boolean hasMoreData = dataSize == PageBean.PAGE_SIZE;
+
+        //修正当前页
+        if(dataSize == 0) {
+            mPageBean.decline();
+        }
+
         isLoadingMore = false;
         mHasMoreData = hasMoreData;
+
+        return mHasMoreData;
     }
 
     public PageBean getPageBean() {
         return mPageBean;
-    }
-
-    private int mDataSize;
-
-    public boolean onChanged(int dataSize) {
-        final int originSize = mDataSize;
-        final int currentSize = dataSize;
-        final int diffSize = currentSize - originSize;
-        mDataSize = currentSize;
-
-        if(isLoadingMore) { // 初步判断为加载更多数据的返回数据
-            if(diffSize < 0) { // 对数据进行了删除操作,暂且认为还有更多数据，具体判断需要再次进行下拉刷新
-                return true;
-            } else if(diffSize < PageBean.PAGE_SIZE) { // 返回的数据不满足再次请求的条件
-                return false;
-            } else {
-                return true;
-            }
-        } else {  // 对数据进行刷新
-            if(mHasMoreData) { // 原来认为还有更多数据，再次刷新不影响之前的判断
-                return true;
-            } else {
-                if(diffSize <= 0 ) { // 原来认为没有更多数据，再次刷新数据更少，任然认为没有更多数据
-                    return false;
-                } else if(diffSize < PageBean.PAGE_SIZE){ // 原来认为没有更多数据，再次刷新加载的新数据不满足分页条件
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }
     }
 
     private OnLoadMoreListener mLoadMoreListener;

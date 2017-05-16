@@ -10,11 +10,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by fhf11991 on 2017/5/11.
@@ -22,20 +23,15 @@ import com.aitangba.testproject.paging.PageBean;
 
 public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
-    private static final int TYPE_HEADER_VIEW = 1001;//header类型 Item
-    private static final int TYPE_FOOTER_VIEW = 1002;//footer类型 Item
+    private static final int TYPE_HEADER_VIEW = 1001; //header类型 Item
+    private static final int TYPE_FOOTER_VIEW = 1002; //footer类型 Item
 
     private EasyAdapter mEasyAdapter;
     private View mEmptyView;
     private View mHeaderView;
-    private View mFooterView;
+    private FooterViewHolder mFooterViewHolder;
 
     private PagingHelper mPagingHelper = new PagingHelper();
-    private FooterViewHolder holder;
-
-    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
-        mPagingHelper.setOnLoadMoreListener(loadMoreListener);
-    }
 
     public PagingRecyclerView(Context context) {
         this(context, null);
@@ -48,7 +44,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
     public PagingRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        setFooterView(LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null));
+        setFooterView(new FooterViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null)));
 
         addOnScrollListener(new OnScrollListener() {
             @Override
@@ -74,14 +70,6 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
             return;
         }
         super.setAdapter(mEasyAdapter = new EasyAdapter(adapter));
-
-        mEasyAdapter.registerAdapterDataObserver(new AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                finishLoadMore(mPagingHelper.onChanged(mEasyAdapter.mAdapter.getItemCount()));
-            }
-        });
     }
 
     @Override
@@ -90,16 +78,25 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
     }
 
     @Override
+    public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
+        mPagingHelper.setOnLoadMoreListener(loadMoreListener);
+    }
+
+    @Override
     public void startLoad(boolean refresh) {
         mPagingHelper.startLoad(refresh);
     }
 
     @Override
-    public void finishLoadMore(boolean hasMoreData) {
-        mPagingHelper.finishLoadMore(hasMoreData);
+    public <T> List<T> checkPaging(List<T> list) {
+        if(list == null) {
+            list = Collections.EMPTY_LIST;
+        }
 
+        boolean hasMoreData = mPagingHelper.finishLoadMore(list.size());
         updateEmptyStatus();
         updateFooterStatus(hasMoreData);
+        return list;
     }
 
     @Override
@@ -125,7 +122,11 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
             return;
         }
 
-        final boolean empty = ((mEasyAdapter == null) || mEasyAdapter.isEmpty());
+        if(mEasyAdapter == null) {
+            return;
+        }
+
+        final boolean empty = (mEasyAdapter.mAdapter.getItemCount() == 0);
 
         if(empty) {
             mEmptyView.setVisibility(View.VISIBLE);
@@ -134,31 +135,18 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         }
     }
 
-    public void setFooterView(View footerView) {
-        mFooterView = footerView;
+    public void setFooterView(FooterViewHolder footerViewHolder) {
+        mFooterViewHolder = footerViewHolder;
         if(mEasyAdapter != null) {
             mEasyAdapter.notifyDataSetChanged();
         }
     }
 
     private void updateFooterStatus(boolean hasMoreData) {
-        if(mFooterView == null) {
+        if(mFooterViewHolder == null) {
             return;
         }
-
-        if(holder == null) {
-            holder = new FooterViewHolder();
-            holder.mProgressBar = (ProgressBar) mFooterView.findViewById(R.id.footer_view_progressbar);
-            holder.mTextView = (TextView) mFooterView.findViewById(R.id.footer_view_tv);
-        }
-
-        if(hasMoreData) {
-            holder.mProgressBar.setVisibility(View.VISIBLE);
-            holder.mTextView.setText("加载更多数据中");
-        } else {
-            holder.mProgressBar.setVisibility(View.GONE);
-            holder.mTextView.setText("没有更多数据了");
-        }
+        mFooterViewHolder.bindView(hasMoreData);
     }
 
     @Override
@@ -208,7 +196,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
             if(viewType == TYPE_HEADER_VIEW) {
                 return new ViewHolder(mHeaderView) {};
             } else if(viewType == TYPE_FOOTER_VIEW) {
-                return new ViewHolder(mFooterView) {};
+                return new ViewHolder(mFooterViewHolder.itemView) {};
             }
             return mAdapter.onCreateViewHolder(parent, viewType);
         }
@@ -227,7 +215,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         @Override
         public int getItemCount() {
             final boolean hasHeader = mHeaderView != null;
-            final boolean hasFooter = mPagingHelper.isAutoLoadEnabled() && mFooterView != null;
+            final boolean hasFooter = mPagingHelper.isAutoLoadEnabled() && mFooterViewHolder.itemView != null;
 
             final int commonItemCount = mAdapter.getItemCount();
             final int headerCount = hasHeader ? 1 : 0;
@@ -281,10 +269,5 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
             mAdapter.onDetachedFromRecyclerView(recyclerView);
         }
-
-        protected boolean isEmpty() {
-            return mAdapter.getItemCount() == 0;
-        }
-
     }
 }
