@@ -32,33 +32,33 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paging_recycler_view);
-        mRecyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
-        mRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(boolean isReload) {
-                Log.d("TAG", "onLoadMore ---");
-                loadData();
-            }
-        });
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(mAdapter = new Adapter());
-
-        View view = findViewById(R.id.emptyView);
-        mRecyclerView.setEmptyView(view);
-
-        TextView textView = new TextView(this);
-        textView.setText("title");
-        mRecyclerView.setHeaderView(textView);
-
-        findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAdapter.mList.clear();
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-
-        loadData();
+//        mRecyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
+//        mRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
+//            @Override
+//            public void onLoadMore(boolean isReload) {
+//                Log.d("TAG", "onLoadMore ---");
+//                loadData();
+//            }
+//        });
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mRecyclerView.setAdapter(mAdapter = new Adapter());
+//
+//        View view = findViewById(R.id.emptyView);
+//        mRecyclerView.setEmptyView(view);
+//
+//        TextView textView = new TextView(this);
+//        textView.setText("title");
+//        mRecyclerView.setHeaderView(textView);
+//
+//        findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mAdapter.mList.clear();
+//                mAdapter.notifyDataSetChanged();
+//            }
+//        });
+//
+//        loadData();
     }
 
     private List<String> getData(int size) {
