@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,6 +49,7 @@ public class FlowLayout extends ViewGroup {
     public void setVerticalSpace(int verticalSpace) {
         mVerticalSpace = verticalSpace;
         requestLayout();
+        new LinearLayout(null);
     }
 
     @Override
@@ -223,6 +225,9 @@ public class FlowLayout extends ViewGroup {
 
         public int row;
         public int index;
+
+        public int maxWidth;
+        public int maxHeight;
 
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
