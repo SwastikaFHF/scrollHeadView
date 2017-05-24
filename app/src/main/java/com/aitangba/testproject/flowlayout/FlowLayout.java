@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,7 +18,7 @@ public class FlowLayout extends ViewGroup {
 
     private SparseArray<RomInfo> romInfoList = new SparseArray<>();
 
-    private @Gravity int mGravity = CENTER;
+    private @Gravity int mGravity = BOTTOM;
 
     private int mHorizontalSpace = 10; // the same as leftMargin,every first child do not use leftMargin
     private int mVerticalSpace = 10;  // the same as topMargin,every first row do not use topMargin
@@ -49,7 +48,6 @@ public class FlowLayout extends ViewGroup {
     public void setVerticalSpace(int verticalSpace) {
         mVerticalSpace = verticalSpace;
         requestLayout();
-        new LinearLayout(null);
     }
 
     @Override
@@ -62,6 +60,8 @@ public class FlowLayout extends ViewGroup {
             return;
         }
 
+        final int leftMargin = mHorizontalSpace;
+        final int topMargin = mVerticalSpace;
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSpace = widthSize - getPaddingLeft() - getPaddingRight();
@@ -82,25 +82,22 @@ public class FlowLayout extends ViewGroup {
             final int childHeight = child.getMeasuredHeight();
             final int childWidth = child.getMeasuredWidth();
             LayoutParams layoutParams = (LayoutParams) child.getLayoutParams();
-            final int marginHorizontal = mHorizontalSpace;
 
-            widthSpaceNeed = widthSpaceNeed + marginHorizontal + childWidth;
+            widthSpaceNeed = widthSpaceNeed + leftMargin + childWidth;
 
             if(widthSpaceNeed <= widthSpace) {
-                layoutParams.setPosition(row, index);
-
-                index = index + 1;
                 rowMaxHeight = Math.max(rowMaxHeight, childHeight);
 
+                layoutParams.setPosition(row, index);
+                index = index + 1;
             } else {
                 row = row + 1;
                 index = 0;
-                layoutParams.setPosition(row, index);
-
-                index = index + 1;
+                widthSpaceNeed = 0 + leftMargin + childWidth;
                 rowMaxHeight = childHeight;
 
-                widthSpaceNeed = 0 + 0 + childWidth;
+                layoutParams.setPosition(row, index);
+                index = index + 1;
             }
 
             // find max height
@@ -117,18 +114,17 @@ public class FlowLayout extends ViewGroup {
         int maxWidth = 0;
         for(int i = 0; i < romInfoList.size(); i ++) {
             RomInfo romInfo = romInfoList.valueAt(i);
-            maxHeight = maxHeight + romInfo.maxHeight + mVerticalSpace;
 
-            // first child do not need leftMargin
-            if(i == 0) {
-                romInfo.maxWidth = romInfo.maxWidth - mHorizontalSpace;
+            if(i == 0) { // first row do not need topMargin,so do not add topMargin
+                maxHeight = maxHeight + romInfo.maxHeight;
+            } else {
+                maxHeight = maxHeight + romInfo.maxHeight + topMargin;
             }
 
+            // first child in every row do not need leftMargin,so remove it
+            romInfo.maxWidth = romInfo.maxWidth - leftMargin;
             maxWidth = Math.max(maxWidth, romInfo.maxWidth);
         }
-
-         // first row do not need VerticalSpace
-        maxHeight = maxHeight - mVerticalSpace;
 
         int width;
         if(widthMode == MeasureSpec.AT_MOST) {
@@ -225,9 +221,6 @@ public class FlowLayout extends ViewGroup {
 
         public int row;
         public int index;
-
-        public int maxWidth;
-        public int maxHeight;
 
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
