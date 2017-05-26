@@ -3,9 +3,11 @@ package com.aitangba.testproject.threadpool.volley;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.HashSet;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by fhf11991 on 2017/5/26.
@@ -15,73 +17,114 @@ public class ThreadManager {
 
     private final static int CORE_NUM = 2;
 
+    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
+
     private int coreNum = CORE_NUM;
-    private AtomicInteger threadNum = new AtomicInteger();
-    private AtomicInteger workNum = new AtomicInteger();
-    private AtomicInteger threadIndex = new AtomicInteger();
+    private AtomicInteger workersCount = new AtomicInteger();
+    private AtomicInteger currentJobsCount = new AtomicInteger(); // jobs num from running to waiting
+    private volatile boolean isShutdown = false;
+
+    private final HashSet<Worker> workers = new HashSet<>();
+    private final ReentrantLock mainLock = new ReentrantLock();
 
     private PriorityBlockingQueue<Request> mBlockingPriorityQueue = new PriorityBlockingQueue<>();
 
     public void execute(@NonNull Request command) {
+        if(isShutdown) {
+            return;
+        }
 
         if(!addWorker(command)) {
             mBlockingPriorityQueue.offer(command);
-            workNum.incrementAndGet();
+            currentJobsCount.incrementAndGet();
         }
+    }
+
+    public void shutdown() {
+        isShutdown = true;
+        mBlockingPriorityQueue.clear();
+
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            for (Worker w : workers) {
+                Log.d("ThreadManager", "开始关闭线程");
+                w.close();
+            }
+            workers.clear();
+        } finally {
+            mainLock.unlock();
+        }
+    }
+
+    private int threadIndex;
+
+    protected Thread newThread(Runnable r) {
+        String threadName = "#" + threadIndex ++;
+        Log.d("ThreadManager", "创建了一个新的线程 named = " + threadName);
+        return new Thread(r, threadName);
     }
 
     private boolean addWorker(Request request) {
         for(;;) {
-            int threadNum = this.threadNum.get();
-            int workerNum = this.workNum.get();
-            Log.d("ThreadManager", "任务 named = " + request.name +  " threadNum = " + threadNum + " workerNum = " + workerNum);
-            if(threadNum != 0 && workerNum < threadNum) { // some thread is sleep
+            int threadNum = this.workersCount.get();
+            int workerNum = this.currentJobsCount.get();
+            Log.d("ThreadManager", "任务 named = " + request.name +  " workersCount = " + threadNum + " workerNum = " + workerNum);
+            if(workerNum == MAXIMUM_POOL_SIZE) {
+                return false;
+            } else if(threadNum != 0 && workerNum < threadNum) { // some thread is sleep
                 return false;
             } else {
-                WorkerThread dispatcher = new WorkerThread("#" + threadIndex.incrementAndGet(), this, request);
-                dispatcher.start();
+                Worker dispatcher = new Worker(this, request);
+                final ReentrantLock mainLock = this.mainLock;
+                mainLock.lock();
+                try {
+                    workers.add(dispatcher);
+                } finally {
+                    mainLock.unlock();
+                }
+                dispatcher.thread.start();
                 return true;
             }
         }
     }
 
-    public static class WorkerThread extends Thread {
+    public static class Worker implements Runnable {
 
-        private final static String TAG = "WorkerThread";
+        private final static String TAG = "Worker";
 
         private ThreadManager mThreadManager;
-        private Request mFirstRequest;
+        private Request mCurrentRequest;
+        private Thread thread;
 
-        public WorkerThread(String threadName, ThreadManager threadManager, Request firstRequest) {
-            super(threadName);
+        public Worker(ThreadManager threadManager, Request firstRequest) {
             this.mThreadManager = threadManager;
-            mFirstRequest = firstRequest;
+            mCurrentRequest = firstRequest;
+            thread = threadManager.newThread(this);
 
-            mThreadManager.threadNum.incrementAndGet();
-            mThreadManager.workNum.incrementAndGet();
-            Log.d(TAG, "创建了一个新的线程 named = " + threadName);
+            mThreadManager.workersCount.incrementAndGet();
+            mThreadManager.currentJobsCount.incrementAndGet();
         }
 
         @Override
         public void run() {
-            super.run();
-
-            Request request = mFirstRequest;
-            mFirstRequest = null;
             boolean isCoreThread = false;
-
             try {
                 retry:
                 for(;;) {
-                    while (request != null || (request = (isCoreThread ?
-                            mThreadManager.mBlockingPriorityQueue.take()
-                            : mThreadManager.mBlockingPriorityQueue.poll(1, TimeUnit.MILLISECONDS))) != null) {
-                        request.run();
-                        request = null;
-                        mThreadManager.workNum.decrementAndGet();
+                    while (!mThreadManager.isShutdown
+                            && (mCurrentRequest != null || (mCurrentRequest = (isCoreThread ? mThreadManager.mBlockingPriorityQueue.take()
+                            : mThreadManager.mBlockingPriorityQueue.poll(1, TimeUnit.MILLISECONDS))) != null)) {
+                        mCurrentRequest.run();
+                        mCurrentRequest = null;
+                        isCoreThread = false;
+                        mThreadManager.currentJobsCount.decrementAndGet();
                     }
 
-                    if(mThreadManager.threadNum.get() <= mThreadManager.coreNum) {
+                    if(mThreadManager.isShutdown) {
+                        break;
+                    } else if(mThreadManager.workersCount.get() <= mThreadManager.coreNum) {
                         isCoreThread = true;
                         continue retry;
                     } else {
@@ -90,10 +133,31 @@ public class ThreadManager {
                 }
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
+
             } finally {
-                mThreadManager.threadNum.decrementAndGet();
+                final ReentrantLock mainLock = mThreadManager.mainLock;
+                mainLock.lock();
+                try {
+                    mThreadManager.workers.remove(this);
+                } finally {
+                    mainLock.unlock();
+                }
+                mThreadManager.workersCount.decrementAndGet();
                 Log.d(TAG, "线程" + Thread.currentThread().getName() + "关闭");
+            }
+        }
+
+        private void close() {
+            if(mCurrentRequest != null) {
+                mCurrentRequest.close();
+                mCurrentRequest = null;
+            }
+
+            if (!thread.isInterrupted()) {
+                try {
+                    thread.interrupt();
+                } catch (SecurityException ignore) {
+                }
             }
         }
     }

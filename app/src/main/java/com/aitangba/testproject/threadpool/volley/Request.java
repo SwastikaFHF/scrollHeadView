@@ -20,4 +20,8 @@ public class Request implements Comparable<Request>, Runnable {
     public void run() {
         Log.d("Request", "run ---");
     }
+
+    public void close() {
+
+    }
 }

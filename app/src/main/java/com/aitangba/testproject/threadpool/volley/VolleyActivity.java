@@ -29,6 +29,13 @@ public class VolleyActivity extends AppCompatActivity {
                 getRunnable(4);
             }
         });
+
+        findViewById(R.id.shutdown_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRequestQueue.shutdown();
+            }
+        });
     }
 
     private int mNum;
@@ -52,9 +59,9 @@ public class VolleyActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            Log.d("Worker", "我的编号是num = " + num);
             try {
                 Thread.sleep(2000);
+                Log.d("Worker", "编号 " + num + "执行结束");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
