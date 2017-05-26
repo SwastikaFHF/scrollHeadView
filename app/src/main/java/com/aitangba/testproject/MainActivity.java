@@ -25,6 +25,7 @@ import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.stub.StubActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
+import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
@@ -116,7 +117,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
 //                startActivity(ThreadPoolActivity.class);
-                startActivity(PagingRecyclerViewActivity.class);
+//                startActivity(PagingRecyclerViewActivity.class);
+                startActivity(VolleyActivity.class);
 //                startActivity(CalendarActivity.class);
                 break;
             default:break;

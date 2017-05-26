@@ -9,6 +9,8 @@ import android.util.Log;
 
 public class Request implements Comparable<Request>, Runnable {
 
+    public String name;
+
     @Override
     public int compareTo(@NonNull Request another) {
         return 0;

@@ -72,6 +72,7 @@
         <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".paging.PagingRecyclerViewActivity"></activity>
+        <activity android:name=".threadpool.volley.VolleyActivity"></activity>
 
     </application>
 
