@@ -3,9 +3,11 @@ package com.aitangba.testproject.flowlayout;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,6 +17,8 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 public class FlowLayout extends ViewGroup {
+
+    private final static String TAG = "FlowLayout";
 
     private @Gravity int mGravity = CENTER;
     private SparseIntArray mRowInfoList = new SparseIntArray(); // just record the max height of every row
@@ -61,13 +65,12 @@ public class FlowLayout extends ViewGroup {
         final int leftMargin = mHorizontalSpace;
         final int topMargin = mVerticalSpace;
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSpace = widthSize - getPaddingLeft() - getPaddingRight();
 
         int widthSpaceNeed = 0;
         int rowMaxWidth = 0;
 
-        int row = 0;
+        int row = -1; // in case,first child is out of bounds
         int index = 0;
 
         for(int i = 0; i < childCount; i++) {
@@ -84,7 +87,7 @@ public class FlowLayout extends ViewGroup {
 
             widthSpaceNeed = widthSpaceNeed + leftMargin + childWidth;
 
-            if(widthSpaceNeed > widthSpace) { // current row can not contain this child, so turn next row !!!
+            if(row == -1 || widthSpaceNeed > widthSpace) { // current row can not contain this child, so turn next row !!!
                 row = row + 1;
                 index = 0;
                 widthSpaceNeed = 0 + leftMargin + childWidth;
@@ -105,20 +108,56 @@ public class FlowLayout extends ViewGroup {
             maxHeight = maxHeight + height + margin;
         }
 
-        // first child in every row do not need leftMargin,so remove it
-        int maxWidth = rowMaxWidth - leftMargin + getPaddingLeft() + getPaddingRight();
 
-        int width;
-        if(widthMode == MeasureSpec.AT_MOST) {
-            width = maxWidth;
-        } else {
+        // first child in every row do not need leftMargin,so remove it
+        final int maxWidth = rowMaxWidth - leftMargin + getPaddingLeft() + getPaddingRight();
+
+        int width = maxWidth;
+
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        if(widthMode == MeasureSpec.EXACTLY) {
             width = widthSize;
+            if(getLayoutParams() instanceof LinearLayout.LayoutParams) {
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) getLayoutParams();
+                if(layoutParams.weight != 0) {
+                    width = maxWidth;
+                }
+            }
         }
+
         setMeasuredDimension(width, maxHeight + getPaddingTop() + getPaddingBottom());
+
+        printSize(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    private void printSize(int widthMeasureSpec, int heightMeasureSpec) {
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        Log.d(TAG, "---- widthSize = " + widthSize
+               + "  widthMode = " + getModeName(widthMode)
+               + "  heightSize = " + heightSize
+               + "  heightMode = " + getModeName(heightMode)
+        );
+    }
+
+    private String getModeName(int mode) {
+        if(mode == MeasureSpec.EXACTLY) {
+            return "EXACTLY";
+        } else if(mode == MeasureSpec.AT_MOST) {
+            return "AT_MOST";
+        } else {
+            return "UNSPECIFIED";
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d(TAG, "onLayout");
+
         int childCount = getChildCount();
         if(childCount == 0) {
             return;
@@ -143,11 +182,11 @@ public class FlowLayout extends ViewGroup {
 
             if(layoutParams.row != rowTemp) { // not the same row, reset some params
                 widthTemp = getPaddingLeft();
-                heightTemp = heightTemp + previousRowHeight;
+                heightTemp = heightTemp + previousRowHeight + mVerticalSpace; // in this situation, every row must add extra vertical space !!!
             }
 
             int left = widthTemp;
-            int top = heightTemp + getChildTopDiff(currentRowHeight, childHeight) + (layoutParams.row == 0 ? 0 : mVerticalSpace);
+            int top = heightTemp + getChildTopDiff(currentRowHeight, childHeight);
             child.layout(left, top, left + childWidth, top + childHeight);
 
             widthTemp = widthTemp + childWidth + mHorizontalSpace;

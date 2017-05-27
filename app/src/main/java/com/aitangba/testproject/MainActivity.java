@@ -10,6 +10,7 @@ import com.aitangba.testproject.calendarview.CalendarActivity;
 import com.aitangba.testproject.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.edgeeffect.EffectActivity;
+import com.aitangba.testproject.flowlayout.FlowViewActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.irregularview.IrregularViewActivity;
@@ -117,7 +118,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
 //                startActivity(ThreadPoolActivity.class);
-                startActivity(PagingRecyclerViewActivity.class);
+//                startActivity(PagingRecyclerViewActivity.class);
+                startActivity(FlowViewActivity.class);
 //                startActivity(VolleyActivity.class);
 //                startActivity(CalendarActivity.class);
                 break;

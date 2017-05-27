@@ -73,6 +73,7 @@
                   android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".paging.PagingRecyclerViewActivity"></activity>
         <activity android:name=".threadpool.volley.VolleyActivity"></activity>
+        <activity android:name=".flowlayout.FlowViewActivity"></activity>
 
     </application>
 
