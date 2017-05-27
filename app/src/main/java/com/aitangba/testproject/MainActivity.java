@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                startActivity(LoadingTestActivity.class);
 //                startActivity(PagingListViewActivity.class);
 //                startActivity(ThreadPoolActivity.class);
-//                startActivity(PagingRecyclerViewActivity.class);
-                startActivity(VolleyActivity.class);
+                startActivity(PagingRecyclerViewActivity.class);
+//                startActivity(VolleyActivity.class);
 //                startActivity(CalendarActivity.class);
                 break;
             default:break;
