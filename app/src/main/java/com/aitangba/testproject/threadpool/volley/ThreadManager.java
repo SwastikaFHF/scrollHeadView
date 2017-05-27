@@ -1,5 +1,7 @@
 package com.aitangba.testproject.threadpool.volley;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -21,14 +23,22 @@ public class ThreadManager {
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
 
     private int coreNum = CORE_NUM;
-    private AtomicInteger workersCount = new AtomicInteger();
-    private AtomicInteger currentJobsCount = new AtomicInteger(); // jobs num from running to waiting
+    private int waitTime = 1; //ms
+
+    private AtomicInteger workersCount = new AtomicInteger(); // current threads
+    private AtomicInteger currentJobsCount = new AtomicInteger(); // the count of jobs from running to waiting
     private volatile boolean isShutdown = false;
 
     private final HashSet<Worker> workers = new HashSet<>();
     private final ReentrantLock mainLock = new ReentrantLock();
 
     private PriorityBlockingQueue<Request> mBlockingPriorityQueue = new PriorityBlockingQueue<>();
+
+    private ExecutorDelivery mExecutorDelivery;
+
+    public ThreadManager() {
+        mExecutorDelivery = new ExecutorDelivery(new Handler(Looper.getMainLooper()));
+    }
 
     public void execute(@NonNull Request command) {
         if(isShutdown) {
@@ -70,7 +80,7 @@ public class ThreadManager {
         for(;;) {
             int threadNum = this.workersCount.get();
             int workerNum = this.currentJobsCount.get();
-            Log.d("ThreadManager", "任务 named = " + request.name +  " workersCount = " + threadNum + " workerNum = " + workerNum);
+            Log.d("ThreadManager", "任务 named = " + " workersCount = " + threadNum + " workerNum = " + workerNum);
             if(workerNum == MAXIMUM_POOL_SIZE) {
                 return false;
             } else if(threadNum != 0 && workerNum < threadNum) { // some thread is sleep
@@ -90,7 +100,7 @@ public class ThreadManager {
         }
     }
 
-    public static class Worker implements Runnable {
+    private static class Worker implements Runnable {
 
         private final static String TAG = "Worker";
 
@@ -115,8 +125,8 @@ public class ThreadManager {
                 for(;;) {
                     while (!mThreadManager.isShutdown
                             && (mCurrentRequest != null || (mCurrentRequest = (isCoreThread ? mThreadManager.mBlockingPriorityQueue.take()
-                            : mThreadManager.mBlockingPriorityQueue.poll(1, TimeUnit.MILLISECONDS))) != null)) {
-                        mCurrentRequest.run();
+                            : mThreadManager.mBlockingPriorityQueue.poll(mThreadManager.waitTime, TimeUnit.MILLISECONDS))) != null)) {
+                        mThreadManager.mExecutorDelivery.postResponse(mCurrentRequest, mCurrentRequest.performRequest());
                         mCurrentRequest = null;
                         isCoreThread = false;
                         mThreadManager.currentJobsCount.decrementAndGet();
