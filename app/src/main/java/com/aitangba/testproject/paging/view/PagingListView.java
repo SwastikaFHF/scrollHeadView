@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.aitangba.testproject.R;
@@ -66,6 +67,11 @@ public class PagingListView extends ListView implements PagingManager {
     @Override
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         mPagingHelper.setOnLoadMoreListener(loadMoreListener);
+    }
+
+    @Override
+    public void setAdapter(ListAdapter adapter) {
+        super.setAdapter(adapter);
     }
 
     @Override

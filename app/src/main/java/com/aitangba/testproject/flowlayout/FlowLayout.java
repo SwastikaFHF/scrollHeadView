@@ -127,36 +127,10 @@ public class FlowLayout extends ViewGroup {
 
         setMeasuredDimension(width, maxHeight + getPaddingTop() + getPaddingBottom());
 
-        printSize(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    private void printSize(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-
-        Log.d(TAG, "---- widthSize = " + widthSize
-               + "  widthMode = " + getModeName(widthMode)
-               + "  heightSize = " + heightSize
-               + "  heightMode = " + getModeName(heightMode)
-        );
-    }
-
-    private String getModeName(int mode) {
-        if(mode == MeasureSpec.EXACTLY) {
-            return "EXACTLY";
-        } else if(mode == MeasureSpec.AT_MOST) {
-            return "AT_MOST";
-        } else {
-            return "UNSPECIFIED";
-        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d(TAG, "onLayout");
 
         int childCount = getChildCount();
         if(childCount == 0) {
@@ -225,7 +199,7 @@ public class FlowLayout extends ViewGroup {
         return new LayoutParams(p);
     }
 
-    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+    private static class LayoutParams extends ViewGroup.MarginLayoutParams {
 
         public int row;
         public int index;
