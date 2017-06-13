@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
     <com.aitangba.testproject.flowlayout.FlowLayout
         android:layout_width="1dp"
         android:layout_weight="1"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
 
@@ -46,6 +47,36 @@
             android:text="测试View5"/>
 
     </com.aitangba.testproject.flowlayout.FlowLayout>
+
+    <com.aitangba.testproject.flowlayout.AverageSpaceViewGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="测试View1"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="测试View2"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="测试View3"/>
+
+
+    </com.aitangba.testproject.flowlayout.AverageSpaceViewGroup>
 
     <Button
         android:id="@+id/emptyTextBtn"
