@@ -1,0 +1,32 @@
+package com.aitangba.testproject.fragment;
+
+import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+
+import com.aitangba.testproject.R;
+import com.aitangba.testproject.databinding.ActivityFragmentBinding;
+
+/**
+ * Created by fhf11991 on 2017/8/9.
+ */
+
+public class FragmentTestActivity extends AppCompatActivity {
+
+    private ActivityFragmentBinding mBinding;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_fragment);
+
+        mBinding.getRoot().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getSupportFragmentManager().beginTransaction().add(R.id.container_layout, new OneFragment(), "cc").commitAllowingStateLoss();
+            }
+        }, 3000);
+
+    }
+}
