@@ -56,12 +56,12 @@ public class BannerView extends FrameLayout implements ViewPager.OnPageChangeLis
         mViewPager.setAdapter(mViewPagerAdapter = new ViewPagerAdapter());
         mViewPager.addOnPageChangeListener(this);
 
-//        mDotLayout = (LinearLayout) findViewById(R.id.ll_dots);
+        mDotLayout = (LinearLayout) findViewById(R.id.ll_dots);
         mImageDefault = (ImageView) findViewById(R.id.iv_default);
 
         initAdvViews(null);
         initDotViews(null);
-        startAutoPlay();
+//        startAutoPlay();
     }
 
     @Override

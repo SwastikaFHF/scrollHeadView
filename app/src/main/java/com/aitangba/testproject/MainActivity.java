@@ -1,7 +1,9 @@
 package com.aitangba.testproject;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -27,7 +29,6 @@ import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
-import com.aitangba.testproject.stub.StubActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
@@ -37,105 +38,97 @@ import com.aitangba.testproject.viewpager.ViewPageActivity;
 import com.aitangba.testproject.wheelview.WheelViewActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
 
+import java.util.ArrayList;
+
 /**
  * Created by fhf11991 on 2016/6/22.
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity {
+
+    private ArrayList<ActivityInfo> activityInfoList = new ArrayList<>();
+    {
+        activityInfoList.add(new ActivityInfo("选择数字", NumberPickerActivity.class));
+        activityInfoList.add(new ActivityInfo("水平滚动", HorizonScrollActivity.class));
+        activityInfoList.add(new ActivityInfo("垂直滚动", ListViewActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义Swipe", CustomSwipeActivity.class));
+        activityInfoList.add(new ActivityInfo("水平滑动", HorizonScrollTestActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义多样式adapter", MultiAdapterActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义多样式view_page", ViewPageActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义圆角背景的TextView", CornerRectangleActivity.class));
+        activityInfoList.add(new ActivityInfo("可滑动的activity", SlidingMenuActivity.class));
+        activityInfoList.add(new ActivityInfo("水平滑动广告图", com.aitangba.testproject.horizonscrollview.HorizonScrollActivity.class));
+        activityInfoList.add(new ActivityInfo("YouTube", YoutubeActivity.class));
+        activityInfoList.add(new ActivityInfo("边缘效应", EffectActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义progressbar", ProgressbarActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义Path", PathActivity.class));
+        activityInfoList.add(new ActivityInfo("WheelView", WheelViewActivity.class));
+        activityInfoList.add(new ActivityInfo("嵌套滑动ViewGroup", NestedScrollActivity.class));
+        activityInfoList.add(new ActivityInfo("lightAdapter", LightAdapterActivity.class));
+        activityInfoList.add(new ActivityInfo("自定义加载View", LoadViewActivity.class));
+        activityInfoList.add(new ActivityInfo("ubb转换", UbbActivity.class));
+        activityInfoList.add(new ActivityInfo("登录测试", com.aitangba.testproject.login.MainActivity.class));
+        activityInfoList.add(new ActivityInfo("删除动画测试", RemoveItemActivity.class));
+        activityInfoList.add(new ActivityInfo("不规则图形测试", IrregularViewActivity.class));
+
+        activityInfoList.add(new ActivityInfo("登录测试", LoadingTestActivity.class));
+        activityInfoList.add(new ActivityInfo("分页", PagingListViewActivity.class));
+        activityInfoList.add(new ActivityInfo("ThreadPoolActivity", ThreadPoolActivity.class));
+        activityInfoList.add(new ActivityInfo("PagingRecyclerViewActivity", PagingRecyclerViewActivity.class));
+        activityInfoList.add(new ActivityInfo("浮动View", FlowViewActivity.class));
+        activityInfoList.add(new ActivityInfo("Drawable", DrawableTestActivity.class));
+        activityInfoList.add(new ActivityInfo("RunnableManager", RunnableManagerActivity.class));
+        activityInfoList.add(new ActivityInfo("FragmentTestActivity", FragmentTestActivity.class));
+        activityInfoList.add(new ActivityInfo("VolleyActivity", VolleyActivity.class));
+        activityInfoList.add(new ActivityInfo("CalendarActivity", CalendarActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.onClick();
+            }
+        });
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_number_picker_activity:
-                startActivity(NumberPickerActivity.class);
-                break;
-            case R.id.bt_horizon_scroll:
-                startActivity(HorizonScrollActivity.class);
-                break;
-            case R.id.bt_vertical_scroll:
-                startActivity(ListViewActivity.class);
-                break;
-            case R.id.bt_custom_swipe:
-                startActivity(CustomSwipeActivity.class);
-                break;
-            case R.id.bt_horizon_scroll_test:
-                startActivity(HorizonScrollTestActivity.class);
-                break;
-            case R.id.bt_multi_adapter:
-                startActivity(MultiAdapterActivity.class);
-                break;
-            case R.id.bt_view_page:
-                startActivity(ViewPageActivity.class);
-                break;
-            case R.id.bt_corner_text:
-                startActivity(CornerRectangleActivity.class);
-                break;
-            case R.id.bt_scroll_activity:
-                startActivity(SlidingMenuActivity.class);
-                break;
-            case R.id.bt_horizon_scroll_activity:
-                startActivity(com.aitangba.testproject.horizonscrollview.HorizonScrollActivity.class);
-                break;
-            case R.id.bt_youtube_activity:
-                startActivity(YoutubeActivity.class);
-                break;
-            case R.id.bt_effect_activity:
-                startActivity(EffectActivity.class);
-                break;
-            case R.id.bt_progressbar_activity:
-                startActivity(ProgressbarActivity.class);
-                break;
-            case R.id.bt_path_activity:
-                startActivity(PathActivity.class);
-                break;
-            case R.id.bt_wheel_view:
-                startActivity(WheelViewActivity.class);
-                break;
-            case R.id.bt_nested_scroll:
-                startActivity(NestedScrollActivity.class);
-                break;
-            case R.id.bt_light_adapter:
-                startActivity(LightAdapterActivity.class);
-                break;
-            case R.id.bt_loading_view_activity:
-                startActivity(LoadViewActivity.class);
-                break;
-            case R.id.bt_ubb_activity:
-                startActivity(UbbActivity.class);
-                break;
-            case R.id.bt_login_activity:
-                startActivity(com.aitangba.testproject.login.MainActivity.class);
-                break;
-            case R.id.bt_remove_item_activity:
-                startActivity(RemoveItemActivity.class);
-                break;
-            case R.id.bt_irregular_view_activity:
-                startActivity(IrregularViewActivity.class);
-                break;
-            case R.id.bt_loading_activity:
-//                startActivity(LoadingTestActivity.class);
-//                startActivity(PagingListViewActivity.class);
-//                startActivity(ThreadPoolActivity.class);
-//                startActivity(PagingRecyclerViewActivity.class);
-//                startActivity(FlowViewActivity.class);
-//                startActivity(DrawableTestActivity.class);
-                startActivity(RunnableManagerActivity.class);
-//                startActivity(FragmentTestActivity.class);
-//                startActivity(VolleyActivity.class);
-//                startActivity(CalendarActivity.class);
-                break;
-            default:break;
+    private void onClick() {
+        new AlertDialog.Builder(this).setSingleChoiceItems(getTitles(), 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                startActivity(activityInfoList.get(which).activityClass);
+            }
+        }).show();
+    }
+
+    private String[] getTitles() {
+        String[] titles = new String[activityInfoList.size()];
+
+        for(int i = 0, size = activityInfoList.size(); i < size ; i++) {
+            titles[i] = activityInfoList.get(i).name;
         }
+
+        return titles;
     }
 
     private void startActivity(Class<?> activityClass) {
         if(activityClass != null) {
             startActivity(new Intent(this, activityClass));
+        }
+    }
+
+    private static class ActivityInfo {
+        public String name;
+        public Class<?> activityClass;
+
+        public ActivityInfo(String name, Class<?> activityClass) {
+            this.name = name;
+            this.activityClass = activityClass;
         }
     }
 }

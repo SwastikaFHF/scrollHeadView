@@ -14,12 +14,6 @@ public class RunQueue {
 
     private final ArrayList<HandlerAction> mActions = new ArrayList<HandlerAction>();
 
-    private View mRootView;
-
-    public RunQueue(@NonNull View mRootView) {
-        this.mRootView = mRootView;
-    }
-
     void post(Runnable action) {
         postDelayed(action, 0);
     }

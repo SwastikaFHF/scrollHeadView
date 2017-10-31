@@ -99,7 +99,7 @@ public class HorizonScrollImageView extends ViewGroup {
         final int widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
         final int heightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
 
-        for(int i = 0 ;i < childCount; i ++) {
+        for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             child.measure(widthSpec, heightSpec);
         }
@@ -118,17 +118,17 @@ public class HorizonScrollImageView extends ViewGroup {
         final int lastIndex = (mCurrentPosition - 1 + childCount) % childCount;
         final int nextIndex = (mCurrentPosition + 1) % childCount;
 
-        for(int i = 0 ;i < childCount; i ++) {
+        for (int i = 0; i < childCount; i++) {
             final View child = getChildAt(i);
             final int childWidth = child.getMeasuredWidth();
             final int childHeight = child.getMeasuredHeight();
 
             final int left;
-            if(i == lastIndex && curLeft > 0) {
-                left = - (width - curLeft);
-            } else if(i == mCurrentPosition) {
+            if (i == lastIndex && curLeft > 0) {
+                left = -(width - curLeft);
+            } else if (i == mCurrentPosition) {
                 left = curLeft;
-            } else if(i == nextIndex && curLeft < 0) {
+            } else if (i == nextIndex && curLeft < 0) {
                 left = width + curLeft;
             } else {
                 left = width;
@@ -162,18 +162,18 @@ public class HorizonScrollImageView extends ViewGroup {
                 mLastPointX = curPointX;
 
                 final int tempLeft = mLeft;
-                mLeft = mLeft + (int)distanceX;
+                mLeft = mLeft + (int) distanceX;
                 final int curLeft = mLeft;
 
                 float nextViewX;
                 float lastViewX;
-                if(tempLeft <= 0 && curLeft >= 0) {  // <--
-                    lastViewX = - width + curLeft;
+                if (tempLeft <= 0 && curLeft >= 0) {  // <--
+                    lastViewX = -width + curLeft;
                     nextViewX = width;
-                } else if(tempLeft <= 0 && curLeft < 0) {
+                } else if (tempLeft <= 0 && curLeft < 0) {
                     lastViewX = -width;
                     nextViewX = width + curLeft;
-                } else if(tempLeft > 0 && curLeft > 0) {  // -->
+                } else if (tempLeft > 0 && curLeft > 0) {  // -->
                     nextViewX = -width;
                     lastViewX = distanceX;
                 } else {
@@ -199,7 +199,8 @@ public class HorizonScrollImageView extends ViewGroup {
 //                resetLastView(mCurrentPosition);
                 break;
 
-            default:break;
+            default:
+                break;
         }
         return false;
     }
@@ -211,7 +212,7 @@ public class HorizonScrollImageView extends ViewGroup {
         final View lastView = getChildAt(lastIndex);
         final int lastViewLeft = lastView.getLeft();
         final boolean needMove = lastViewLeft >= width;
-        if(needMove) {
+        if (needMove) {
             final int height = getMeasuredHeight();
             lastView.layout(-width, 0, 0, height);
         }
@@ -226,7 +227,7 @@ public class HorizonScrollImageView extends ViewGroup {
         final View lastView = getChildAt(lastIndex);
         final int lastViewLeft = lastView.getLeft();
         final boolean isMoved = lastViewLeft <= 0;
-        if(isMoved) {
+        if (isMoved) {
             lastView.layout(width, 0, width + lastView.getMeasuredWidth(), height);
         }
     }
@@ -237,7 +238,9 @@ public class HorizonScrollImageView extends ViewGroup {
         Log.d(TAG, "onTouchEvent ===");
         return true;
     }
+
     private boolean mIsSlideAnimPlaying; //滑动动画展示过程中
+
     private void startSlideAnim() {
         final int curLeft = mLeft;
         final View curView = getChildAt(mCurrentPosition);
@@ -254,17 +257,17 @@ public class HorizonScrollImageView extends ViewGroup {
         final float curStopX;
         final float followStopX;
         final int endPositionTemp;
-        if(curLeft < 0 && diffLeft >= limitWidth) {   // <--
+        if (curLeft < 0 && diffLeft >= limitWidth) {   // <--
             curStopX = -(width + curLeft);
             followView = getChildAt(nextIndex);
             followStopX = -(width + curLeft);
             endPositionTemp = nextIndex;
-        } else if(curLeft < 0 && diffLeft < limitWidth) {
+        } else if (curLeft < 0 && diffLeft < limitWidth) {
             curStopX = curLeft;
             followView = getChildAt(nextIndex);
             followStopX = curLeft;
             endPositionTemp = mCurrentPosition;
-        } else if(curLeft > 0 && diffLeft < limitWidth) {
+        } else if (curLeft > 0 && diffLeft < limitWidth) {
             curStopX = -curLeft;
             followView = getChildAt(lastIndex);
             followStopX = -curLeft;
