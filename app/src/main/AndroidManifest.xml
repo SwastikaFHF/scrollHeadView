@@ -75,6 +75,8 @@
         <activity android:name=".threadpool.volley.VolleyActivity"></activity>
         <activity android:name=".flowlayout.FlowViewActivity"></activity>
         <activity android:name=".fragment.FragmentTestActivity"></activity>
+        <activity android:name=".drawable.DrawableTestActivity"></activity>
+        <activity android:name=".runnablemanager.RunnableManagerActivity"></activity>
 
     </application>
 
