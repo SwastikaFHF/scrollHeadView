@@ -78,8 +78,9 @@ public class MainActivity extends AppCompatActivity {
         activityInfoList.add(new ActivityInfo("加载测试", LoadingTestActivity.class));
         activityInfoList.add(new ActivityInfo("分页", PagingListViewActivity.class));
         activityInfoList.add(new ActivityInfo("线程ThreadPoolActivity", ThreadPoolActivity.class));
-        activityInfoList.add(new ActivityInfo("PagingRecyclerViewActivity", PagingRecyclerViewActivity.class));
         activityInfoList.add(new ActivityInfo("浮动View", FlowViewActivity.class));
+
+        activityInfoList.add(new ActivityInfo("PagingRecyclerViewActivity", PagingRecyclerViewActivity.class));
         activityInfoList.add(new ActivityInfo("Drawable", DrawableTestActivity.class));
         activityInfoList.add(new ActivityInfo("RunnableManager", RunnableManagerActivity.class));
         activityInfoList.add(new ActivityInfo("FragmentTestActivity", FragmentTestActivity.class));

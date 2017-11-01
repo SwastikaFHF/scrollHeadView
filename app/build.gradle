@@ -49,6 +49,5 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'me.iwf.photopicker:PhotoPicker:0.9.5@aar'
-//    implementation group: 'com.alibaba', name: 'fastjson', version: '1.1.54.android'
     implementation 'com.google.code.gson:gson:2.8.0'
 }

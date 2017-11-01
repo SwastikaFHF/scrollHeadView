@@ -29,10 +29,7 @@ public class HorizonScrollImageView extends ViewGroup {
     private int mDefaultGutterSize; //默认两边边缘
     private static final int DEFAULT_GUTTER_SIZE = 16; // dips
     private int mTouchSlop;
-
-    private View mFirstChildView;
-    private View mSecondChildView;
-    private View mThirdChildView;
+    private int mCurrentPosition;
 
     public HorizonScrollImageView(Context context) {
         this(context, null);
@@ -47,48 +44,11 @@ public class HorizonScrollImageView extends ViewGroup {
         init(context);
     }
 
-    private int mCurrentPosition;
-
     private void init(Context context) {
+        mTouchSlop = ViewConfiguration.get(context).getScaledPagingTouchSlop();
 
         final float density = context.getResources().getDisplayMetrics().density;
-        final ViewConfiguration configuration = ViewConfiguration.get(context);
         mDefaultGutterSize = (int) (DEFAULT_GUTTER_SIZE * density);
-        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
-
-        mFirstChildView = createChildView();
-        mSecondChildView = createChildView();
-        mThirdChildView = createChildView();
-
-        addView(mFirstChildView);
-        addView(mSecondChildView);
-        addView(mThirdChildView);
-
-        addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                Log.d(TAG, "addOnAttachStateChangeListener -----> onViewAttachedToWindow ");
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                Log.d(TAG, "addOnAttachStateChangeListener -----> onViewDetachedFromWindow ");
-            }
-        });
-    }
-
-    private View createChildView() {
-        ImageView imageView = new ImageView(getContext());
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        imageView.setClickable(false);
-        imageView.setImageResource(R.drawable.bg_red);
-        imageView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "点击事件-----");
-            }
-        });
-        return imageView;
     }
 
     @Override
@@ -107,7 +67,6 @@ public class HorizonScrollImageView extends ViewGroup {
 
         final int maxGutterSize = width / 10;
         mGutterSize = Math.min(maxGutterSize, mDefaultGutterSize);
-//        new ViewPager()
     }
 
     @Override
