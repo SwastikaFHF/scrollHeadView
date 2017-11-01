@@ -21,6 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
         <activity android:name=".verticalnestedscroll.VerticalScrollActivity"></activity>
         <activity android:name=".customswipe.CustomSwipeActivity"></activity>
@@ -35,7 +36,7 @@
         <activity android:name=".slideback.slidinglayout.SlideBackActivity"
             android:theme="@style/slideBack"></activity>
 
-        <activity android:name=".horizonscrollview.HorizonScrollActivity"></activity>
+        <activity android:name=".horizonscrollview.HorizonScrollAdActivity"></activity>
         <activity android:name=".youtube.YoutubeActivity"></activity>
         <activity android:name=".edgeeffect.EffectActivity"></activity>
         <activity android:name=".progressbar.ProgressbarActivity"></activity>
@@ -50,7 +51,7 @@
         <activity android:name=".ubb.UbbActivity"></activity>
 
         <!-- login test -->
-        <activity android:name=".login.MainActivity"></activity>
+        <activity android:name=".login.DrawTestActivity"></activity>
         <activity android:name=".login.LoginActivity"></activity>
         <activity android:name=".login.LoginRequestActivity"></activity>
 
@@ -77,6 +78,8 @@
         <activity android:name=".fragment.FragmentTestActivity"></activity>
         <activity android:name=".drawable.DrawableTestActivity"></activity>
         <activity android:name=".runnablemanager.RunnableManagerActivity"></activity>
+
+        <activity android:name=".amap.LocationTestActivity"></activity>
 
     </application>
 

@@ -6,13 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.amap.api.location.AMapLocation;
 
-public class MainActivity extends AppCompatActivity {
+public class LocationTestActivity extends AppCompatActivity {
 
     private AMapHelper aMapHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        aMapHelper = new AMapHelper(this);
 
         aMapHelper.startLocation(new AMapHelper.Callback() {
             @Override

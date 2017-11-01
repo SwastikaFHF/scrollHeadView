@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.lightadapter.BaseAdapter;
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +35,12 @@ public class BaseAdapterActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter = new BaseAdapter());
 
-        String json = JSON.toJSONString(getData(20));
+        String json = new Gson().toJson(getData(20));
 
         Log.d("BaseAdapterActivity", "json ==  " + json);
 
-        List<Mouse> mouses = JSON.parseArray(json, Mouse.class);
-        Log.d("BaseAdapterActivity", "mouses ==  " + JSON.toJSONString(mouses));
+        List<Mouse> mouses = new Gson().fromJson(json, new TypeToken<ArrayList<Mouse>>(){}.getType());
+        Log.d("BaseAdapterActivity", "mouses ==  " + new Gson().toJson(mouses));
 
         CatViewModel cat = new CatViewModel();
         cat.legs = "猫腿";

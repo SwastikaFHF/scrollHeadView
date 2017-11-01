@@ -1,6 +1,5 @@
 package com.aitangba.testproject.login;
 
-import android.app.ActivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +13,7 @@ import com.aitangba.testproject.R;
  * Created by fhf11991 on 2017/1/10.
  */
 
-public class MainActivity extends AppCompatActivity implements Callback {
+public class DrawTestActivity extends AppCompatActivity implements Callback {
 
     private long onCreateStartTime;
 
@@ -24,12 +23,12 @@ public class MainActivity extends AppCompatActivity implements Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_test);
         TextView textView = (TextView) findViewById(R.id.text);
-        textView.setText(MainActivity.class.getSimpleName());
+        textView.setText(DrawTestActivity.class.getSimpleName());
 
         findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginRequestActivity.startActivity(MainActivity.this);
+                LoginRequestActivity.startActivity(DrawTestActivity.this);
             }
         });
 

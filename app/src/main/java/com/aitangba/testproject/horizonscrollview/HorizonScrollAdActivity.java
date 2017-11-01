@@ -10,7 +10,7 @@ import com.aitangba.testproject.slideback.slidinglayout.BaseActivity;
  * Created by fhf11991 on 2016/9/1.
  */
 
-public class HorizonScrollActivity extends BaseActivity {
+public class HorizonScrollAdActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

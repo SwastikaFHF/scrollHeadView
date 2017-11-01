@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aitangba.testproject.R;
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +81,7 @@ public class ThreadPoolActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK && requestCode == PhotoPicker.REQUEST_CODE) {
             if (data != null) {
                 mPhotos = data.getStringArrayListExtra(PhotoPicker.KEY_SELECTED_PHOTOS);
-                mTextView.setText(JSON.toJSONString(mPhotos));
+                mTextView.setText(new Gson().toJson(mPhotos));
             }
         }
     }

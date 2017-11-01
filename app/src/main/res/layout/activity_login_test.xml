@@ -21,6 +21,7 @@
     <com.aitangba.testproject.login.CustomView
         android:id="@+id/custom"
         android:layout_width="2dp"
-                                               android:layout_height="2dp"
-    android:background="@color/colorAccent"></com.aitangba.testproject.login.CustomView>
+        android:layout_height="2dp"
+        android:background="@color/colorAccent"/>
+
 </LinearLayout>
