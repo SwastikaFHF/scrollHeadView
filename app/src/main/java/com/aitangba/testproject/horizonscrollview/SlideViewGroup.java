@@ -119,6 +119,7 @@ public class SlideViewGroup extends ViewGroup {
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
         Log.d(TAG, "onInterceptTouchEvent --- ACTION = " + getEventName(ev));
         if(mSliding) {
+            requestParentDisallowInterceptTouchEvent(true);
             return true;
         }
 
