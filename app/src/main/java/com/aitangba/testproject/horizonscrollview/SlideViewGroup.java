@@ -1,7 +1,6 @@
 package com.aitangba.testproject.horizonscrollview;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +12,7 @@ import android.widget.Scroller;
 
 /**
  * Created by fhf11991 on 2016/8/31.
+ * 2017-11-15 当前index为0，向右滑动，会出现瞬间白屏现象！！！
  */
 public class SlideViewGroup extends ViewGroup {
     private static final String TAG = "SlideViewGroup";
@@ -61,56 +61,20 @@ public class SlideViewGroup extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        int left = 0;
+        int count = getChildCount();
 
-        final int childCount = getChildCount();
-
-        // current child view
-        View currentChildView = getChildAt(mCurrentPosition);
-        final int left = mCurrentViewLeft;
-        final int right = mCurrentViewLeft + currentChildView.getMeasuredWidth();
-        currentChildView.layout(left, t, right, t + currentChildView.getMeasuredHeight());
-
-        if (childCount <= 1) {
-            return;
+        for(int i = 0; i < count; i ++) {
+            View childView = getChildAt(i);
+            int right = left + childView.getMeasuredWidth();
+            int bottom = t + childView.getMeasuredHeight();
+            childView.layout(left, t, right, bottom);
+            if(changeLayout) {
+                left = left - childView.getMeasuredWidth();
+            } else {
+                left = right;
+            }
         }
-
-        // other child view
-        int otherChildViewPosition;
-        View otherChildView;
-        int otherViewLeft;
-        if (mCurrentViewLeft < 0) { // turn right
-            otherChildViewPosition = (mCurrentPosition + 1) % childCount;
-            otherChildView = getChildAt(otherChildViewPosition);
-            otherViewLeft = right;
-        } else if (mCurrentViewLeft > 0) { // turn left
-            otherChildViewPosition = (mCurrentPosition - 1 + childCount) % childCount;
-            otherChildView = getChildAt(otherChildViewPosition);
-            otherViewLeft = left - otherChildView.getMeasuredWidth();
-        } else {
-            return;
-        }
-        otherChildView.layout(otherViewLeft, t, otherViewLeft + otherChildView.getMeasuredWidth(), t + currentChildView.getMeasuredHeight());
-    }
-
-    private String getEventName(MotionEvent ev) {
-
-        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                return "ACTION_DOWN";
-            case MotionEvent.ACTION_MOVE:
-                return "ACTION_MOVE";
-            case MotionEvent.ACTION_UP:
-                return "ACTION_UP";
-            case MotionEvent.ACTION_OUTSIDE:
-                return "ACTION_OUTSIDE";
-            case MotionEvent.ACTION_CANCEL:
-                return "ACTION_CANCEL";
-
-            default:
-                break;
-        }
-        return "unknown_action";
     }
 
     @Override
@@ -136,6 +100,8 @@ public class SlideViewGroup extends ViewGroup {
         return super.onInterceptTouchEvent(ev);
     }
 
+    boolean changeLayout = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
@@ -146,31 +112,44 @@ public class SlideViewGroup extends ViewGroup {
                 float pointX = ev.getRawX();
                 float diff = pointX - mLastPointX;
                 mLastPointX = pointX;
-                mCurrentViewLeft += diff;
-                requestLayout();
+
+                float scrollToX = getScrollX() + diff;
+
+                Log.d(TAG, "onTouchEvent ---  scrollToX = " + scrollToX);
+                if(scrollToX < 0 && !changeLayout) {
+                    changeLayout = true;
+                    requestLayout();
+                } else if(scrollToX > 0 && changeLayout){
+                    changeLayout = false;
+                    requestLayout();
+                }
+
+
+                scrollBy((int) -diff, 0);//向右滑动diff > 0,
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_OUTSIDE:
                 requestParentDisallowInterceptTouchEvent(false);
                 mSliding = false;
 
+
                 int width = getMeasuredWidth();
                 int halfWidth = width / 2;
 
                 int targetX;
-                if (mCurrentViewLeft < -halfWidth) {
+                if (getScrollX() < -halfWidth) {
                     targetX = -width;
-                } else if (mCurrentViewLeft >= -halfWidth && mCurrentViewLeft <= 0) {
+                } else if (getScrollX() >= -halfWidth && getScrollX() <= 0) {
                     targetX = 0;
-                } else if (mCurrentViewLeft <= -halfWidth && mCurrentViewLeft >= 0) {
+                } else if (getScrollX() <= -halfWidth && getScrollX() >= 0) {
                     targetX = 0;
                 } else {
                     targetX = width;
                 }
-//                mScroller.startScroll(mCurrentViewLeft, 0, targetX - mCurrentViewLeft, 0);
-//                Log.d(TAG, "ACTION_OUTSIDE ---> mCurrentViewLeft = " + mCurrentViewLeft + "  dx = " + (targetX - mCurrentViewLeft));
-                break;
 
+                mScroller.startScroll(getScrollX(), 0, targetX - getScrollX(), 0);
+                invalidate();
+                break;
             default:
                 break;
         }
@@ -184,15 +163,35 @@ public class SlideViewGroup extends ViewGroup {
         }
     }
 
-
     @Override
     public void computeScroll() {
         if (mScroller.computeScrollOffset()) {
-            mCurrentViewLeft = mScroller.getCurrX();
-            Log.d(TAG, "computeScroll ---> getCurrX = " + mCurrentViewLeft);
-            requestLayout();
-        } else {
-            Log.d(TAG, "computeScroll ---> over " + mCurrentViewLeft);
+            int x = mScroller.getCurrX();
+            int y = mScroller.getCurrY();
+            scrollTo(x, y);
+            invalidate();
+            return;
         }
+    }
+
+    private String getEventName(MotionEvent ev) {
+
+        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                return "ACTION_DOWN";
+            case MotionEvent.ACTION_MOVE:
+                return "ACTION_MOVE";
+            case MotionEvent.ACTION_UP:
+                return "ACTION_UP";
+            case MotionEvent.ACTION_OUTSIDE:
+                return "ACTION_OUTSIDE";
+            case MotionEvent.ACTION_CANCEL:
+                return "ACTION_CANCEL";
+
+            default:
+                break;
+        }
+        return "unknown_action";
     }
 }

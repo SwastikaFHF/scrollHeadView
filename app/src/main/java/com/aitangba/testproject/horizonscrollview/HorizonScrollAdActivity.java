@@ -26,7 +26,7 @@ public class HorizonScrollAdActivity extends BaseActivity {
         slideViewGroup.addView(imageView);
 
         imageView = new ImageView(this);
-        imageView.setBackgroundResource(R.drawable.bg_red);
+        imageView.setBackgroundResource(R.drawable.bg_update_common);
 
         slideViewGroup.addView(imageView);
     }
