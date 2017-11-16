@@ -7,6 +7,12 @@
     <com.aitangba.testproject.horizonscrollview.SlideViewGroup
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="200dp"/>
+
+    <com.aitangba.testproject.horizonscrollview.LoopViewPager
+        android:id="@+id/loopViewPager"
+        android:layout_width="match_parent"
         android:layout_height="200dp"/>
     
 </LinearLayout>
