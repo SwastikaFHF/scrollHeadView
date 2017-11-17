@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.slideback.slidinglayout.BaseActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by fhf11991 on 2016/9/1.
  */
@@ -33,16 +36,38 @@ public class HorizonScrollAdActivity extends BaseActivity {
 //
 //        slideViewGroup.addView(imageView);
 
-        LoopViewPager loopViewPager = findViewById(R.id.loopViewPager);
+        List<Integer> list = new ArrayList<>();
+        list.add(R.drawable.bg_red);
+        list.add(R.drawable.bg_red);
+        final Adapter adapter = new Adapter(list);
+        final LoopViewPager loopViewPager = findViewById(R.id.loopViewPager);
+        loopViewPager.setAdapter(adapter);
 
-        loopViewPager.setAdapter(new Adapter());
+
+        findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Integer> list = new ArrayList<>();
+                list.add(R.drawable.bg_update_common);
+                list.add(R.drawable.bg_update_common);
+                final Adapter adapter = new Adapter(list);
+                loopViewPager.setAdapter(adapter);
+            }
+        });
     }
 
     private class Adapter extends PagerAdapter {
 
+        private List<Integer> mList;
+
+
+        public Adapter(List<Integer> list) {
+            mList = list;
+        }
+
         @Override
         public int getCount() {
-            return 2;
+            return mList.size();
         }
 
         @Override
@@ -58,11 +83,7 @@ public class HorizonScrollAdActivity extends BaseActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             ImageView imageView = new ImageView(container.getContext());
-            if(position == 0) {
-                imageView.setBackgroundResource(R.drawable.bg_red);
-            } else {
-                imageView.setBackgroundResource(R.drawable.bg_update_common);
-            }
+            imageView.setBackgroundResource(mList.get(position));
             container.addView(imageView);
             return imageView;
         }
