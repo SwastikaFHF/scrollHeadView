@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.ActivityFragmentBinding;
@@ -21,12 +22,13 @@ public class FragmentTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_fragment);
 
-        mBinding.getRoot().postDelayed(new Runnable() {
+        mBinding.testBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void run() {
-                getSupportFragmentManager().beginTransaction().add(R.id.container_layout, new OneFragment(), "cc").commitAllowingStateLoss();
+            public void onClick(View v) {
+                getSupportFragmentManager().beginTransaction().add(R.id.container_layout, new FirstFragment(), "cc").commitAllowingStateLoss();
+                finish();
             }
-        }, 3000);
+        });
 
     }
 }

@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(HorizonScrollAdActivity.class);
+                startActivity(FragmentTestActivity.class);
             }
         });
     }
