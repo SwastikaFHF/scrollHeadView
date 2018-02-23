@@ -1,18 +1,65 @@
 <!DOCTYPE html>
-<html>
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+<html lang="zh-CN">
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+   <title>Bootstrap 101 Template</title>
 
-      <script type="text/javascript">
+   <!-- Bootstrap -->
+   <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+   <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+   <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+   <!-- Include all compiled plugins (below), or include individual files as needed -->
+   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+   <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+   <script type="text/javascript">
          function callAndroid(){
             var json = {"params":{"content":"js调用了Toast方法"}};
             UtilsPlugin.toast(JSON.stringify(json));
          }
-      </script>
+   </script>
 
-      <title>Carson</title>
-   </head>
-   <body>
-      <button type="button" id="button1" onclick="callAndroid()">测试</button>
-   </body>
+</head>
+<body>
+
+<h3>全局接口</h3>
+
+<div class="btn-group">
+		<label for="name">选择列表</label>
+		<select class="form-control">
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option>
+		</select>
+	</div>
+
+<div class="form-group">
+    <label>选择域名:</label>
+    <div class="btn-group bootstrap-select show-tick dropdown">
+   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      
+      <span class="caret"></span>
+   </button>
+   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <li><a href="#">Action</a></li>
+      <li><a href="#">Another action</a></li>
+      <li><a href="#">Something else here</a></li>
+   </ul>
+</div>
+</div>
+
+<div class="form-group">
+    <label>编辑域名:</label>
+    <div class="btn-group">
+     <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+</div>
+</div>
+
+<button type="button" class="btn btn-lg btn-warning " onclick="callAndroid()">提交</button>
+</body>
 </html>
