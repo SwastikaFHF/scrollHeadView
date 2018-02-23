@@ -38,6 +38,7 @@ import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
 import com.aitangba.testproject.viewpager.ViewPageActivity;
+import com.aitangba.testproject.webdebug.WebDebugActivity;
 import com.aitangba.testproject.wheelview.WheelViewActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
 
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         activityInfoList.add(new ActivityInfo("CalendarActivity", CalendarActivity.class));
 
         activityInfoList.add(new ActivityInfo("权限测试", LocationTestActivity.class));
+        activityInfoList.add(new ActivityInfo("WebView调试测试", WebDebugActivity.class));
     }
 
     @Override
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(FragmentTestActivity.class);
+                startActivity(WebDebugActivity.class);
             }
         });
     }

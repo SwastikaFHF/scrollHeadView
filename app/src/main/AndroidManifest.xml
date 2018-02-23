@@ -80,6 +80,7 @@
         <activity android:name=".runnablemanager.RunnableManagerActivity"></activity>
 
         <activity android:name=".amap.LocationTestActivity"></activity>
+        <activity android:name=".webdebug.WebDebugActivity"></activity>
 
     </application>
 

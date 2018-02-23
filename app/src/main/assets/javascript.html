@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+
+      <script type="text/javascript">
+         function callAndroid(){
+            var json = {"params":{"content":"js调用了Toast方法"}};
+            UtilsPlugin.toast(JSON.stringify(json));
+         }
+      </script>
+
+      <title>Carson</title>
+   </head>
+   <body>
+      <button type="button" id="button1" onclick="callAndroid()">测试</button>
+   </body>
+</html>
