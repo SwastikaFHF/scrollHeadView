@@ -20,6 +20,7 @@ import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.horizonscrollview.HorizonScrollAdActivity;
 import com.aitangba.testproject.irregularview.IrregularViewActivity;
+import com.aitangba.testproject.job.JobListActivity;
 import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loadingview.LoadViewActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
         activityInfoList.add(new ActivityInfo("权限测试", LocationTestActivity.class));
         activityInfoList.add(new ActivityInfo("WebView调试测试", WebDebugActivity.class));
+        activityInfoList.add(new ActivityInfo("任务调度", JobListActivity.class));
     }
 
     @Override
