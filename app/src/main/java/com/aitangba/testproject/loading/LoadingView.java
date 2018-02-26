@@ -9,8 +9,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 /**
  * Created by fhf11991 on 2018/2/26.
@@ -18,10 +20,12 @@ import android.view.View;
 
 public class LoadingView extends View {
 
-    private final static int RADIUS = 40;
+    private final static int RADIUS = 20;
     private final static int TARGET_VALUE = 150;
     private final static int DURATION = 1000;
 
+    private final AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator(); // 加速
+    private final DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator(); // 减速
     private Paint mRedPaint;
     private Paint mYellowPaint;
     private Paint mGreenPaint;
@@ -41,24 +45,26 @@ public class LoadingView extends View {
         super(context, attrs, defStyleAttr);
 
         mRedPaint = new Paint();
-        mRedPaint.setColor(Color.RED);
+        mRedPaint.setColor(Color.parseColor("#EC6173"));
         mRedPaint.setAntiAlias(true);
 
         mYellowPaint = new Paint();
-        mYellowPaint.setColor(Color.YELLOW);
+        mYellowPaint.setColor(Color.parseColor("#FFE793"));
         mYellowPaint.setAntiAlias(true);
 
         mGreenPaint = new Paint();
-        mGreenPaint.setColor(Color.GREEN);
+        mGreenPaint.setColor(Color.parseColor("#74DF74"));
         mGreenPaint.setAntiAlias(true);
 
         mValueAnimator = ValueAnimator.ofInt(1, TARGET_VALUE);
         mValueAnimator.setDuration(DURATION);
+        mValueAnimator.setInterpolator(accelerateInterpolator);
         mValueAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mCurrentCycle = (mCurrentCycle + 1) % 6;
+                animation.setInterpolator(mCurrentCycle % 2 == 0 ? accelerateInterpolator : decelerateInterpolator);
                 animation.start();
             }
         });
@@ -66,7 +72,6 @@ public class LoadingView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mCurrentValue = (int) animation.getAnimatedValue();
-                Log.d("LoadingView", "-----> mCurrentValue = " + mCurrentValue);
                 invalidate();
             }
         });

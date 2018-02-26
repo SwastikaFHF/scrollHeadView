@@ -17,6 +17,5 @@ public class LoadingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
         LoadingView loadingView = findViewById(R.id.loadingView);
-        loadingView.start();
     }
 }
