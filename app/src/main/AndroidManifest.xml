@@ -82,6 +82,7 @@
         <activity android:name=".amap.LocationTestActivity"></activity>
         <activity android:name=".webdebug.WebDebugActivity"></activity>
         <activity android:name=".job.JobListActivity"></activity>
+        <activity android:name=".loading.LoadingActivity"></activity>
 
     </application>
 
