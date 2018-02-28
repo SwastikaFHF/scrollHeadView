@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
@@ -56,25 +55,8 @@ public class LoadingView extends View {
         mGreenPaint.setColor(Color.parseColor("#74DF74"));
         mGreenPaint.setAntiAlias(true);
 
-        mValueAnimator = ValueAnimator.ofInt(1, TARGET_VALUE);
-        mValueAnimator.setDuration(DURATION);
-        mValueAnimator.setInterpolator(accelerateInterpolator);
-        mValueAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                mCurrentCycle = (mCurrentCycle + 1) % 6;
-                animation.setInterpolator(mCurrentCycle % 2 == 0 ? accelerateInterpolator : decelerateInterpolator);
-                animation.start();
-            }
-        });
-        mValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCurrentValue = (int) animation.getAnimatedValue();
-                invalidate();
-            }
-        });
+        mValueAnimator = buildAnimator();
+        mValueAnimator.start();
 
         addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
             @Override
@@ -87,6 +69,29 @@ public class LoadingView extends View {
                 cancel();
             }
         });
+    }
+
+    private ValueAnimator buildAnimator() {
+        ValueAnimator animator = ValueAnimator.ofInt(1, TARGET_VALUE);
+        animator.setDuration(DURATION);
+        animator.setInterpolator(mCurrentCycle % 2 == 0 ? accelerateInterpolator : decelerateInterpolator);
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mCurrentCycle = (mCurrentCycle + 1) % 6;
+                mValueAnimator = buildAnimator();
+                mValueAnimator.start();
+            }
+        });
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCurrentValue = (int) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+        return animator;
     }
 
     public void start() {
