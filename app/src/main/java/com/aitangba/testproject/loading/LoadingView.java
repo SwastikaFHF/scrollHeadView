@@ -21,7 +21,7 @@ public class LoadingView extends View {
 
     private final static int RADIUS = 20;
     private final static int TARGET_VALUE = 150;
-    private final static int DURATION = 1000;
+    private final static int DURATION = 600;
 
     private final AccelerateInterpolator accelerateInterpolator = new AccelerateInterpolator(); // 加速
     private final DecelerateInterpolator decelerateInterpolator = new DecelerateInterpolator(); // 减速
