@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -18,6 +19,8 @@ import android.view.animation.DecelerateInterpolator;
  */
 
 public class LoadingView extends View {
+
+    private static final String TAG = "LoadingView";
 
     private final static int RADIUS = 20;
     private final static int TARGET_VALUE = 150;
@@ -56,19 +59,6 @@ public class LoadingView extends View {
         mGreenPaint.setAntiAlias(true);
 
         mValueAnimator = buildAnimator();
-        mValueAnimator.start();
-
-        addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                start();
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                cancel();
-            }
-        });
     }
 
     private ValueAnimator buildAnimator() {
@@ -80,6 +70,7 @@ public class LoadingView extends View {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mCurrentCycle = (mCurrentCycle + 1) % 6;
+                Log.d(TAG, "End   CurrentCycle = " + mCurrentCycle);
                 mValueAnimator = buildAnimator();
                 mValueAnimator.start();
             }
@@ -88,6 +79,7 @@ public class LoadingView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mCurrentValue = (int) animation.getAnimatedValue();
+                Log.d(TAG, "Update   CurrentValue = " + mCurrentValue);
                 invalidate();
             }
         });
@@ -112,73 +104,74 @@ public class LoadingView extends View {
 
         int width = getMeasuredWidth();
         int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
         int paddingRight = getPaddingRight();
 
         int totalDistance = (width - paddingLeft - paddingRight) / 2 - RADIUS;
         int distance = mCurrentValue * totalDistance / TARGET_VALUE;
         int middleCenterX = paddingLeft + totalDistance + RADIUS;
 
+        int centY = getMeasuredHeight() / 2;
+
         switch (mCurrentCycle) {
             case 0:
                 // red circle  ->|
-                canvas.drawCircle(paddingLeft + RADIUS + distance, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(paddingLeft + RADIUS + distance, centY, RADIUS, mRedPaint);
 
                 // yellow circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mYellowPaint);
 
                 // green circle |<-
-                canvas.drawCircle(width - paddingRight - RADIUS - distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(width - paddingRight - RADIUS - distance, centY, RADIUS, mGreenPaint);
                 break;
             case 1:
                 // red circle |->
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, centY, RADIUS, mRedPaint);
 
                 // yellow circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mYellowPaint);
 
                 // green circle <-|
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, centY, RADIUS, mGreenPaint);
                 break;
             case 2:
                 // red circle |<-
-                canvas.drawCircle(width - paddingRight - RADIUS - distance, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(width - paddingRight - RADIUS - distance, centY, RADIUS, mRedPaint);
 
                 // yellow circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mYellowPaint);
 
                 // green circle ->|
-                canvas.drawCircle(paddingLeft + RADIUS + distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(paddingLeft + RADIUS + distance, centY, RADIUS, mGreenPaint);
                 break;
             case 3:
                 // red circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mRedPaint);
 
                 // yellow circle <-|
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, centY, RADIUS, mYellowPaint);
 
                 // green circle |->
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, centY, RADIUS, mGreenPaint);
                 break;
             case 4:
                 // red circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mRedPaint);
 
                 // yellow circle ->|
-                canvas.drawCircle(paddingLeft + RADIUS + distance, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(paddingLeft + RADIUS + distance, centY, RADIUS, mYellowPaint);
 
                 // green circle |<-
-                canvas.drawCircle(width - paddingRight - RADIUS - distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(width - paddingRight - RADIUS - distance, centY, RADIUS, mGreenPaint);
                 break;
             case 5:
                 // red circle <-|
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, paddingTop + RADIUS, RADIUS, mRedPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS - distance, centY, RADIUS, mRedPaint);
 
                 // yellow circle
-                canvas.drawCircle(middleCenterX, paddingTop + RADIUS, RADIUS, mYellowPaint);
+                canvas.drawCircle(middleCenterX, centY, RADIUS, mYellowPaint);
 
                 // green circle |->
-                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, paddingTop + RADIUS, RADIUS, mGreenPaint);
+                canvas.drawCircle(paddingLeft + totalDistance + RADIUS + distance, centY, RADIUS, mGreenPaint);
                 break;
 
         }

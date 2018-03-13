@@ -40,6 +40,4 @@ public class LoadingTestActivity extends BaseActivity {
             }
         });
     }
-
-
 }

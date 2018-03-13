@@ -15,7 +15,11 @@ public class LoadingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_loading);
         LoadingView loadingView = findViewById(R.id.loadingView);
+        loadingView.cancel();
+
+        new LoadingDialog(this).show();
     }
 }
