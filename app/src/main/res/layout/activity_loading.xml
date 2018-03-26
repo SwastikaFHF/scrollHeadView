@@ -5,6 +5,19 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@android:color/holo_red_dark">
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:layout_width="70dp"
+            android:layout_height="?actionBarSize"
+            android:background="@null"
+            android:src="@drawable/ic_menu_scan"/>
+
+    </FrameLayout>
+
     <com.aitangba.testproject.loading.LoadingView
         android:id="@+id/loadingView"
         android:layout_width="150dp"
