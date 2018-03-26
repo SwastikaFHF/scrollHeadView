@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by fhf11991 on 2018/3/26.
  */
-public abstract class AsyncTask<Params, Progress, Error, Result> {
+abstract class AsyncTask<Params, Progress, Error, Result> {
     private static final String LOG_TAG = "AsyncTask";
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
