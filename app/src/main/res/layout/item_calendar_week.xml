@@ -6,10 +6,11 @@
               android:gravity="center"
               android:layout_height="wrap_content">
 
-    <TextView
+    <com.aitangba.testproject.view.calendar.common.CheckableTextView
         android:id="@+id/dayText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/calendar_text"
         android:padding="10dp"
         android:text="14" />
 

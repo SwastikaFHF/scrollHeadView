@@ -9,12 +9,10 @@ import android.view.View;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
-import com.aitangba.testproject.calendarview.CalendarActivity;
 import com.aitangba.testproject.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.drawable.DrawableTestActivity;
 import com.aitangba.testproject.edgeeffect.EffectActivity;
-import com.aitangba.testproject.flowlayout.FlowViewActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.horizonscroll.HorizonScrollTestActivity;
@@ -39,9 +37,11 @@ import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
-import com.aitangba.testproject.viewpager.ViewPageActivity;
+import com.aitangba.testproject.view.calendar.CalendarActivity;
+import com.aitangba.testproject.view.flowlayout.FlowViewActivity;
+import com.aitangba.testproject.view.viewpager.ViewPageActivity;
+import com.aitangba.testproject.view.wheelview.WheelViewActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
-import com.aitangba.testproject.wheelview.WheelViewActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(LoadingActivity.class);
+                startActivity(CalendarActivity.class);
             }
         });
     }

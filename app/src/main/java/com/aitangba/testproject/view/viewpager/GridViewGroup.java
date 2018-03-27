@@ -1,4 +1,4 @@
-package com.aitangba.testproject.viewpager;
+package com.aitangba.testproject.view.viewpager;
 
 import android.content.Context;
 import android.util.AttributeSet;

@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.testproject.flowlayout.FlowLayout
+    <com.aitangba.testproject.view.flowlayout.FlowLayout
         android:layout_width="1dp"
         android:layout_weight="1"
         android:visibility="gone"
@@ -46,9 +46,9 @@
             android:gravity="center"
             android:text="测试View5"/>
 
-    </com.aitangba.testproject.flowlayout.FlowLayout>
+    </com.aitangba.testproject.view.flowlayout.FlowLayout>
 
-    <com.aitangba.testproject.flowlayout.AverageSpaceViewGroup
+    <com.aitangba.testproject.view.flowlayout.AverageSpaceViewGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -76,7 +76,7 @@
             android:text="测试View3"/>
 
 
-    </com.aitangba.testproject.flowlayout.AverageSpaceViewGroup>
+    </com.aitangba.testproject.view.flowlayout.AverageSpaceViewGroup>
 
     <Button
         android:id="@+id/emptyTextBtn"

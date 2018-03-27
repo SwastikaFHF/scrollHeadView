@@ -1,35 +1,20 @@
-package com.aitangba.testproject.calendarview;
+package com.aitangba.testproject.view.calendar.hotel;
 
 import android.databinding.DataBindingUtil;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.ItemCalendarMonthBinding;
 import com.aitangba.testproject.databinding.ItemCalendarWeekBinding;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by fhf11991 on 2017/4/11.
  */
 
-public class HolidayCalendarAdapter extends BaseCalendarAdapter {
-
-    private List<HolidayCalendarBean> mHolidays = new ArrayList<>();
-    private List<HolidayCalendarBean> mRestDays = new ArrayList<>();
-
-    public void setHolidays(List<HolidayCalendarBean> holidays) {
-        mHolidays.addAll(holidays);
-    }
-
-    public void setRestDays(List<HolidayCalendarBean> restDays) {
-        mRestDays.addAll(restDays);
-    }
+public class CalendarAdapter extends BaseCalendarAdapter {
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -64,8 +49,6 @@ public class HolidayCalendarAdapter extends BaseCalendarAdapter {
                     binding.dayText.setText(String.valueOf(calendarBean.date));
                 }
 
-                matchHoliday(binding.dayText, calendarBean);
-
                 binding.getRoot().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -86,15 +69,6 @@ public class HolidayCalendarAdapter extends BaseCalendarAdapter {
                 binding.getRoot().setVisibility(View.GONE);
             }
 
-        }
-    }
-
-    private void matchHoliday(TextView textView, CalendarBean calendarBean) {
-        for(HolidayCalendarBean holidayCalendarBean : mHolidays) {
-            if(holidayCalendarBean.sameDay(calendarBean)) {
-                textView.setText(holidayCalendarBean.holidayName);
-                break;
-            }
         }
     }
 }

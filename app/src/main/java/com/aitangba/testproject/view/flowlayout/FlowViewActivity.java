@@ -1,4 +1,4 @@
-package com.aitangba.testproject.flowlayout;
+package com.aitangba.testproject.view.flowlayout;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

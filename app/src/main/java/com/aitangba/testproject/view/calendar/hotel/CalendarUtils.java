@@ -1,4 +1,4 @@
-package com.aitangba.testproject.calendarview;
+package com.aitangba.testproject.view.calendar.hotel;
 
 import java.util.ArrayList;
 import java.util.Calendar;

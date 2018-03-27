@@ -1,4 +1,4 @@
-package com.aitangba.testproject.wheelview;
+package com.aitangba.testproject.view.wheelview;
 
 import android.content.Context;
 import android.database.DataSetObserver;

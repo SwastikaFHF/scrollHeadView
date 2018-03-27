@@ -1,4 +1,4 @@
-package com.aitangba.testproject.calendarview;
+package com.aitangba.testproject.view.calendar.hotel;
 
 import android.databinding.ViewDataBinding;
 import android.support.annotation.IntDef;
