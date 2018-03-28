@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
+import com.aitangba.testproject.view.calendar.common.listener.BaseChoiceListener;
+import com.aitangba.testproject.view.calendar.common.listener.CustomChoiceListener;
 import com.aitangba.testproject.view.calendar.common.listener.MultipleChoiceListener;
 import com.aitangba.testproject.view.calendar.common.listener.RangeChoiceListener;
 import com.aitangba.testproject.view.calendar.common.listener.SingleChoiceListener;
@@ -25,6 +27,7 @@ import java.util.Map;
 public class CalendarView extends RecyclerView {
 
     private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM");
+    private final List<BaseChoiceListener> mListeners = new ArrayList<>();
 
     public CalendarView(Context context) {
         super(context);
@@ -38,9 +41,16 @@ public class CalendarView extends RecyclerView {
         super(context, attrs, defStyle);
     }
 
-
     public Builder init(Date fromDate, Date toDate) {
         return new Builder(fromDate, toDate);
+    }
+
+    public void addListener(BaseChoiceListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void removeListener(BaseChoiceListener listener) {
+        mListeners.remove(listener);
     }
 
     private void validateAndUpdate(@NonNull Builder builder) {
@@ -48,18 +58,22 @@ public class CalendarView extends RecyclerView {
         MonthAdapter adapter = new MonthAdapter();
         setAdapter(adapter);
 
-        CellAdapter.OnCellClickListener onCellClickListener = null;
+        BaseChoiceListener onCellClickListener = null;
         switch (builder.mode) {
             case SINGLE:
-                onCellClickListener = new SingleChoiceListener(adapter);
+                onCellClickListener = new SingleChoiceListener();
                 break;
             case RANGE:
-                onCellClickListener = new RangeChoiceListener(adapter, builder.multipleSize);
+                onCellClickListener = new RangeChoiceListener(builder.multipleSize);
                 break;
             case MULTIPLE:
-                onCellClickListener = new MultipleChoiceListener(adapter, builder.multipleSize);
+                onCellClickListener = new MultipleChoiceListener(builder.multipleSize);
+                break;
+            case CUSTOM:
+                onCellClickListener = new CustomChoiceListener(mListeners);
                 break;
         }
+        onCellClickListener.attachMonthAdapter(adapter);
 
         Calendar nowCalendar = Calendar.getInstance();
         clearTime(nowCalendar);
@@ -176,7 +190,7 @@ public class CalendarView extends RecyclerView {
     }
 
     public enum SelectionMode {
-        SINGLE,MULTIPLE,RANGE
+        SINGLE,MULTIPLE,RANGE,CUSTOM
     }
 }
 

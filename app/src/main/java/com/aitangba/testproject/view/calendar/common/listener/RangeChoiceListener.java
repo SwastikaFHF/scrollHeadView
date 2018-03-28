@@ -4,7 +4,6 @@ import android.view.View;
 
 import com.aitangba.testproject.view.calendar.common.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Date;
 import java.util.List;
@@ -13,19 +12,17 @@ import java.util.List;
  * Created by fhf11991 on 2018/3/28.
  */
 
-public class RangeChoiceListener implements CellAdapter.OnCellClickListener {
+public class RangeChoiceListener  extends BaseChoiceListener {
 
     private int mRangeSize;
-    private MonthAdapter mMonthAdapter;
 
-    public RangeChoiceListener(MonthAdapter monthAdapter, int rangeSize) {
-        mMonthAdapter = monthAdapter;
+    public RangeChoiceListener(int rangeSize) {
         mRangeSize = rangeSize;
     }
 
     @Override
     public void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean) {
-        List<CellBean> selectedCells = mMonthAdapter.getSelectedCell();
+        List<CellBean> selectedCells = getMonthAdapter().getSelectedCell();
         int size = selectedCells.size();
         if (size == 0) {
             cellBean.isSelected = !cellBean.isSelected;
@@ -44,8 +41,8 @@ public class RangeChoiceListener implements CellAdapter.OnCellClickListener {
                 firstSelectedDate = date;
                 lastSelectedDate = selectedDate;
             }
-            for (int i = 0, count = mMonthAdapter.getItemCount(); i < count; i++) {
-                CellAdapter itemAdapter = mMonthAdapter.getItem(i);
+            for (int i = 0, count = getMonthAdapter().getItemCount(); i < count; i++) {
+                CellAdapter itemAdapter = getMonthAdapter().getItem(i);
                 for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
                     CellBean tempCell = itemAdapter.getItem(j);
                     Date tempDate = tempCell.date;
@@ -54,13 +51,13 @@ public class RangeChoiceListener implements CellAdapter.OnCellClickListener {
                     }
                 }
             }
-            mMonthAdapter.notifyDataSetChanged();
+            getMonthAdapter().notifyDataSetChanged();
         } else {
             for (CellBean itemCell : selectedCells) {
                 itemCell.isSelected = false;
             }
             cellBean.isSelected = true;
-            mMonthAdapter.notifyDataSetChanged();
+            getMonthAdapter().notifyDataSetChanged();
         }
     }
 }

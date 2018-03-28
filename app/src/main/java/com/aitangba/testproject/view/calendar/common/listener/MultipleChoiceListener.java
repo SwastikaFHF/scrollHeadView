@@ -4,7 +4,6 @@ import android.view.View;
 
 import com.aitangba.testproject.view.calendar.common.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -14,13 +13,11 @@ import java.util.List;
  * Created by fhf11991 on 2018/3/28.
  */
 
-public class MultipleChoiceListener implements CellAdapter.OnCellClickListener {
+public class MultipleChoiceListener extends BaseChoiceListener {
 
-    private MonthAdapter mMonthAdapter;
     private int mMultipleSize;
 
-    public MultipleChoiceListener(MonthAdapter monthAdapter, int multipleSize) {
-        mMonthAdapter = monthAdapter;
+    public MultipleChoiceListener(int multipleSize) {
         mMultipleSize = multipleSize;
     }
 
@@ -39,7 +36,7 @@ public class MultipleChoiceListener implements CellAdapter.OnCellClickListener {
         }
 
         // 清理超出范围的日期
-        List<CellBean> selectedCells = mMonthAdapter.getSelectedCell();
+        List<CellBean> selectedCells = getMonthAdapter().getSelectedCell();
         int size = selectedCells.size();
         Date date = cellBean.date;
         if(size == 0) {
@@ -54,7 +51,7 @@ public class MultipleChoiceListener implements CellAdapter.OnCellClickListener {
                 firstSelectedCell.isSelected = false;
             }
             cellBean.isSelected = true;
-            mMonthAdapter.notifyDataSetChanged();
+            getMonthAdapter().notifyDataSetChanged();
         } else {
             Date firstSelectedDate = selectedCells.get(0).date;
             Date lastSelectedDate = selectedCells.get(size - 1).date;
@@ -74,7 +71,7 @@ public class MultipleChoiceListener implements CellAdapter.OnCellClickListener {
                 }
             }
             cellBean.isSelected = true;
-            mMonthAdapter.notifyDataSetChanged();
+            getMonthAdapter().notifyDataSetChanged();
         }
     }
 
