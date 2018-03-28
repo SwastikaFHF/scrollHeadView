@@ -18,12 +18,17 @@ public class CellAdapter extends MonthView.BaseCellAdapter {
     private int mSpaceCount;
     private List<CellBean> mList = new ArrayList<>();
     private String mTitle;
+    private OnCellClickListener mOnCellClickListener;
 
     public CellAdapter(int spaceCount, List<CellBean> list, String title) {
         mSpaceCount = spaceCount;
         mList.clear();
         mList.addAll(list);
         mTitle = title;
+    }
+
+    public void setOnCellClickListener(OnCellClickListener onCellClickListener) {
+        mOnCellClickListener = onCellClickListener;
     }
 
     public String getTitle() {
@@ -65,14 +70,23 @@ public class CellAdapter extends MonthView.BaseCellAdapter {
             viewHolder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    cellBean.isSelected = !cellBean.isSelected;
-                    notifyDataSetChanged();
+                    if(mOnCellClickListener != null) {
+                        mOnCellClickListener.onClick(CellAdapter.this, v, cellBean);
+                    }
                 }
             });
         }
     }
 
+    public CellBean getItem(int position) {
+        return mList.get(position);
+    }
+
     public static class ViewHolder {
         private CheckableTextView title;
+    }
+
+    public interface OnCellClickListener {
+        void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean);
     }
 }
