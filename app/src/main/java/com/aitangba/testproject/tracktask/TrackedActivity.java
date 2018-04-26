@@ -1,0 +1,26 @@
+package com.aitangba.testproject.tracktask;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+
+import com.aitangba.testproject.R;
+
+/**
+ * Created by fhf11991 on 2018/4/24.
+ */
+
+public class TrackedActivity extends AppCompatActivity {
+    TrackedAsyncTask.Tracker tracker = new TrackedAsyncTask.Tracker();
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_track);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        TrackedFragment fragment = new TrackedFragment();
+        transaction.add(R.id.containerLayout, fragment).commit();
+    }
+}

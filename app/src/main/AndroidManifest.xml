@@ -83,6 +83,7 @@
         <activity android:name=".webdebug.WebDebugActivity"></activity>
         <activity android:name=".job.JobListActivity"></activity>
         <activity android:name=".loading.LoadingActivity"></activity>
+        <activity android:name=".tracktask.TrackedActivity"></activity>
 
     </application>
 

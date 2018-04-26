@@ -504,6 +504,7 @@ abstract class AsyncTask<Params, Progress, Error, Result> {
         }
     }
 
+    @WorkerThread
     protected final void publishError(Error... values) {
         if (!isCancelled()) {
             getHandler().obtainMessage(MESSAGE_POST_ERROR,

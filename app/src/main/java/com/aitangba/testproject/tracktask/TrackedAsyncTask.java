@@ -110,6 +110,14 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
     protected void onCancelled() {
     }
 
+    protected final void publishProgress(Progress... value) {
+        mInnerTask.publishProgress(value);
+    }
+
+    protected final void publishError(Error... error) {
+        mInnerTask.publishError(error);
+    }
+
     @SafeVarargs
     private final TrackedAsyncTask<Params, Progress, Error, Result> executeParallel(Params... params) {
         if (mTracker == null) {
@@ -227,9 +235,5 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
             mOwner.unregisterSelf();
             mOwner.onSuccess(result);
         }
-    }
-
-    public interface TrackSupport {
-        TrackedAsyncTask.Tracker getTracker();
     }
 }

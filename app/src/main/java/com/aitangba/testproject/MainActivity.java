@@ -34,6 +34,7 @@ import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
+import com.aitangba.testproject.tracktask.TrackedActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(CalendarActivity.class);
+                startActivity(TrackedActivity.class);
             }
         });
     }
