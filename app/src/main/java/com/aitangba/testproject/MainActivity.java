@@ -31,6 +31,7 @@ import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
+import com.aitangba.testproject.screenshot.ScreenShotActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(TrackedActivity.class);
+                startActivity(ScreenShotActivity.class);
             }
         });
     }

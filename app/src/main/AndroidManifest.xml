@@ -84,6 +84,7 @@
         <activity android:name=".job.JobListActivity"></activity>
         <activity android:name=".loading.LoadingActivity"></activity>
         <activity android:name=".tracktask.TrackedActivity"></activity>
+        <activity android:name=".screenshot.ScreenShotActivity"></activity>
 
     </application>
 
