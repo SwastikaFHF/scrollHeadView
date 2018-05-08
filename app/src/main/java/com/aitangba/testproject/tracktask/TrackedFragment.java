@@ -2,11 +2,13 @@ package com.aitangba.testproject.tracktask;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.aitangba.testproject.R;
 
@@ -16,8 +18,6 @@ import com.aitangba.testproject.R;
 
 public class TrackedFragment extends Fragment {
 
-    private Handler handler = new Handler();
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_one, container, false);
@@ -25,15 +25,26 @@ public class TrackedFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        handler.post(new Runnable() {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        new HttpTask(this){
+
             @Override
-            public void run() {
-                Log.d("TrackedActivity", "runnable -- getActivity() == null ?? " + (getActivity() == null));
+            protected Object doInBackground(Object[] objects) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return super.doInBackground(objects);
             }
-        });
-        Log.d("TrackedActivity", "onDestroyView -- getActivity() == null ?? " + (getActivity() == null));
+
+            @Override
+            protected void onSuccess(Object o) {
+                super.onSuccess(o);
+                Toast.makeText(getActivity(), "成功啦！！！", Toast.LENGTH_SHORT).show();
+            }
+        }.startRequest();
     }
 }
 

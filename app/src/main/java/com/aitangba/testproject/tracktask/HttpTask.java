@@ -1,8 +1,5 @@
 package com.aitangba.testproject.tracktask;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
@@ -12,29 +9,20 @@ import android.view.View;
 
 public class HttpTask extends TrackedAsyncTask {
 
-    public HttpTask(Activity activity) {
-
+    public HttpTask(TrackedActivity activity) {
+        this(activity.getWindow().getDecorView());
     }
 
     public HttpTask(Fragment fragment) {
+        this(fragment.getView());
     }
 
     public HttpTask(View view) {
-
-        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-
-            }
-        });
+        super(view);
     }
 
-    public HttpTask(Dialog dialog) {
+    public void startRequest() {
+        executeParallel(new Void[0]);
     }
 
     @Override

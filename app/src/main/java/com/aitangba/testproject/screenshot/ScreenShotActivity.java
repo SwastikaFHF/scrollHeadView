@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 public class ScreenShotActivity extends AppCompatActivity {
 
     private ImageView imageView;
+    private static final String TAG = "ScreenShotActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +56,26 @@ public class ScreenShotActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             }
         });
+
+        findViewById(Window.ID_ANDROID_CONTENT).addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                Log.d(TAG, "onViewAttachedToWindow");
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Log.d(TAG, "onViewDetachedFromWindow");
+            }
+        });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
     public static Bitmap getScreenShotSync(View v) {
         Bitmap bitmap = null;
         // 将绘图缓存得到的,注意这里得到的只是一个图像的引用
