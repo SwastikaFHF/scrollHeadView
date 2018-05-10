@@ -31,7 +31,7 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
     }
 
     private void unregisterSelf() {
-        ViewTracked.getInstance().unregisterTask(this);
+        TaskTracked.getInstance().unregisterTask(this);
     }
 
     /**
@@ -102,14 +102,14 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
 
     @SafeVarargs
     protected final TrackedAsyncTask<Params, Progress, Error, Result> executeParallel(Params... params) {
-        ViewTracked.getInstance().registerTask(mRootView, this);
+        TaskTracked.getInstance().registerTask(mRootView, this);
         mInnerTask.executeParallel(params);
         return this;
     }
 
     @SafeVarargs
     protected final TrackedAsyncTask<Params, Progress, Error, Result> executeSerial(Params... params) {
-        ViewTracked.getInstance().registerTask(mRootView, this);
+        TaskTracked.getInstance().registerTask(mRootView, this);
         mInnerTask.executeSerial(params);
         return this;
     }

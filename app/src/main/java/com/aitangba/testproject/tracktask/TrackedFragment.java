@@ -1,13 +1,17 @@
 package com.aitangba.testproject.tracktask;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aitangba.testproject.R;
@@ -18,10 +22,42 @@ import com.aitangba.testproject.R;
 
 public class TrackedFragment extends Fragment {
 
+    private static final String TAG = "TrackedFragment";
+    private TextView mTextView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_one, container, false);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mTextView = view.findViewById(R.id.textView);
+
+        mTextView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                Log.d(TAG, "the draw from mTextView");
+                return true;
+            }
+        });
+
+        view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                Log.d(TAG, "the draw from rootView");
+                return true;
+            }
+        });
+
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mTextView.setText("测试@！！！");
+            }
+        }, 2000);
     }
 
     @Override

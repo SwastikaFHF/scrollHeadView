@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
@@ -31,7 +32,6 @@ import com.aitangba.testproject.path.PathActivity;
 import com.aitangba.testproject.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
-import com.aitangba.testproject.screenshot.ScreenShotActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
@@ -54,6 +54,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<ActivityInfo> activityInfoList = new ArrayList<>();
+    private Button mButton;
+
     {
         activityInfoList.add(new ActivityInfo("水平滚动", HorizonScrollActivity.class));
         activityInfoList.add(new ActivityInfo("水平滑动", HorizonScrollTestActivity.class));
@@ -124,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
+        mButton = findViewById(R.id.testBtn);
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(TrackedActivity.class);

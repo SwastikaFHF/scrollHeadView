@@ -5,11 +5,11 @@ import android.view.View;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class ViewTracked {
+public class TaskTracked {
 
     private final LinkedList<ViewElement> mViewElements = new LinkedList<>();
 
-    public static ViewTracked getInstance() {
+    public static TaskTracked getInstance() {
         return SingletonHandler.instance;
     }
 
@@ -37,7 +37,7 @@ public class ViewTracked {
 
     //内部类
     private static final class SingletonHandler{
-        private static ViewTracked instance = new ViewTracked();
+        private static TaskTracked instance = new TaskTracked();
     }
 
     private class ViewElement implements View.OnAttachStateChangeListener {
