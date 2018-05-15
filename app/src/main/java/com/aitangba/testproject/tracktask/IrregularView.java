@@ -10,6 +10,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.lang.annotation.Retention;
@@ -59,6 +60,11 @@ public class IrregularView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         resetPath(w, h);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return super.dispatchTouchEvent(event);
     }
 
     private void resetPath(int w, int h) {
