@@ -40,4 +40,8 @@
         <attr name="selectorEnabled" format="boolean" />
         <attr name="selectorDrawable" format="reference" />
     </declare-styleable>
+
+    <declare-styleable name="PartialityLinearLayout_Layout">
+        <attr name="primary" format="boolean"/>
+    </declare-styleable>
 </resources>

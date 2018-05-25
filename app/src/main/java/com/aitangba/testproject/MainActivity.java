@@ -39,6 +39,7 @@ import com.aitangba.testproject.tracktask.TrackedActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
+import com.aitangba.testproject.view.ViewDemoActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.flowlayout.FlowViewActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(TrackedActivity.class);
+                startActivity(ViewDemoActivity.class);
             }
         });
     }
