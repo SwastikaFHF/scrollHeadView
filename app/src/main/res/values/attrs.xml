@@ -44,4 +44,12 @@
     <declare-styleable name="PartialityLinearLayout_Layout">
         <attr name="primary" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="PartialityLinearLayout">
+        <attr name="gravity">
+            <enum name="left" value="1"/>
+            <enum name="center" value="2"/>
+            <enum name="right" value="3"/>
+        </attr>
+    </declare-styleable>
 </resources>

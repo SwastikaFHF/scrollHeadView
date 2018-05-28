@@ -15,16 +15,27 @@ import com.aitangba.testproject.R;
 public class PartialityLinearLayout extends ViewGroup {
 
     private static final String TAG = "Partiality";
+
+    private int mGravity = CENTER;
+
+    private static final int LEFT = 1;
+    private static final int CENTER = 2;
+    private static final int RIGHT = 3;
+
     public PartialityLinearLayout(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public PartialityLinearLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
     public PartialityLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.PartialityLinearLayout);
+        this.mGravity = array.getInt(R.styleable.PartialityLinearLayout_gravity, CENTER);
+        array.recycle();
     }
 
     @Override
@@ -85,7 +96,7 @@ public class PartialityLinearLayout extends ViewGroup {
 
         int heightSizeAndState;
         if(heightMode == MeasureSpec.EXACTLY) {
-            heightSizeAndState = heightMode;
+            heightSizeAndState = heightSize;
         } else if(heightMode == MeasureSpec.AT_MOST) {
             heightSizeAndState = Math.min(itemMaxHeight + getPaddingTop() + getPaddingBottom(), heightSize);
         } else {
@@ -97,9 +108,25 @@ public class PartialityLinearLayout extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        int childLeft = 0;
-        int paddingTop = getPaddingTop();
+        int childTotalWidth = 0;
+        for(int i = 0,count = getChildCount(); i < count ; i++) {
+            View child = getChildAt(i);
+            if(child.getVisibility() == GONE) {
+                continue;
+            }
+            childTotalWidth = childTotalWidth + child.getMeasuredWidth();
+        }
 
+        int middle = getMeasuredHeight() / 2;
+        int width = getMeasuredWidth();
+        int childLeft;
+        if(mGravity == LEFT) {
+            childLeft = getPaddingLeft();
+        } else if(mGravity == CENTER) {
+            childLeft = (width - childTotalWidth) / 2;
+        } else {
+            childLeft = width - getPaddingRight() - childTotalWidth;
+        }
         for(int i = 0,count = getChildCount(); i < count ; i++) {
             View child = getChildAt(i);
             if(child.getVisibility() == GONE) {
@@ -107,10 +134,11 @@ public class PartialityLinearLayout extends ViewGroup {
             }
 
             int childWidth = child.getMeasuredWidth();
+            int childHeight = child.getMeasuredHeight();
             if(child.getLayoutParams() instanceof LayoutParams) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 childLeft += lp.leftMargin;
-                setChildFrame(child, childLeft, paddingTop + lp.topMargin, childWidth, child.getMeasuredHeight());
+                setChildFrame(child, childLeft, middle - childHeight / 2, childWidth, childHeight);
                 childLeft += childWidth + lp.rightMargin;
             }
         }
@@ -137,7 +165,7 @@ public class PartialityLinearLayout extends ViewGroup {
         return p instanceof LayoutParams;
     }
 
-    private static class LayoutParams extends ViewGroup.MarginLayoutParams {
+    private static class LayoutParams extends MarginLayoutParams {
 
         private boolean primary;
 

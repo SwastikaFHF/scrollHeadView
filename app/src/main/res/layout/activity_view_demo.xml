@@ -15,24 +15,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            app:gravity="right"
             android:background="@color/colorAccent">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/debug_long_string"/>
+                android:text="@string/debug_short_string"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_launcher"
                 app:primary="true"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher"
-                app:primary="false"/>
 
         </com.aitangba.testproject.view.partiality.PartialityLinearLayout>
         <TextView
