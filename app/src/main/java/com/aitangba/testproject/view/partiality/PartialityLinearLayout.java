@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.aitangba.testproject.R;
 
@@ -30,7 +29,6 @@ public class PartialityLinearLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Log.d(TAG, "onMeasure --- width = " + MeasureSpec.toString(widthMeasureSpec) + "   height = " + MeasureSpec.toString(heightMeasureSpec));
 
         // measure primary children
@@ -52,10 +50,13 @@ public class PartialityLinearLayout extends ViewGroup {
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final boolean isExactly = widthMode == MeasureSpec.EXACTLY;
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         int surplusWidth = widthSize - measureSpace;
         int widthSpec = MeasureSpec.makeMeasureSpec(surplusWidth, MeasureSpec.getMode(widthMeasureSpec));
+
+        int itemMaxHeight = 0;
+        int itemWidth = 0;
         // measure other children
         for(int i = 0,count = getChildCount(); i < count ; i++) {
             View child = getChildAt(i);
@@ -68,7 +69,30 @@ public class PartialityLinearLayout extends ViewGroup {
                     measureChild(child, widthSpec, heightMeasureSpec);
                 }
             }
+
+            itemMaxHeight = Math.max(itemMaxHeight, child.getMeasuredHeight());
+            itemWidth = itemWidth + child.getMeasuredWidth();
         }
+
+        int widthSizeAndState;
+        if(widthMode == MeasureSpec.EXACTLY) {
+            widthSizeAndState = widthSize;
+        } else if(widthMode == MeasureSpec.AT_MOST) {
+            widthSizeAndState = Math.min(itemWidth + getPaddingLeft() + getPaddingRight(), widthSize);
+        } else {
+            widthSizeAndState = widthSize;
+        }
+
+        int heightSizeAndState;
+        if(heightMode == MeasureSpec.EXACTLY) {
+            heightSizeAndState = heightMode;
+        } else if(heightMode == MeasureSpec.AT_MOST) {
+            heightSizeAndState = Math.min(itemMaxHeight + getPaddingTop() + getPaddingBottom(), heightSize);
+        } else {
+            heightSizeAndState = heightSize;
+        }
+
+        setMeasuredDimension(widthSizeAndState, heightSizeAndState);
     }
 
     @Override

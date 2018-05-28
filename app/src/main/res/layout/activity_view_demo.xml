@@ -6,21 +6,39 @@
     android:orientation="vertical">
 
 
-    <com.aitangba.testproject.view.partiality.PartialityLinearLayout
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
+        <com.aitangba.testproject.view.partiality.PartialityLinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/debug_long_string"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher"
+                app:primary="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher"
+                app:primary="false"/>
+
+        </com.aitangba.testproject.view.partiality.PartialityLinearLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/debug_long_string"/>
+            android:text="@string/debug_short_string"/>
+    </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bulletin_bar_notice_ic"
-            app:primary="true"/>
-
-    </com.aitangba.testproject.view.partiality.PartialityLinearLayout>
 </LinearLayout>
