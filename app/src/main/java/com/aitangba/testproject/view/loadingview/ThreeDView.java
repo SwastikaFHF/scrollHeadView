@@ -1,4 +1,4 @@
-package com.aitangba.testproject.loadingview;
+package com.aitangba.testproject.view.loadingview;
 
 import android.content.Context;
 import android.graphics.Camera;
@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.text.Html;
 import android.util.AttributeSet;
 import android.view.View;
 

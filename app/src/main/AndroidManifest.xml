@@ -47,7 +47,7 @@
         <activity android:name=".lightadapter.ui.BaseAdapterActivity"></activity>
         <activity android:name=".lightadapter.viewmodel.LightAdapterActivity"></activity>
         <activity android:name=".numberpicker.NumberPickerActivity"></activity>
-        <activity android:name=".loadingview.LoadViewActivity"></activity>
+        <activity android:name=".view.loadingview.LoadViewActivity"></activity>
         <activity android:name=".ubb.UbbActivity"></activity>
 
         <!-- login test -->
@@ -57,7 +57,7 @@
 
         <activity android:name=".removeitem.RemoveItemActivity"></activity>
 
-        <activity android:name=".irregularview.IrregularViewActivity"></activity>
+        <activity android:name=".view.irregularview.IrregularViewActivity"></activity>
         <activity android:name=".baseui.test.LoadingTestActivity"></activity>
         <service android:name=".baseui.test.CustomService"></service>
         <activity android:name=".paging.PagingListViewActivity"></activity>

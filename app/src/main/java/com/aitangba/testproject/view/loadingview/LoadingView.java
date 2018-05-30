@@ -1,4 +1,4 @@
-package com.aitangba.testproject.loadingview;
+package com.aitangba.testproject.view.loadingview;
 
 import android.animation.ValueAnimator;
 import android.content.Context;

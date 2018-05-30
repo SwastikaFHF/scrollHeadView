@@ -19,11 +19,12 @@
     </FrameLayout>
 
 
-    <com.aitangba.testproject.irregularview.IrregularView android:layout_width="match_parent"
+    <com.aitangba.testproject.view.irregularview.IrregularView
+        android:layout_width="match_parent"
                                                           android:visibility="gone"
                                                           android:layout_height="match_parent"/>
 
-    <com.aitangba.testproject.irregularview.RemoteControlMenu
+    <com.aitangba.testproject.view.irregularview.RemoteControlMenu
         android:visibility="gone"
         android:layout_height="match_parent" android:layout_width="match_parent"/>
 </FrameLayout>

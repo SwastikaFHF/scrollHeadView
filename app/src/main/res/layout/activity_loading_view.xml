@@ -4,12 +4,12 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.aitangba.testproject.loadingview.LoadingView
+    <com.aitangba.testproject.view.loadingview.LoadingView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
 
-    <com.aitangba.testproject.loadingview.ThreeDView
+    <com.aitangba.testproject.view.loadingview.ThreeDView
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

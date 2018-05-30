@@ -1,4 +1,4 @@
-package com.aitangba.testproject.irregularview;
+package com.aitangba.testproject.view.irregularview;
 
 import android.content.Context;
 import android.graphics.Canvas;
