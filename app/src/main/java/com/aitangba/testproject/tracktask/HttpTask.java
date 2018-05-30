@@ -22,7 +22,7 @@ public class HttpTask extends TrackedAsyncTask {
     }
 
     public void startRequest() {
-        executeParallel(new Void[0]);
+//        executeParallel(new Void[0]);
     }
 
     @Override
