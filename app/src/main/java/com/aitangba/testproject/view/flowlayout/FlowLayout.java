@@ -46,7 +46,7 @@ public class FlowLayout extends ViewGroup {
 
         int row = 0; // in case,first child is out of bounds
         int column = 0;
-        int requiredWidth = 0;
+        int leftMarginTemp = 0;
         int maxHeightFromSameRow = 0;
         int maxWidth = 0;
         int maxHeight = getPaddingTop() + getPaddingBottom();
@@ -62,32 +62,20 @@ public class FlowLayout extends ViewGroup {
 
             final boolean firstColumn = column == 0;
             final boolean lastItemView = i == Math.max(0, childCount - 1);
-            final boolean enoughWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth <= availableWidth;
-            if(enoughWidth && !lastItemView) {
-                requiredWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth;
-                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, childHeight + (row == 0 ? 0 : mTopMargin));
-            } else if(enoughWidth) {
-                requiredWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth;
-                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, childHeight + (row == 0 ? 0 : mTopMargin));
-                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
-                layoutParams.maxHeightFromSameRow = maxHeightFromSameRow;
-                maxWidth = Math.max(maxWidth, requiredWidth);
-                maxHeight = maxHeight + maxHeightFromSameRow;
+            final int neededWidth = leftMarginTemp + (firstColumn ? 0 : mLeftMargin) + childWidth;
+            final boolean enoughWidth = neededWidth <= availableWidth;
+            final int currentItemHeight = childHeight + (row == 0 ? 0 : mTopMargin);
+
+            if(lastItemView && enoughWidth) {
+                notifyCurrentRowViews(i, row, Math.max(maxHeightFromSameRow, currentItemHeight));
+                layoutParams.maxHeightFromSameRow = Math.max(maxHeightFromSameRow, currentItemHeight);
             } else if(lastItemView) {
                 notifyCurrentRowViews(i, row, maxHeightFromSameRow);
-                layoutParams.maxHeightFromSameRow = childHeight + (firstColumn ? 0 : mTopMargin);
-                requiredWidth = (firstColumn ? 0 : mLeftMargin) + childWidth;
-                maxWidth = Math.max(maxWidth, requiredWidth);
-                maxHeight = maxHeight + maxHeightFromSameRow + (firstColumn ? 0 : mTopMargin) + childHeight;
-            } else { // 换行，不是最后一个View
+                layoutParams.maxHeightFromSameRow = currentItemHeight;
+            } else if(!enoughWidth) {
                 notifyCurrentRowViews(i, row, maxHeightFromSameRow);
-                layoutParams.maxHeightFromSameRow = childHeight + (firstColumn ? 0 : mTopMargin);
-                maxWidth = Math.max(maxWidth, requiredWidth);
-                maxHeight = maxHeight + maxHeightFromSameRow + (firstColumn ? ((row == 0 ? 0 : mTopMargin) + childHeight) : 0);
-                requiredWidth = 0;
-                maxHeightFromSameRow = (row == 0 ? 0 : mTopMargin) + childHeight;
+                layoutParams.maxHeightFromSameRow = currentItemHeight;
             }
-            Log.d(TAG, "i = " + i + " requiredWidth = " + requiredWidth + " maxHeightFromSameRow = " + maxHeightFromSameRow + " maxWidth = " + maxWidth + " maxHeight = " + maxHeight );
 
             if (firstColumn && enoughWidth) {
                 layoutParams.setPosition(row, column);
@@ -104,6 +92,27 @@ public class FlowLayout extends ViewGroup {
                 column = 0;
                 layoutParams.setPosition(row, column);
             }
+
+            if(enoughWidth) {
+                leftMarginTemp = leftMarginTemp + (firstColumn ? 0 : mLeftMargin) + childWidth;
+                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, currentItemHeight);
+                maxWidth = Math.max(maxWidth, leftMarginTemp);
+                maxHeight = maxHeight + (lastItemView ? maxHeightFromSameRow : 0);
+            } else {
+                int currentMaxWidth = leftMarginTemp;
+                int lastMaxHeight = maxHeightFromSameRow;
+                leftMarginTemp = childWidth;
+                maxHeightFromSameRow = 0;
+                maxWidth = firstColumn ? neededWidth : Math.max(maxWidth, currentMaxWidth);
+                maxHeight = maxHeight + (firstColumn ? currentItemHeight : 0) + lastMaxHeight;
+            }
+            Log.d(TAG, " i = " + i
+                    + " neededWidth = " + neededWidth
+                    + " currentItemHeight = " + currentItemHeight
+                    + " leftMarginTemp = " + leftMarginTemp
+                    + " maxHeightFromSameRow = " + maxHeightFromSameRow
+                    + " maxWidth = " + maxWidth
+                    + " maxHeight = " + maxHeight );
         }
 
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
