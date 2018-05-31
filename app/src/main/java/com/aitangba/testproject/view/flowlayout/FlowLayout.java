@@ -4,27 +4,22 @@ import android.content.Context;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 /**
  * Created by fhf11991 on 2017/5/18.
  */
 
 public class FlowLayout extends ViewGroup {
-
     private final static String TAG = "FlowLayout";
-
-    private @Gravity int mGravity = CENTER;
-    private SparseIntArray mRowInfoList = new SparseIntArray(); // just record the max height of every row
-    private int mHorizontalSpace = 10; // the same as leftMargin,every first child do not use leftMargin
-    private int mVerticalSpace = 10;  // the same as topMargin,every first row do not use topMargin
+    private @Gravity
+    int mGravity = CENTER;
+    private int mLeftMargin = 10; // the same as leftMargin,every first child do not use leftMargin
+    private int mTopMargin = 10;  // the same as topMargin,every first row do not use topMargin
 
     public FlowLayout(Context context) {
         super(context);
@@ -43,130 +38,134 @@ public class FlowLayout extends ViewGroup {
         requestLayout();
     }
 
-    public void setHorizontalSpace(int horizontalSpace) {
-        mHorizontalSpace = horizontalSpace;
-        requestLayout();
-    }
-
-    public void setVerticalSpace(int verticalSpace) {
-        mVerticalSpace = verticalSpace;
-        requestLayout();
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        mRowInfoList.clear();
+        final int childCount = getChildCount();
+        final int width = MeasureSpec.getSize(widthMeasureSpec);
+        final int availableWidth = width - getPaddingLeft() - getPaddingRight();
 
-        int childCount = getChildCount();
-        if(childCount == 0) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            return;
-        }
-
-        final int leftMargin = mHorizontalSpace;
-        final int topMargin = mVerticalSpace;
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int widthSpace = widthSize - getPaddingLeft() - getPaddingRight();
-
-        int widthSpaceNeed = 0;
-        int rowMaxWidth = 0;
-
-        int row = -1; // in case,first child is out of bounds
-        int index = 0;
-
-        for(int i = 0; i < childCount; i++) {
+        int row = 0; // in case,first child is out of bounds
+        int column = 0;
+        int requiredWidth = 0;
+        int maxHeightFromSameRow = 0;
+        int maxWidth = 0;
+        int maxHeight = getPaddingTop() + getPaddingBottom();
+        for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            measureChild(child, widthMeasureSpec, heightMeasureSpec);
-
             if (child.getVisibility() == View.GONE) {
                 continue;
             }
-
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
             final int childHeight = child.getMeasuredHeight();
             final int childWidth = child.getMeasuredWidth();
             LayoutParams layoutParams = (LayoutParams) child.getLayoutParams();
 
-            widthSpaceNeed = widthSpaceNeed + leftMargin + childWidth;
-
-            if(row == -1 || widthSpaceNeed > widthSpace) { // current row can not contain this child, so turn next row !!!
-                row = row + 1;
-                index = 0;
-                widthSpaceNeed = 0 + leftMargin + childWidth;
+            final boolean firstColumn = column == 0;
+            final boolean lastItemView = i == Math.max(0, childCount - 1);
+            final boolean enoughWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth <= availableWidth;
+            if(enoughWidth && !lastItemView) {
+                requiredWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth;
+                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, childHeight + (row == 0 ? 0 : mTopMargin));
+            } else if(enoughWidth) {
+                requiredWidth = requiredWidth + (firstColumn ? 0 : mLeftMargin) + childWidth;
+                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, childHeight + (row == 0 ? 0 : mTopMargin));
+                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
+                layoutParams.maxHeightFromSameRow = maxHeightFromSameRow;
+                maxWidth = Math.max(maxWidth, requiredWidth);
+                maxHeight = maxHeight + maxHeightFromSameRow;
+            } else if(lastItemView) {
+                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
+                layoutParams.maxHeightFromSameRow = childHeight + (firstColumn ? 0 : mTopMargin);
+                requiredWidth = (firstColumn ? 0 : mLeftMargin) + childWidth;
+                maxWidth = Math.max(maxWidth, requiredWidth);
+                maxHeight = maxHeight + maxHeightFromSameRow + (firstColumn ? 0 : mTopMargin) + childHeight;
+            } else { // 换行，不是最后一个View
+                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
+                layoutParams.maxHeightFromSameRow = childHeight + (firstColumn ? 0 : mTopMargin);
+                maxWidth = Math.max(maxWidth, requiredWidth);
+                maxHeight = maxHeight + maxHeightFromSameRow + (firstColumn ? ((row == 0 ? 0 : mTopMargin) + childHeight) : 0);
+                requiredWidth = 0;
+                maxHeightFromSameRow = (row == 0 ? 0 : mTopMargin) + childHeight;
             }
+            Log.d(TAG, "i = " + i + " requiredWidth = " + requiredWidth + " maxHeightFromSameRow = " + maxHeightFromSameRow + " maxWidth = " + maxWidth + " maxHeight = " + maxHeight );
 
-            layoutParams.setPosition(row, index);
-            index = index + 1;
-
-            int height = mRowInfoList.get(row, 0);
-            mRowInfoList.put(row, Math.max(height, childHeight));
-            rowMaxWidth = Math.max(rowMaxWidth, widthSpaceNeed);
+            if (firstColumn && enoughWidth) {
+                layoutParams.setPosition(row, column);
+                column = column + 1;
+            } else if (firstColumn) {
+                layoutParams.setPosition(row, column);
+                row = row + 1;
+                column = 0;
+            } else if (enoughWidth) {
+                layoutParams.setPosition(row, column);
+                column = column + 1;
+            } else {
+                row = row + 1;
+                column = 0;
+                layoutParams.setPosition(row, column);
+            }
         }
-
-        int maxHeight = 0;
-        for(int i = 0; i < mRowInfoList.size(); i ++) {
-            int height = mRowInfoList.get(i, 0);
-            int margin = i == 0 ? 0 : topMargin; // first row do not need topMargin,so do not add topMargin
-            maxHeight = maxHeight + height + margin;
-        }
-
-
-        // first child in every row do not need leftMargin,so remove it
-        final int maxWidth = rowMaxWidth - leftMargin + getPaddingLeft() + getPaddingRight();
-
-        int width = maxWidth;
 
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        if(widthMode == MeasureSpec.EXACTLY) {
-            width = widthSize;
-            if(getLayoutParams() instanceof LinearLayout.LayoutParams) {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) getLayoutParams();
-                if(layoutParams.weight != 0) {
-                    width = maxWidth;
-                }
-            }
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSizeAndState;
+        if (widthMode == MeasureSpec.EXACTLY) {
+            widthSizeAndState = widthSize;
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            widthSizeAndState = Math.min(maxWidth + getPaddingLeft() + getPaddingRight(), widthSize);
+        } else {
+            widthSizeAndState = widthSize;
         }
 
-        setMeasuredDimension(width, maxHeight + getPaddingTop() + getPaddingBottom());
+        int heightSizeAndState;
+        if (heightMode == MeasureSpec.EXACTLY) {
+            heightSizeAndState = heightSize;
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            heightSizeAndState = Math.min(maxHeight + getPaddingTop() + getPaddingBottom(), heightSize);
+        } else {
+            heightSizeAndState = heightSize;
+        }
+        setMeasuredDimension(widthSizeAndState, heightSizeAndState);
+    }
 
+    private void notifyCurrentRowViews(int currentIndex, int currentRow, int maxHeight) {
+        for (int j = currentIndex - 1; j >= 0; j--) {
+            LayoutParams previousLayoutParams = (LayoutParams) getChildAt(j).getLayoutParams();
+            if (previousLayoutParams.row == currentRow) {
+                previousLayoutParams.maxHeightFromSameRow = maxHeight;
+            } else {
+                break;
+            }
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
-        int childCount = getChildCount();
-        if(childCount == 0) {
-            return;
-        }
-
+        final int childCount = getChildCount();
         int rowTemp = 0;
         int widthTemp = getPaddingLeft();
         int heightTemp = getPaddingTop();
-
         int previousRowHeight = 0; // just record, and adjust the height of every row !!!
-        for(int i = 0; i < childCount; i++) {
+        for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-
             if (child.getVisibility() == View.GONE) {
                 continue;
             }
-
             LayoutParams layoutParams = (LayoutParams) child.getLayoutParams();
             int childHeight = child.getMeasuredHeight();
             int childWidth = child.getMeasuredWidth();
-            int currentRowHeight = mRowInfoList.get(layoutParams.row, 0);
-
-            if(layoutParams.row != rowTemp) { // not the same row, reset some params
+            int maxHeightFromSameRow = layoutParams.maxHeightFromSameRow;
+            if (layoutParams.row != rowTemp) { // not the same row, reset some params
                 widthTemp = getPaddingLeft();
-                heightTemp = heightTemp + previousRowHeight + mVerticalSpace; // in this situation, every row must add extra vertical space !!!
+                heightTemp = heightTemp + previousRowHeight + mTopMargin; // in this situation, every row must add extra vertical space !!!
             }
-
             int left = widthTemp;
-            int top = heightTemp + getChildTopDiff(currentRowHeight, childHeight);
+            int top = heightTemp + getChildTopDiff(maxHeightFromSameRow, childHeight);
             child.layout(left, top, left + childWidth, top + childHeight);
-
-            widthTemp = widthTemp + childWidth + mHorizontalSpace;
-            previousRowHeight = currentRowHeight;
-
+            widthTemp = widthTemp + mLeftMargin + childWidth;
+            previousRowHeight = maxHeightFromSameRow;
             rowTemp = layoutParams.row;
         }
     }
@@ -200,16 +199,16 @@ public class FlowLayout extends ViewGroup {
         return new LayoutParams(p);
     }
 
-    private static class LayoutParams extends ViewGroup.MarginLayoutParams {
+    private static class LayoutParams extends ViewGroup.LayoutParams {
+        int row;
+        int index;
+        int maxHeightFromSameRow;
 
-        public int row;
-        public int index;
-
-        public LayoutParams(ViewGroup.LayoutParams source) {
+        LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
 
-        public void setPosition(int row, int index) {
+        void setPosition(int row, int index) {
             this.row = row;
             this.index = index;
         }
@@ -217,12 +216,10 @@ public class FlowLayout extends ViewGroup {
 
     @IntDef({TOP, CENTER, BOTTOM})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface Gravity {
-
+    @interface Gravity {
     }
 
     public final static int TOP = 1;
     public final static int CENTER = 2;
     public final static int BOTTOM = 3;
-
 }

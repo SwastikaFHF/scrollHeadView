@@ -22,13 +22,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".horizonscroll.HorizonScrollActivity"></activity>
-        <activity android:name=".verticalnestedscroll.VerticalScrollActivity"></activity>
-        <activity android:name=".customswipe.CustomSwipeActivity"></activity>
-        <activity android:name=".horizonscroll.HorizonScrollTestActivity"></activity>
+        <activity android:name=".view.horizonscroll.HorizonScrollActivity"></activity>
+        <activity android:name=".view.verticalnestedscroll.VerticalScrollActivity"></activity>
+        <activity android:name=".view.customswipe.CustomSwipeActivity"></activity>
+        <activity android:name=".view.horizonscroll.HorizonScrollTestActivity"></activity>
         <activity android:name=".multiadapter.ui.MultiAdapterActivity"></activity>
         <activity android:name=".view.viewpager.ViewPageActivity"></activity>
-        <activity android:name=".cornerrectangle.CornerRectangleActivity"></activity>
+        <activity android:name=".view.cornerrectangle.CornerRectangleActivity"></activity>
         <activity android:name=".slideback.slidingmenu.SlidingMenuActivity"
                   android:theme="@style/JK.SwipeBack.Transparent.Theme"></activity>
 
@@ -36,17 +36,17 @@
         <activity android:name=".slideback.slidinglayout.SlideBackActivity"
             android:theme="@style/slideBack"></activity>
 
-        <activity android:name=".horizonscrollview.HorizonScrollAdActivity"></activity>
+        <activity android:name=".view.horizonscrollview.HorizonScrollAdActivity"></activity>
         <activity android:name=".youtube.YoutubeActivity"></activity>
-        <activity android:name=".edgeeffect.EffectActivity"></activity>
-        <activity android:name=".progressbar.ProgressbarActivity"></activity>
-        <activity android:name=".path.PathActivity"></activity>
+        <activity android:name=".view.edgeeffect.EffectActivity"></activity>
+        <activity android:name=".view.progressbar.ProgressbarActivity"></activity>
+        <activity android:name=".view.path.PathActivity"></activity>
         <activity android:name=".view.wheelview.WheelViewActivity"></activity>
-        <activity android:name=".verticalnestedscroll.listview.ListViewActivity"></activity>
-        <activity android:name=".verticalnestedscroll.nestedscrollview.NestedScrollActivity"></activity>
+        <activity android:name=".view.verticalnestedscroll.listview.ListViewActivity"></activity>
+        <activity android:name=".view.verticalnestedscroll.nestedscrollview.NestedScrollActivity"></activity>
         <activity android:name=".lightadapter.ui.BaseAdapterActivity"></activity>
         <activity android:name=".lightadapter.viewmodel.LightAdapterActivity"></activity>
-        <activity android:name=".numberpicker.NumberPickerActivity"></activity>
+        <activity android:name=".view.numberpicker.NumberPickerActivity"></activity>
         <activity android:name=".view.loadingview.LoadViewActivity"></activity>
         <activity android:name=".ubb.UbbActivity"></activity>
 
@@ -76,7 +76,7 @@
         <activity android:name=".threadpool.volley.VolleyActivity"></activity>
         <activity android:name=".view.flowlayout.FlowViewActivity"></activity>
         <activity android:name=".fragment.FragmentTestActivity"></activity>
-        <activity android:name=".drawable.DrawableTestActivity"></activity>
+        <activity android:name=".view.drawable.DrawableTestActivity"></activity>
         <activity android:name=".runnablemanager.RunnableManagerActivity"></activity>
 
         <activity android:name=".amap.LocationTestActivity"></activity>

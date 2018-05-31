@@ -11,7 +11,7 @@
         android:paddingRight="20dp"
         android:background="#F44336">
 
-        <com.aitangba.testproject.HeaderTabLayout.HeaderTabLayout
+        <com.aitangba.testproject.view.HeaderTabLayout.HeaderTabLayout
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

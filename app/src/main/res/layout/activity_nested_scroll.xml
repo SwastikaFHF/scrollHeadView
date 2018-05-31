@@ -10,7 +10,7 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="0dp"-->
         <!--android:layout_weight="1">-->
-    <com.aitangba.testproject.verticalnestedscroll.nestedscroll.VerticalNestedScrollView
+    <com.aitangba.testproject.view.verticalnestedscroll.nestedscroll.VerticalNestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -52,6 +52,6 @@
 
         <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
-    </com.aitangba.testproject.verticalnestedscroll.nestedscroll.VerticalNestedScrollView>
+    </com.aitangba.testproject.view.verticalnestedscroll.nestedscroll.VerticalNestedScrollView>
     <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 </LinearLayout>

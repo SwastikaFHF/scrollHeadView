@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.testproject.edgeeffect.EffectView
+    <com.aitangba.testproject.view.edgeeffect.EffectView
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@android:color/holo_orange_dark"/>

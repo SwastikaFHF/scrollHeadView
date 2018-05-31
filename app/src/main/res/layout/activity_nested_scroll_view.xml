@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollView
+    <com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/verticalNestedScrollView">
@@ -28,6 +28,6 @@
         </LinearLayout>
 
 
-    </com.aitangba.testproject.verticalnestedscroll.nestedscrollview.NestedScrollView>
+    </com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollView>
 
 </LinearLayout>

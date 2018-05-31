@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.aitangba.testproject.customswipe.CustomSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.aitangba.testproject.view.customswipe.CustomSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                                android:id="@+id/swipeRefreshLayout"
                                                                android:orientation="vertical"
                                                                android:layout_width="match_parent"
@@ -34,4 +34,4 @@
             android:divider="@android:color/transparent"/>
 
     </LinearLayout>
-</com.aitangba.testproject.customswipe.CustomSwipeRefreshLayout>
+</com.aitangba.testproject.view.customswipe.CustomSwipeRefreshLayout>
