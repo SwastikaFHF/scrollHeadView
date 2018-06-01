@@ -16,8 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class FlowLayout extends ViewGroup {
     private final static String TAG = "FlowLayout";
-    private @Gravity
-    int mGravity = CENTER;
+    private int mGravity = CENTER;
     private int mLeftMargin = 10; // the same as leftMargin,every first child do not use leftMargin
     private int mTopMargin = 10;  // the same as topMargin,every first row do not use topMargin
 
@@ -33,7 +32,7 @@ public class FlowLayout extends ViewGroup {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setChildGravity(@Gravity int gravity) {
+    public void setGravity(@Gravity int gravity) {
         mGravity = gravity;
         requestLayout();
     }
@@ -60,59 +59,63 @@ public class FlowLayout extends ViewGroup {
             final int childWidth = child.getMeasuredWidth();
             LayoutParams layoutParams = (LayoutParams) child.getLayoutParams();
 
-            final boolean firstColumn = column == 0;
+            boolean firstColumn = column == 0;
             final boolean lastItemView = i == Math.max(0, childCount - 1);
             final int neededWidth = leftMarginTemp + (firstColumn ? 0 : mLeftMargin) + childWidth;
             final boolean enoughWidth = neededWidth <= availableWidth;
             final int currentItemHeight = childHeight + (row == 0 ? 0 : mTopMargin);
 
-            if(lastItemView && enoughWidth) {
-                notifyCurrentRowViews(i, row, Math.max(maxHeightFromSameRow, currentItemHeight));
-                layoutParams.maxHeightFromSameRow = Math.max(maxHeightFromSameRow, currentItemHeight);
-            } else if(lastItemView) {
-                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
-                layoutParams.maxHeightFromSameRow = currentItemHeight;
-            } else if(!enoughWidth) {
-                notifyCurrentRowViews(i, row, maxHeightFromSameRow);
-                layoutParams.maxHeightFromSameRow = currentItemHeight;
-            }
-
             if (firstColumn && enoughWidth) {
                 layoutParams.setPosition(row, column);
                 column = column + 1;
-            } else if (firstColumn) {
+            } else if (firstColumn) { // 当前为第一列，可是宽度也不满足，所以纠下一个View为第一列
                 layoutParams.setPosition(row, column);
                 row = row + 1;
                 column = 0;
             } else if (enoughWidth) {
                 layoutParams.setPosition(row, column);
                 column = column + 1;
-            } else {
+            } else { // 当前不是第一列，可是宽度也不满足，所以纠正当前View为第一列，下一个View为第二列
                 row = row + 1;
-                column = 0;
-                layoutParams.setPosition(row, column);
+                column = 1;
+                layoutParams.setPosition(row, 0);
             }
 
-            if(enoughWidth) {
-                leftMarginTemp = leftMarginTemp + (firstColumn ? 0 : mLeftMargin) + childWidth;
-                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, currentItemHeight);
-                maxWidth = Math.max(maxWidth, leftMarginTemp);
-                maxHeight = maxHeight + (lastItemView ? maxHeightFromSameRow : 0);
-            } else {
-                int currentMaxWidth = leftMarginTemp;
+            if(!enoughWidth) {
                 int lastMaxHeight = maxHeightFromSameRow;
-                leftMarginTemp = childWidth;
-                maxHeightFromSameRow = 0;
-                maxWidth = firstColumn ? neededWidth : Math.max(maxWidth, currentMaxWidth);
-                maxHeight = maxHeight + (firstColumn ? currentItemHeight : 0) + lastMaxHeight;
+                notifyCurrentRowViews(i, row - 1, lastMaxHeight);
+                layoutParams.maxHeightFromSameRow = currentItemHeight;
+
+                leftMarginTemp = firstColumn ? 0 : childWidth;
+                maxHeightFromSameRow = firstColumn ? 0 : currentItemHeight;
+                maxHeight = maxHeight + lastMaxHeight + (lastItemView||firstColumn ? currentItemHeight : 0);
+                maxWidth = Math.max(maxWidth, firstColumn ? childWidth : (lastItemView ? neededWidth : 0));
+            } else if(lastItemView) {
+                int currentMaxHeight = Math.max(maxHeightFromSameRow, currentItemHeight);
+                notifyCurrentRowViews(i, row, currentMaxHeight);
+                layoutParams.maxHeightFromSameRow = currentMaxHeight;
+
+                leftMarginTemp = neededWidth;
+                maxHeightFromSameRow = currentMaxHeight;
+                maxHeight = maxHeight + currentItemHeight;
+                maxWidth = Math.max(maxWidth, leftMarginTemp);
+            } else {
+                leftMarginTemp = leftMarginTemp + childWidth + (firstColumn ? 0 : mLeftMargin);
+                maxHeightFromSameRow = Math.max(maxHeightFromSameRow, currentItemHeight);
+//                maxHeight = maxHeight;
+                maxWidth = Math.max(maxWidth, leftMarginTemp);
             }
+
             Log.d(TAG, " i = " + i
+                    + " childWidth = " + childWidth
+                    + " childHeight = " + childHeight
                     + " neededWidth = " + neededWidth
-                    + " currentItemHeight = " + currentItemHeight
                     + " leftMarginTemp = " + leftMarginTemp
                     + " maxHeightFromSameRow = " + maxHeightFromSameRow
                     + " maxWidth = " + maxWidth
-                    + " maxHeight = " + maxHeight );
+                    + " maxHeight = " + maxHeight
+                    + " row = " + layoutParams.row
+                    + " column = " + layoutParams.column);
         }
 
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -210,16 +213,16 @@ public class FlowLayout extends ViewGroup {
 
     private static class LayoutParams extends ViewGroup.LayoutParams {
         int row;
-        int index;
+        int column;
         int maxHeightFromSameRow;
 
         LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
 
-        void setPosition(int row, int index) {
+        void setPosition(int row, int column) {
             this.row = row;
-            this.index = index;
+            this.column = column;
         }
     }
 
