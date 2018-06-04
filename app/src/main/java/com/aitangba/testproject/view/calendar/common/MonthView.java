@@ -19,6 +19,7 @@ public class MonthView extends ViewGroup {
     private BaseCellAdapter mAdapter;
     private LayoutInflater mLayoutInflater;
     private DataSetObserver mDataSetObserver;
+    private static final int MAX_CELL_SIZE = 31;
 
     public MonthView(Context context) {
         this(context, null);
@@ -33,34 +34,56 @@ public class MonthView extends ViewGroup {
         mDataSetObserver = new DataSetObserver() {
             @Override
             public void notifyDataSetChanged() {
-                for (int i = 0, count = getChildCount(); i < count; i++) {
-                    mAdapter.onBindView(getChildAt(i), i);
-                }
+                checkCells();
+                refreshCells();
             }
         };
+    }
+
+    private void checkCells() {
+        if(mAdapter == null) {
+            return;
+        }
+
+        final int childCount = getChildCount();
+        if(childCount < MAX_CELL_SIZE) {
+            for (int i = Math.max(0, childCount - 1); i < MAX_CELL_SIZE; i++) {
+                View view = mAdapter.onCreateView(getLayoutInflater(), this);
+                addView(view);
+            }
+        } else if(childCount > MAX_CELL_SIZE) {
+            for (int i = Math.max(0, MAX_CELL_SIZE - 1); i < childCount; i++) {
+                removeViewAt(getChildCount() - 1);
+            }
+        }
     }
 
     public void setAdapter(@NonNull BaseCellAdapter adapter) {
         mAdapter = adapter;
         mAdapter.setDataSetObserver(mDataSetObserver);
 
-        final int dataSize = mAdapter.getCount(); // 30
-        Log.d(TAG, "dataSize = " + dataSize);
-        for (int i = 0; i < dataSize; i++) {
-            if (i >= getChildCount()) {
-                View view = mAdapter.onCreateView(getLayoutInflater(), this);
-                addView(view);
-            }
-            mAdapter.onBindView(getChildAt(i), i);
+        checkCells();
+        refreshCells();
+    }
+
+    private void refreshCells() {
+        if(mAdapter == null) {
+            return;
         }
 
-        final int childCount = getChildCount(); // 28
-        if (childCount > dataSize) { // remove children
-            for (int i = 0, dis = childCount - dataSize; i < dis; i++) {
-                removeViewAt(getChildCount() - 1);
+        final int dataSize = mAdapter.getCount();
+        final int childCount = getChildCount();
+        Log.d(TAG, " dataSize = " + dataSize + " childCount = " + childCount);
+
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            if (i >= dataSize) {
+                child.setVisibility(GONE);
+            } else {
+                child.setVisibility(VISIBLE);
+                mAdapter.onBindView(child, i);
             }
         }
-        requestLayout();
     }
 
     private LayoutInflater getLayoutInflater() {
@@ -82,15 +105,17 @@ public class MonthView extends ViewGroup {
             int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(widthLimit, MeasureSpec.EXACTLY);
 
             int itemHeight = -1;
+            int invisibleChildCount = 0;
             for (int i = 0; i < childCount; i++) {
                 View child = getChildAt(i);
-                if (itemHeight == -1) {
-                    if (child.getVisibility() == View.GONE) {
-                        continue;
-                    } else {
-                        child.measure(childWidthMeasureSpec, heightMeasureSpec);
-                        itemHeight = child.getMeasuredHeight();
-                    }
+                if(child.getVisibility() == GONE) {
+                    invisibleChildCount ++;
+                    continue;
+                }
+
+                if (itemHeight == -1) { // 获取第一个可见的cell的高度
+                    child.measure(childWidthMeasureSpec, heightMeasureSpec);
+                    itemHeight = child.getMeasuredHeight();
                 } else {
                     int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(itemHeight, MeasureSpec.EXACTLY);
                     child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
@@ -98,7 +123,7 @@ public class MonthView extends ViewGroup {
             }
 
             int spaceSize = mAdapter == null ? 0 : mAdapter.getSpaceCount();
-            double heightTemp = Math.ceil((double) (childCount + spaceSize) / COLUMN_SIZE) * itemHeight;
+            double heightTemp = Math.ceil((double) (childCount - invisibleChildCount + spaceSize) / COLUMN_SIZE) * itemHeight;
             setMeasuredDimension(widthSize, getPaddingTop() + (int) heightTemp + getPaddingBottom());
         }
     }
@@ -113,6 +138,10 @@ public class MonthView extends ViewGroup {
         int index = spaceSize;
         for (int i = 0; i < childCount; i++) {
             View childView = getChildAt(i);
+            if(childView.getVisibility() == GONE) {
+                continue;
+            }
+
             int childWidth = childView.getMeasuredWidth();
             int childHeight = childView.getMeasuredHeight();
 

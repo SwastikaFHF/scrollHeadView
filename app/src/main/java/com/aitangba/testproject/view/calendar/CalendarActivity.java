@@ -14,6 +14,7 @@ import com.aitangba.testproject.view.calendar.common.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
 import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 import com.aitangba.testproject.view.calendar.common.listener.BaseChoiceListener;
+import com.aitangba.testproject.view.calendar.common.listener.RangeChoiceListener;
 import com.aitangba.testproject.view.calendar.common.listener.SingleChoiceListener;
 
 import java.util.Calendar;
@@ -48,17 +49,17 @@ public class CalendarActivity extends AppCompatActivity {
 //        mAdapter.notifyDataSetChanged();
 
         Calendar toDateCal = Calendar.getInstance();
-        toDateCal.add(Calendar.DATE, 20);
+        toDateCal.add(Calendar.DATE, 200);
 
         CalendarView calendarView = findViewById(R.id.calendarView);
-        calendarView.addListener(new BaseChoiceListener() {
-            @Override
-            public void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean) {
-                Toast.makeText(cellView.getContext(), "单个测试", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        calendarView.addListener(new BaseChoiceListener() {
+//            @Override
+//            public void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean) {
+//                Toast.makeText(cellView.getContext(), "单个测试", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-        calendarView.addListener(new SingleChoiceListener());
+        calendarView.addListener(new RangeChoiceListener(5));
         calendarView.init(new Date(), toDateCal.getTime()).setMultipleSize(10).build(CalendarView.SelectionMode.CUSTOM);
 
     }
