@@ -1,28 +1,29 @@
-package com.aitangba.testproject.view.calendar.common.listener;
+package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
 
-import com.aitangba.testproject.view.calendar.common.CellAdapter;
+import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
+import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by fhf11991 on 2018/3/28.
+ * Created by fhf11991 on 2018/6/5
  */
+public class MultipleChoiceManager extends BaseHolidayManager {
 
-public class MultipleChoiceListener extends BaseChoiceListener {
 
     private int mMultipleSize;
 
-    public MultipleChoiceListener(int multipleSize) {
+    public MultipleChoiceManager(int multipleSize) {
         mMultipleSize = multipleSize;
     }
 
     @Override
-    public void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean) {
+    public void onClick(MonthAdapter monthAdapter, CellAdapter cellAdapter, View cellView, CellBean cellBean) {
         if(cellBean.isSelected) {
             cellBean.isSelected = false;
             cellAdapter.notifyDataSetChanged();
@@ -36,7 +37,7 @@ public class MultipleChoiceListener extends BaseChoiceListener {
         }
 
         // 清理超出范围的日期
-        List<CellBean> selectedCells = getMonthAdapter().getSelectedCell();
+        List<CellBean> selectedCells = monthAdapter.getSelectedCell();
         int size = selectedCells.size();
         Date date = cellBean.date;
         if(size == 0) {
@@ -51,7 +52,7 @@ public class MultipleChoiceListener extends BaseChoiceListener {
                 firstSelectedCell.isSelected = false;
             }
             cellBean.isSelected = true;
-            getMonthAdapter().notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         } else {
             Date firstSelectedDate = selectedCells.get(0).date;
             Date lastSelectedDate = selectedCells.get(size - 1).date;
@@ -71,7 +72,7 @@ public class MultipleChoiceListener extends BaseChoiceListener {
                 }
             }
             cellBean.isSelected = true;
-            getMonthAdapter().notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         }
     }
 

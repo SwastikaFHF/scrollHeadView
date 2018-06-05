@@ -162,29 +162,6 @@ public class MonthView extends ViewGroup {
         }
     }
 
-    public static abstract class BaseCellAdapter {
-
-        private DataSetObserver mDataSetObserver;
-
-        private void setDataSetObserver(DataSetObserver dataSetObserver) {
-            mDataSetObserver = dataSetObserver;
-        }
-
-        protected abstract View onCreateView(LayoutInflater layoutInflater, ViewGroup parent);
-
-        protected abstract void onBindView(View child, int position);
-
-        public abstract int getSpaceCount();
-
-        public abstract int getCount();
-
-        public void notifyDataSetChanged() {
-            if (mDataSetObserver != null) {
-                mDataSetObserver.notifyDataSetChanged();
-            }
-        }
-    }
-
     public interface DataSetObserver {
         void notifyDataSetChanged();
     }

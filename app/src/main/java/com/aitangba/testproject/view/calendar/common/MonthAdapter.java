@@ -3,12 +3,12 @@ package com.aitangba.testproject.view.calendar.common;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.ItemCalendarCommonBinding;
 import com.aitangba.testproject.view.RecyclerViewHolder;
+import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,14 +45,14 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         notifyDataSetChanged();
     }
 
-    public CellAdapter getItem(int position) {
+    public BaseCellAdapter getItem(int position) {
         return mList.get(position);
     }
 
     public final List<CellBean> getSelectedCell() {
         List<CellBean> list = new ArrayList<>();
         for (int i = 0, count = getItemCount(); i < count; i++) {
-            CellAdapter itemAdapter = getItem(i);
+            BaseCellAdapter itemAdapter = getItem(i);
             for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
                 CellBean cellBean = itemAdapter.getItem(j);
                 if(cellBean.isSelected) {

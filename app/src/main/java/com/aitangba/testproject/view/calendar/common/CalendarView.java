@@ -7,18 +7,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import com.aitangba.testproject.view.calendar.common.listener.BaseChoiceListener;
-import com.aitangba.testproject.view.calendar.common.listener.CustomChoiceListener;
-import com.aitangba.testproject.view.calendar.common.listener.MultipleChoiceListener;
-import com.aitangba.testproject.view.calendar.common.listener.RangeChoiceListener;
-import com.aitangba.testproject.view.calendar.common.listener.SingleChoiceListener;
+import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
+import com.aitangba.testproject.view.calendar.common.manager.BaseHolidayManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by fhf11991 on 2018/3/28.
@@ -27,7 +23,6 @@ import java.util.Map;
 public class CalendarView extends RecyclerView {
 
     private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("yyyy-MM");
-    private final List<BaseChoiceListener> mListeners = new ArrayList<>();
 
     public CalendarView(Context context) {
         super(context);
@@ -45,35 +40,10 @@ public class CalendarView extends RecyclerView {
         return new Builder(fromDate, toDate);
     }
 
-    public void addListener(BaseChoiceListener listener) {
-        mListeners.add(listener);
-    }
-
-    public void removeListener(BaseChoiceListener listener) {
-        mListeners.remove(listener);
-    }
-
     private void validateAndUpdate(@NonNull Builder builder) {
         setLayoutManager(new LinearLayoutManager(getContext()));
         MonthAdapter adapter = new MonthAdapter();
         setAdapter(adapter);
-
-        BaseChoiceListener onCellClickListener = null;
-        switch (builder.mode) {
-            case SINGLE:
-                onCellClickListener = new SingleChoiceListener();
-                break;
-            case RANGE:
-                onCellClickListener = new RangeChoiceListener(builder.multipleSize);
-                break;
-            case MULTIPLE:
-                onCellClickListener = new MultipleChoiceListener(builder.multipleSize);
-                break;
-            case CUSTOM:
-                onCellClickListener = new CustomChoiceListener(mListeners);
-                break;
-        }
-        onCellClickListener.attachMonthAdapter(adapter);
 
         Calendar nowCalendar = Calendar.getInstance();
         clearTime(nowCalendar);
@@ -109,8 +79,10 @@ public class CalendarView extends RecyclerView {
                 cellBeanList.add(cellBean);
                 tempCalendar.add(Calendar.DAY_OF_MONTH, 1); // next day of current month or the first day of next month
             }
-            CellAdapter cellAdapter = new CellAdapter(weekIndex, cellBeanList, mSimpleDateFormat.format(cellBeanList.get(0).date));
-            cellAdapter.setOnCellClickListener(onCellClickListener);
+            CellAdapter cellAdapter = new CellAdapter(weekIndex, mSimpleDateFormat.format(cellBeanList.get(0).date));
+            cellAdapter.setData(cellBeanList);
+            cellAdapter.attachMonthAdapter(adapter);
+            cellAdapter.setBaseCellManager(builder.onClickManager);
             list.add(cellAdapter);
         }
 
@@ -153,44 +125,26 @@ public class CalendarView extends RecyclerView {
     }
 
     public class Builder {
-        public String flagsText;
-        public List<String> flagDates;
-        public Map<String, String> holidayMap; // 2018-04-01, 清明节
-        public Date startDate;
-        public Date endDate;
-        public List<Date> selectedDates = new ArrayList<>();
-        public SelectionMode mode;
-        public int multipleSize = -1;
+        private Date startDate;
+        private Date endDate;
+        private List<Date> selectedDates = new ArrayList<>();
+        private BaseHolidayManager onClickManager;
 
-        public Builder(Date startDate, Date endDate) {
+        Builder(Date startDate, Date endDate) {
             this.startDate = startDate;
             this.endDate = endDate;
         }
 
-        public Builder setCornerFlags(List<String> flagDates, String flagsText) {
-            this.flagDates = flagDates;
-            this.flagsText = flagsText;
+        public Builder withSelectedDates(List<Date> selectedDates) {
+            this.selectedDates.clear();
+            this.selectedDates.addAll(selectedDates);
             return this;
         }
 
-        public Builder setHolidays(Map<String, String> holidayMap) {
-            this.holidayMap = holidayMap;
-            return this;
-        }
-
-        public Builder setMultipleSize(int multipleSize) {
-            this.multipleSize = multipleSize;
-            return this;
-        }
-
-        public void build(SelectionMode selectionMode) {
-            this.mode = selectionMode;
+        public void build(@NonNull BaseHolidayManager onClickManager) {
+            this.onClickManager = onClickManager;
             validateAndUpdate(this);
         }
-    }
-
-    public enum SelectionMode {
-        SINGLE,MULTIPLE,RANGE,CUSTOM
     }
 }
 

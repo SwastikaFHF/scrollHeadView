@@ -1,28 +1,29 @@
-package com.aitangba.testproject.view.calendar.common.listener;
+package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
 
-import com.aitangba.testproject.view.calendar.common.CellAdapter;
+import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
+import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
+import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by fhf11991 on 2018/3/28.
+ * Created by fhf11991 on 2018/6/5
  */
-
-public class RangeChoiceListener  extends BaseChoiceListener {
+public class RangeChoiceManager extends BaseHolidayManager {
 
     private int mRangeSize;
 
-    public RangeChoiceListener(int rangeSize) {
+    public RangeChoiceManager(int rangeSize) {
         mRangeSize = rangeSize;
     }
 
     @Override
-    public void onClick(CellAdapter cellAdapter, View cellView, CellBean cellBean) {
-        List<CellBean> selectedCells = getMonthAdapter().getSelectedCell();
+    public void onClick(MonthAdapter monthAdapter, CellAdapter cellAdapter, View cellView, CellBean cellBean) {
+        List<CellBean> selectedCells = monthAdapter.getSelectedCell();
         int size = selectedCells.size();
         if (size == 0) {
             cellBean.isSelected = !cellBean.isSelected;
@@ -41,8 +42,8 @@ public class RangeChoiceListener  extends BaseChoiceListener {
                 firstSelectedDate = date;
                 lastSelectedDate = selectedDate;
             }
-            for (int i = 0, count = getMonthAdapter().getItemCount(); i < count; i++) {
-                CellAdapter itemAdapter = getMonthAdapter().getItem(i);
+            for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
+                BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
                 for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
                     CellBean tempCell = itemAdapter.getItem(j);
                     Date tempDate = tempCell.date;
@@ -51,13 +52,13 @@ public class RangeChoiceListener  extends BaseChoiceListener {
                     }
                 }
             }
-            getMonthAdapter().notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         } else {
             for (CellBean itemCell : selectedCells) {
                 itemCell.isSelected = false;
             }
             cellBean.isSelected = true;
-            getMonthAdapter().notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         }
     }
 }
