@@ -18,7 +18,6 @@ public class MonthView extends ViewGroup {
     private static final int COLUMN_SIZE = 7;
     private BaseCellAdapter mAdapter;
     private LayoutInflater mLayoutInflater;
-    private DataSetObserver mDataSetObserver;
     private static final int MAX_CELL_SIZE = 31;
 
     public MonthView(Context context) {
@@ -31,13 +30,6 @@ public class MonthView extends ViewGroup {
 
     public MonthView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mDataSetObserver = new DataSetObserver() {
-            @Override
-            public void notifyDataSetChanged() {
-                checkCells();
-                refreshCells();
-            }
-        };
     }
 
     private void checkCells() {
@@ -60,7 +52,6 @@ public class MonthView extends ViewGroup {
 
     public void setAdapter(@NonNull BaseCellAdapter adapter) {
         mAdapter = adapter;
-        mAdapter.setDataSetObserver(mDataSetObserver);
 
         checkCells();
         refreshCells();
@@ -162,7 +153,4 @@ public class MonthView extends ViewGroup {
         }
     }
 
-    public interface DataSetObserver {
-        void notifyDataSetChanged();
-    }
 }

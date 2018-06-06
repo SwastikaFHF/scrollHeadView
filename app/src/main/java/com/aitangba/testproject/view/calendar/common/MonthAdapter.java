@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.databinding.ItemCalendarCommonBinding;
 import com.aitangba.testproject.view.RecyclerViewHolder;
-import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
+import com.aitangba.testproject.view.calendar.common.sample.SampleCellAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MonthAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
 
-    private List<CellAdapter> mList = new ArrayList();
+    private List<BaseCellAdapter> mList = new ArrayList();
 
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -29,7 +29,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
         ItemCalendarCommonBinding binding = holder.getBing();
-        CellAdapter adapter = mList.get(position);
+        BaseCellAdapter adapter = mList.get(position);
         binding.titleText.setText(adapter.getTitle());
         binding.monthView.setAdapter(adapter);
     }
@@ -39,7 +39,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
         return mList.size();
     }
 
-    public void setData(List<CellAdapter> list) {
+    public void setData(List<? extends SampleCellAdapter> list) {
         mList.clear();
         mList.addAll(list);
         notifyDataSetChanged();

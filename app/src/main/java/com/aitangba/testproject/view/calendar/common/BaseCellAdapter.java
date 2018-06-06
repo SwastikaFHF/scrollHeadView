@@ -13,23 +13,13 @@ import java.util.List;
  */
 public abstract class BaseCellAdapter {
     private List<CellBean> mList = new ArrayList<>();
-    private MonthView.DataSetObserver mDataSetObserver;
-
-    protected void setDataSetObserver(MonthView.DataSetObserver dataSetObserver) {
-        mDataSetObserver = dataSetObserver;
-    }
+    private String mTitle;
 
     protected abstract View onCreateView(LayoutInflater layoutInflater, ViewGroup parent);
 
     protected abstract void onBindView(View child, int position);
 
     public abstract int getSpaceCount();
-
-    public void notifyDataSetChanged() {
-        if (mDataSetObserver != null) {
-            mDataSetObserver.notifyDataSetChanged();
-        }
-    }
 
     public int getCount() {
         return mList.size();
@@ -42,5 +32,13 @@ public abstract class BaseCellAdapter {
 
     public CellBean getItem(int position) {
         return mList.get(position);
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
     }
 }

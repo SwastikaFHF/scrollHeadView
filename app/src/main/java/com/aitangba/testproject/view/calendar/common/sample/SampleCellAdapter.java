@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.common.celladapter;
+package com.aitangba.testproject.view.calendar.common.sample;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,42 +6,25 @@ import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
+import com.aitangba.testproject.view.calendar.common.BaseCellManager;
 import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.CheckableTextView;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
-import com.aitangba.testproject.view.calendar.common.MonthView;
-import com.aitangba.testproject.view.calendar.common.manager.BaseCellManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by fhf11991 on 2018/3/27.
  */
 
-public class CellAdapter extends BaseCellAdapter {
+public class SampleCellAdapter extends BaseCellAdapter {
 
     private int mSpaceCount;
 
-    private String mTitle;
     private BaseCellManager mBaseCellManager;
-    private MonthAdapter mMonthAdapter;
 
-    public CellAdapter(int spaceCount, String title) {
+    public SampleCellAdapter(int spaceCount) {
         mSpaceCount = spaceCount;
-        mTitle = title;
-    }
-
-    public void attachMonthAdapter(MonthAdapter monthAdapter) {
-        mMonthAdapter = monthAdapter;
     }
 
     public void setBaseCellManager(BaseCellManager baseCellManager) {
         mBaseCellManager = baseCellManager;
-    }
-
-    public String getTitle() {
-        return mTitle;
     }
 
     @Override
@@ -79,7 +62,7 @@ public class CellAdapter extends BaseCellAdapter {
             @Override
             public void onClick(View v) {
                 if(mBaseCellManager != null) {
-                    mBaseCellManager.onClick(mMonthAdapter,CellAdapter.this, v, cellBean);
+                    mBaseCellManager.onClick(v, cellBean);
                 }
             }
         });

@@ -2,9 +2,7 @@ package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
 
-import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -23,16 +21,16 @@ public class MultipleChoiceManager extends BaseHolidayManager {
     }
 
     @Override
-    public void onClick(MonthAdapter monthAdapter, CellAdapter cellAdapter, View cellView, CellBean cellBean) {
+    public void onClick(View cellView, CellBean cellBean) {
         if(cellBean.isSelected) {
             cellBean.isSelected = false;
-            cellAdapter.notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
             return;
         }
 
         if(mMultipleSize == -1) {
             cellBean.isSelected = true;
-            cellAdapter.notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
             return;
         }
 
@@ -42,7 +40,7 @@ public class MultipleChoiceManager extends BaseHolidayManager {
         Date date = cellBean.date;
         if(size == 0) {
             cellBean.isSelected = true;
-            cellAdapter.notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         } else if(size == 1) {
             CellBean firstSelectedCell = selectedCells.get(0);
             Date firstSelectedDate = firstSelectedCell.date;
@@ -74,12 +72,5 @@ public class MultipleChoiceManager extends BaseHolidayManager {
             cellBean.isSelected = true;
             monthAdapter.notifyDataSetChanged();
         }
-    }
-
-    private Date getDateLater(Date date, int dateNum) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DAY_OF_YEAR, dateNum);
-        return cal.getTime();
     }
 }

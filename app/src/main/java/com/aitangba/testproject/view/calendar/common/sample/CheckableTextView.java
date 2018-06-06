@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.common;
+package com.aitangba.testproject.view.calendar.common.sample;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

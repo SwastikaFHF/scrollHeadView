@@ -7,8 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.manager.BaseHolidayManager;
+import com.aitangba.testproject.view.calendar.common.sample.SampleCellAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +45,8 @@ public class CalendarView extends RecyclerView {
         MonthAdapter adapter = new MonthAdapter();
         setAdapter(adapter);
 
+        builder.baseCellManager.attachMonthAdapter(adapter);
+
         Calendar nowCalendar = Calendar.getInstance();
         clearTime(nowCalendar);
 
@@ -63,7 +65,7 @@ public class CalendarView extends RecyclerView {
         tempCalendar.set(Calendar.DAY_OF_MONTH, 1); // the first day of start month
         clearTime(tempCalendar);
 
-        List<CellAdapter> list = new ArrayList<>();
+        List<SampleCellAdapter> list = new ArrayList<>();
         CellBean cellBean;
 
         for (int i = 0; i < disMonth; i++) {
@@ -79,10 +81,10 @@ public class CalendarView extends RecyclerView {
                 cellBeanList.add(cellBean);
                 tempCalendar.add(Calendar.DAY_OF_MONTH, 1); // next day of current month or the first day of next month
             }
-            CellAdapter cellAdapter = new CellAdapter(weekIndex, mSimpleDateFormat.format(cellBeanList.get(0).date));
+            SampleCellAdapter cellAdapter = new SampleCellAdapter(weekIndex);
+            cellAdapter.setTitle(mSimpleDateFormat.format(cellBeanList.get(0).date));
             cellAdapter.setData(cellBeanList);
-            cellAdapter.attachMonthAdapter(adapter);
-            cellAdapter.setBaseCellManager(builder.onClickManager);
+            cellAdapter.setBaseCellManager(builder.baseCellManager);
             list.add(cellAdapter);
         }
 
@@ -128,7 +130,7 @@ public class CalendarView extends RecyclerView {
         private Date startDate;
         private Date endDate;
         private List<Date> selectedDates = new ArrayList<>();
-        private BaseHolidayManager onClickManager;
+        private BaseHolidayManager baseCellManager;
 
         Builder(Date startDate, Date endDate) {
             this.startDate = startDate;
@@ -141,8 +143,8 @@ public class CalendarView extends RecyclerView {
             return this;
         }
 
-        public void build(@NonNull BaseHolidayManager onClickManager) {
-            this.onClickManager = onClickManager;
+        public void build(@NonNull BaseHolidayManager baseCellManager) {
+            this.baseCellManager = baseCellManager;
             validateAndUpdate(this);
         }
     }

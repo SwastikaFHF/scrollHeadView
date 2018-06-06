@@ -3,9 +3,7 @@ package com.aitangba.testproject.view.calendar.common.manager;
 import android.view.View;
 
 import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
-import com.aitangba.testproject.view.calendar.common.celladapter.CellAdapter;
 import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 
 import java.util.Date;
 import java.util.List;
@@ -22,12 +20,12 @@ public class RangeChoiceManager extends BaseHolidayManager {
     }
 
     @Override
-    public void onClick(MonthAdapter monthAdapter, CellAdapter cellAdapter, View cellView, CellBean cellBean) {
+    public void onClick(View cellView, CellBean cellBean) {
         List<CellBean> selectedCells = monthAdapter.getSelectedCell();
         int size = selectedCells.size();
         if (size == 0) {
             cellBean.isSelected = !cellBean.isSelected;
-            cellAdapter.notifyDataSetChanged();
+            monthAdapter.notifyDataSetChanged();
         } else if (size == 1) {
             CellBean selectedCell = selectedCells.get(0);
             Date selectedDate = selectedCell.date;
@@ -36,11 +34,22 @@ public class RangeChoiceManager extends BaseHolidayManager {
             Date firstSelectedDate;
             Date lastSelectedDate;
             if (selectedDate.before(date)) {
+                if(mRangeSize != -1 && !date.before(getDateLater(selectedDate, mRangeSize))) {
+                    if(mOnClickRangeListener != null && mOnClickRangeListener.onBeyond()) {
+                        return;
+                    }
+                }
                 firstSelectedDate = selectedDate;
                 lastSelectedDate = date;
-            } else {
-                firstSelectedDate = date;
-                lastSelectedDate = selectedDate;
+            } else if(selectedDate.after(date)){
+                selectedCell.isSelected = false;
+                cellBean.isSelected = true;
+                monthAdapter.notifyDataSetChanged();
+                return;
+            } else { // 再次点击取消选中
+                selectedCell.isSelected = false;
+                monthAdapter.notifyDataSetChanged();
+                return;
             }
             for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
                 BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
@@ -60,5 +69,15 @@ public class RangeChoiceManager extends BaseHolidayManager {
             cellBean.isSelected = true;
             monthAdapter.notifyDataSetChanged();
         }
+    }
+
+    private OnClickRangeListener mOnClickRangeListener;
+
+    public void setOnClickRangeListener(OnClickRangeListener onClickRangeListener) {
+        mOnClickRangeListener = onClickRangeListener;
+    }
+
+    public interface OnClickRangeListener {
+        boolean onBeyond();
     }
 }

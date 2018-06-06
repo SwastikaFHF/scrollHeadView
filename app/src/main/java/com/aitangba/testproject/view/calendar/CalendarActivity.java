@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.view.calendar.common.CalendarView;
+import com.aitangba.testproject.view.calendar.common.manager.MultipleChoiceManager;
 import com.aitangba.testproject.view.calendar.common.manager.RangeChoiceManager;
 import com.aitangba.testproject.view.calendar.common.manager.SingleChoiceManager;
 
@@ -23,8 +24,7 @@ public class CalendarActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 //        recyclerView.setLayoutManager(new GridLayoutManager(this, 7));
 //        HolidayCalendarAdapter mAdapter = new HolidayCalendarAdapter();
 //        recyclerView.setAdapter(mAdapter);
@@ -49,7 +49,14 @@ public class CalendarActivity extends AppCompatActivity {
         Date toDate = toDateCal.getTime();
 
         CalendarView calendarView = findViewById(R.id.calendarView);
-//        calendarView.init(fromDate, toDate).build(new SingleChoiceManager());
-        calendarView.init(fromDate, toDate).build(new RangeChoiceManager(5));
+        RangeChoiceManager manager = new RangeChoiceManager(5);
+        manager.setOnClickRangeListener(new RangeChoiceManager.OnClickRangeListener() {
+            @Override
+            public boolean onBeyond() {
+                return true;
+            }
+        });
+        calendarView.init(fromDate, toDate).build(manager);
+//        calendarView.init(fromDate, toDate).build(new MultipleChoiceManager(5));
     }
 }

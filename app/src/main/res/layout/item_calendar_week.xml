@@ -6,7 +6,7 @@
               android:gravity="center"
               android:layout_height="wrap_content">
 
-    <com.aitangba.testproject.view.calendar.common.CheckableTextView
+    <com.aitangba.testproject.view.calendar.common.sample.CheckableTextView
         android:id="@+id/dayText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
