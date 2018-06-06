@@ -9,7 +9,5 @@ public interface BaseCellManager {
 
     void attachMonthAdapter(MonthAdapter monthAdapter);
 
-    void onBind(View cellView, CellBean cellBean);
-
     void onClick(View cellView, CellBean cellBean);
 }

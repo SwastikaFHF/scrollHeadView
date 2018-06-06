@@ -11,4 +11,6 @@ public class CellBean {
     public boolean isSelected;
     public Date date;
     public boolean enable;
+
+    public String flag;
 }

@@ -1,8 +1,10 @@
 package com.aitangba.testproject.view.calendar.common.sample;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
@@ -43,22 +45,26 @@ public class SampleCellAdapter extends BaseCellAdapter {
         if(viewHolder == null) {
             viewHolder = new ViewHolder();
             viewHolder.title = child.findViewById(R.id.dayText);
+            viewHolder.flag = child.findViewById(R.id.flagText);
             child.setTag(R.id.tag_holder, viewHolder);
         }
 
         CellBean cellBean = getItem(position);
-        viewHolder.title.setEnabled(cellBean.enable);
-        viewHolder.title.setChecked(cellBean.isSelected);
-        if (cellBean.isToday) {
-            viewHolder.title.setText("今天");
-        } else {
-            viewHolder.title.setText(String.valueOf(position + 1));
+        if(child instanceof CheckableRelativeLayout) {
+            CheckableRelativeLayout checkableRelativeLayout = (CheckableRelativeLayout) child;
+            checkableRelativeLayout.setEnabled(cellBean.enable);
+            checkableRelativeLayout.setChecked(cellBean.isSelected);
+
+            if (cellBean.isToday) {
+                viewHolder.title.setText("今天");
+            } else {
+                viewHolder.title.setText(String.valueOf(position + 1));
+            }
+
+            viewHolder.flag.setText(TextUtils.isEmpty(cellBean.flag) ? "" : cellBean.flag);
         }
 
-        if(mBaseCellManager != null) {
-            mBaseCellManager.onBind(child, cellBean);
-        }
-        viewHolder.title.setOnClickListener(new View.OnClickListener() {
+        child.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mBaseCellManager != null) {
@@ -69,6 +75,7 @@ public class SampleCellAdapter extends BaseCellAdapter {
     }
 
     public static class ViewHolder {
-        private CheckableTextView title;
+        private TextView title;
+        private TextView flag;
     }
 }

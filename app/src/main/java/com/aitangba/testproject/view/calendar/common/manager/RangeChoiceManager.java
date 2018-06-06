@@ -35,7 +35,7 @@ public class RangeChoiceManager extends BaseHolidayManager {
             Date lastSelectedDate;
             if (selectedDate.before(date)) {
                 if(mRangeSize != -1 && !date.before(getDateLater(selectedDate, mRangeSize))) {
-                    if(mOnClickRangeListener != null && mOnClickRangeListener.onBeyond()) {
+                    if(mCellSelectableFilter != null && mCellSelectableFilter.onBeyond()) {
                         return;
                     }
                 }
@@ -71,13 +71,13 @@ public class RangeChoiceManager extends BaseHolidayManager {
         }
     }
 
-    private OnClickRangeListener mOnClickRangeListener;
+    private CellSelectableFilter mCellSelectableFilter;
 
-    public void setOnClickRangeListener(OnClickRangeListener onClickRangeListener) {
-        mOnClickRangeListener = onClickRangeListener;
+    public void setCellSelectableFilter(CellSelectableFilter cellSelectableFilter) {
+        mCellSelectableFilter = cellSelectableFilter;
     }
 
-    public interface OnClickRangeListener {
+    public interface CellSelectableFilter {
         boolean onBeyond();
     }
 }

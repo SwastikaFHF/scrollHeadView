@@ -1,7 +1,6 @@
 package com.aitangba.testproject.view.calendar.common.manager;
 
-import android.view.View;
-
+import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
 import com.aitangba.testproject.view.calendar.common.BaseCellManager;
 import com.aitangba.testproject.view.calendar.common.CellBean;
 import com.aitangba.testproject.view.calendar.common.MonthAdapter;
@@ -18,13 +17,23 @@ public abstract class BaseHolidayManager implements BaseCellManager {
 
     protected MonthAdapter monthAdapter;
 
-    protected String flagsText;
-    protected List<String> flagDates;
     protected Map<String, String> holidayMap; // 2018-04-01, 清明节
 
-    public BaseHolidayManager setCornerFlags(List<String> flagDates, String flagsText) {
-        this.flagDates = flagDates;
-        this.flagsText = flagsText;
+    public BaseHolidayManager setCornerFlags(List<Date> flagDates, String flagsText) {
+        retry:
+        for(Date date : flagDates) {
+            for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
+                BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
+                for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
+                    CellBean cellBean = itemAdapter.getItem(j);
+                    if(date.compareTo(cellBean.date) == 0) {
+                        cellBean.flag = flagsText;
+                        continue retry;
+                    }
+                }
+            }
+        }
+        monthAdapter.notifyDataSetChanged();
         return this;
     }
 
@@ -38,10 +47,6 @@ public abstract class BaseHolidayManager implements BaseCellManager {
         this.monthAdapter = monthAdapter;
     }
 
-    @Override
-    public void onBind(View cellView, CellBean cellBean) {
-
-    }
 
     protected static Date getDateLater(Date date, int dateNum) {
         Calendar cal = Calendar.getInstance();
