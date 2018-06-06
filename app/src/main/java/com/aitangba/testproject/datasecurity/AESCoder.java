@@ -20,14 +20,14 @@ public class AESCoder {
     /**
      * 加密
      *
-     * @param secretKeyStr
-     * @param content
-     * @return
+     * @param secretKeyStr 密钥
+     * @param content 明文数据
+     * @return 加密后的数据
      * @throws GeneralSecurityException
      */
     public static String encrypt(String secretKeyStr, String content) throws GeneralSecurityException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(128, new SecureRandom(secretKeyStr.getBytes()));
+        keyGenerator.init(128, new SecureRandom(secretKeyStr.getBytes(CHARSET)));
         SecretKey secretKey = keyGenerator.generateKey();
         byte[] enCodeFormat = secretKey.getEncoded();
 
@@ -40,20 +40,20 @@ public class AESCoder {
         return parseByte2HexStr(result); // 转换成16进制，方面传递数据
     }
 
-
     /**
      * 解密
      *
-     * @param secretKeyStr
+     * @param secretKeyStr 密钥
      * @param encryptedContentStr 16进制的数据
-     * @return
+     * @return 解密后的数据
      * @throws GeneralSecurityException
      */
-    public static byte[] decrypt(String secretKeyStr, String encryptedContentStr) throws GeneralSecurityException {
-        byte[] encryptedContent = parseHexStr2Byte(encryptedContentStr);
+    public static String decrypt(String secretKeyStr, String encryptedContentStr) throws GeneralSecurityException {
+        byte[] encryptedContent = parseHexStr2Byte(encryptedContentStr); // 由16进制数据转换成2进制
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
 
+        // 手动设置Random，解决在Linux系统中发生“BadPaddingException”
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
         random.setSeed(secretKeyStr.getBytes(CHARSET));
         keyGenerator.init(128, random);
@@ -64,7 +64,9 @@ public class AESCoder {
         SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");
         Cipher cipher = Cipher.getInstance("AES");// 创建密码器
         cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
-        return cipher.doFinal(encryptedContent); // 加密
+
+        byte[] result = cipher.doFinal(encryptedContent); // 解密
+        return new String(result, CHARSET);
     }
 
     /**
@@ -111,7 +113,6 @@ public class AESCoder {
         String code = encrypt(secretKeyStr, content);
         System.out.println("密文字符串：" + code);
         // 解密
-        byte[] decryptResult = decrypt(secretKeyStr, code);
-        System.out.println("解密后：" + new String(decryptResult, "UTF-8")); //不转码会乱码
+        System.out.println("解密后：" + decrypt(secretKeyStr, code)); //不转码会乱码
     }
 }
