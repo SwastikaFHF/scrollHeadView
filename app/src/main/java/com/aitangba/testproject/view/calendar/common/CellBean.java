@@ -13,4 +13,5 @@ public class CellBean {
     public boolean enable;
 
     public String flag;
+    public String holiday;
 }

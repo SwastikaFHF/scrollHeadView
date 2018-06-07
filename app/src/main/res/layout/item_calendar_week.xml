@@ -12,6 +12,7 @@
             android:id="@+id/dayText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="14"
             android:textColor="@color/calendar_text" />
@@ -30,6 +31,20 @@
             android:layout_marginEnd="2dp"
             android:layout_alignParentEnd="true"
             tools:text="休"/>
+
+        <TextView
+            android:id="@+id/gregorianDayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dayText"
+            android:layout_marginTop="2dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textSize="12sp"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp"
+            tools:text="春节"/>
 
     </com.aitangba.testproject.view.calendar.common.sample.CheckableRelativeLayout>
 </layout>

@@ -46,6 +46,7 @@ public class SampleCellAdapter extends BaseCellAdapter {
             viewHolder = new ViewHolder();
             viewHolder.title = child.findViewById(R.id.dayText);
             viewHolder.flag = child.findViewById(R.id.flagText);
+            viewHolder.gregorianDayText = child.findViewById(R.id.gregorianDayText);
             child.setTag(R.id.tag_holder, viewHolder);
         }
 
@@ -62,6 +63,7 @@ public class SampleCellAdapter extends BaseCellAdapter {
             }
 
             viewHolder.flag.setText(TextUtils.isEmpty(cellBean.flag) ? "" : cellBean.flag);
+            viewHolder.gregorianDayText.setText(TextUtils.isEmpty(cellBean.holiday) ? "" : cellBean.holiday);
         }
 
         child.setOnClickListener(new View.OnClickListener() {
@@ -77,5 +79,6 @@ public class SampleCellAdapter extends BaseCellAdapter {
     public static class ViewHolder {
         private TextView title;
         private TextView flag;
+        private TextView gregorianDayText;
     }
 }

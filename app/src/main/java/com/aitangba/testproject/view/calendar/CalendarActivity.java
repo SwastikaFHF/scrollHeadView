@@ -15,7 +15,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by fhf11991 on 2017/4/11.
@@ -77,6 +79,24 @@ public class CalendarActivity extends AppCompatActivity {
                     }
 
                     manager.setCornerFlags(list, "休");
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 2000);
+
+        calendarView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<String> flagDates = Arrays.asList(new String[]{"2018-06-07", "2018-06-09", "2018-06-18"});
+
+                    Map<Date, String> map = new HashMap<>();
+                    for(String dateStr : flagDates) {
+                        map.put(mSimpleDateFormat.parse(dateStr), "节假日");
+                    }
+
+                    manager.setHolidays(map);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
