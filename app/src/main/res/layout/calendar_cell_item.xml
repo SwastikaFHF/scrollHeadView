@@ -4,7 +4,7 @@
 
     <com.aitangba.testproject.view.calendar.common.sample.CheckableRelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -15,7 +15,7 @@
             android:layout_centerHorizontal="true"
             android:padding="10dp"
             android:text="14"
-            android:textColor="@color/calendar_text" />
+            tools:textColor="@color/calendar_text" />
 
         <TextView
             android:id="@+id/flagText"

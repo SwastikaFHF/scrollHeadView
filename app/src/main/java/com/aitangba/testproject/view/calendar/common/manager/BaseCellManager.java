@@ -1,6 +1,9 @@
-package com.aitangba.testproject.view.calendar.common;
+package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
+
+import com.aitangba.testproject.view.calendar.CellBean;
+import com.aitangba.testproject.view.calendar.week.MonthAdapter;
 
 /**
  * Created by fhf11991 on 2018/6/5

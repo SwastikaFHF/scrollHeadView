@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.common;
+package com.aitangba.testproject.view.calendar.week;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,8 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
+import com.aitangba.testproject.view.calendar.CellBean;
 import com.aitangba.testproject.view.calendar.common.manager.BaseHolidayManager;
-import com.aitangba.testproject.view.calendar.common.sample.SampleCellAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ public class CalendarView extends RecyclerView {
     }
 
     private void validateAndUpdate(@NonNull Builder builder) {
+        setHasFixedSize(true);
         setLayoutManager(new LinearLayoutManager(getContext()));
         MonthAdapter adapter = new MonthAdapter();
         setAdapter(adapter);
@@ -65,27 +66,40 @@ public class CalendarView extends RecyclerView {
         tempCalendar.set(Calendar.DAY_OF_MONTH, 1); // the first day of start month
         clearTime(tempCalendar);
 
-        List<SampleCellAdapter> list = new ArrayList<>();
+        List<WeekBean> list = new ArrayList<>();
         CellBean cellBean;
 
         for (int i = 0; i < disMonth; i++) {
             int maxDay = tempCalendar.getActualMaximum(Calendar.DATE); // the max day of current month
-
             final int weekIndex = Math.max(0, tempCalendar.get(Calendar.DAY_OF_WEEK) - 1);
-            final List<CellBean> cellBeanList = new ArrayList<>();
-            for (int j = 0; j < maxDay; j++) {
-                cellBean = new CellBean();
-                cellBean.isToday = nowCalendar.equals(tempCalendar);
-                cellBean.enable = !tempCalendar.before(startCalendar) && !tempCalendar.after(endCalendar);
-                cellBean.date = tempCalendar.getTime();
-                cellBeanList.add(cellBean);
-                tempCalendar.add(Calendar.DAY_OF_MONTH, 1); // next day of current month or the first day of next month
+            WeekBean weekBean;
+            int weekCount = (int) Math.ceil((maxDay + weekIndex) / 7d);
+
+
+            int index = 0;
+            retry:
+            for (int j = 0; j < weekCount; j++) {
+                weekBean = new WeekBean();
+                if(j == 0) {
+                    weekBean.title = mSimpleDateFormat.format(tempCalendar.getTime());
+                }
+
+                for (;index < maxDay;) {
+                    cellBean = new CellBean();
+                    cellBean.index = index + 1;
+                    cellBean.isToday = nowCalendar.equals(tempCalendar);
+                    cellBean.enable = !tempCalendar.before(startCalendar) && !tempCalendar.after(endCalendar);
+                    cellBean.date = tempCalendar.getTime();
+                    weekBean.cellBeans.add(cellBean);
+                    tempCalendar.add(Calendar.DAY_OF_MONTH, 1); // next day of current month or the first day of next month
+
+                    index = index + 1;
+                    if((index + weekIndex) % 7 == 0) {
+                        list.add(weekBean);
+                        continue retry;
+                    }
+                }
             }
-            SampleCellAdapter cellAdapter = new SampleCellAdapter(weekIndex);
-            cellAdapter.setTitle(mSimpleDateFormat.format(cellBeanList.get(0).date));
-            cellAdapter.setData(cellBeanList);
-            cellAdapter.setBaseCellManager(builder.baseCellManager);
-            list.add(cellAdapter);
         }
 
         adapter.setData(list);

@@ -5,15 +5,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.view.calendar.common.CalendarView;
 import com.aitangba.testproject.view.calendar.common.manager.RangeChoiceManager;
+import com.aitangba.testproject.view.calendar.week.CalendarView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -67,40 +66,40 @@ public class CalendarActivity extends AppCompatActivity {
 //        calendarView.init(fromDate, toDate).build(new MultipleChoiceManager(5));
 
 
-        calendarView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<String> flagDates = Arrays.asList(new String[]{"2018-06-07", "2018-06-09", "2018-06-18"});
-
-                    List<Date> list = new ArrayList<>();
-                    for(String dateStr : flagDates) {
-                        list.add(mSimpleDateFormat.parse(dateStr));
-                    }
-
-                    manager.setCornerFlags(list, "休");
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 2000);
-
-        calendarView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    List<String> flagDates = Arrays.asList(new String[]{"2018-06-07", "2018-06-09", "2018-06-18"});
-
-                    Map<Date, String> map = new HashMap<>();
-                    for(String dateStr : flagDates) {
-                        map.put(mSimpleDateFormat.parse(dateStr), "节假日");
-                    }
-
-                    manager.setHolidays(map);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 4000);
+//        calendarView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    List<String> flagDates = Arrays.asList(new String[]{"2018-06-07", "2018-06-09", "2018-06-18"});
+//
+//                    List<Date> list = new ArrayList<>();
+//                    for(String dateStr : flagDates) {
+//                        list.add(mSimpleDateFormat.parse(dateStr));
+//                    }
+//
+//                    manager.setCornerFlags(list, "休");
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, 2000);
+//
+//        calendarView.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    List<String> flagDates = Arrays.asList(new String[]{"2018-06-07", "2018-06-09", "2018-06-18"});
+//
+//                    Map<Date, String> map = new HashMap<>();
+//                    for(String dateStr : flagDates) {
+//                        map.put(mSimpleDateFormat.parse(dateStr), "节假日");
+//                    }
+//
+//                    manager.setHolidays(map);
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, 4000);
     }
 }

@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.common;
+package com.aitangba.testproject.view.calendar;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import java.util.Date;
  */
 
 public class CellBean {
+    public int index;
     public boolean isToday;
     public boolean isSelected;
     public Date date;

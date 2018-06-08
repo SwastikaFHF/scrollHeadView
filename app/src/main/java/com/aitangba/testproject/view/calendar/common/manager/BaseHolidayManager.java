@@ -2,10 +2,9 @@ package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.util.Log;
 
-import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
-import com.aitangba.testproject.view.calendar.common.BaseCellManager;
-import com.aitangba.testproject.view.calendar.common.CellBean;
-import com.aitangba.testproject.view.calendar.common.MonthAdapter;
+import com.aitangba.testproject.view.calendar.CellBean;
+import com.aitangba.testproject.view.calendar.week.MonthAdapter;
+import com.aitangba.testproject.view.calendar.week.WeekBean;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,12 +28,12 @@ public abstract class BaseHolidayManager implements BaseCellManager {
 
         retry:
         for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
-            BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
-            for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
+            WeekBean item = monthAdapter.getItem(i);
+            for (int j = 0, itemCount = item.cellBeans.size(); j < itemCount; j++) {
                 if(flagDates.size() == 0) {
                     break retry;
                 }
-                CellBean cellBean = itemAdapter.getItem(j);
+                CellBean cellBean = item.cellBeans.get(j);
                 Date date = flagDates.get(0);
                 if(date.compareTo(cellBean.date) == 0) {
                     cellBean.flag = flagsText;
@@ -54,12 +53,12 @@ public abstract class BaseHolidayManager implements BaseCellManager {
         int mapSize = sortMap.size();
         retry:
         for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
-            BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
-            for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
+            WeekBean item = monthAdapter.getItem(i);
+            for (int j = 0, itemCount = item.cellBeans.size(); j < itemCount; j++) {
                 if(mapIndex == mapSize) {
                     break retry;
                 }
-                CellBean cellBean = itemAdapter.getItem(j);
+                CellBean cellBean = item.cellBeans.get(j);
                 Log.d("CellManager" ,"cellBean = " + mSimpleDateFormat.format(cellBean.date));
 
                 String value = sortMap.get(cellBean.date);

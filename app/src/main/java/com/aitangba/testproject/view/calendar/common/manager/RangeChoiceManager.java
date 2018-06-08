@@ -2,8 +2,8 @@ package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
 
-import com.aitangba.testproject.view.calendar.common.BaseCellAdapter;
-import com.aitangba.testproject.view.calendar.common.CellBean;
+import com.aitangba.testproject.view.calendar.CellBean;
+import com.aitangba.testproject.view.calendar.week.WeekBean;
 
 import java.util.Date;
 import java.util.List;
@@ -52,9 +52,9 @@ public class RangeChoiceManager extends BaseHolidayManager {
                 return;
             }
             for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
-                BaseCellAdapter itemAdapter = monthAdapter.getItem(i);
-                for (int j = 0, itemCount = itemAdapter.getCount(); j < itemCount; j++) {
-                    CellBean tempCell = itemAdapter.getItem(j);
+                WeekBean item = monthAdapter.getItem(i);
+                for (int j = 0, itemCount = item.cellBeans.size(); j < itemCount; j++) {
+                    CellBean tempCell = item.cellBeans.get(j);
                     Date tempDate = tempCell.date;
                     if (!tempDate.before(firstSelectedDate) && !tempDate.after(lastSelectedDate)) {
                         tempCell.isSelected = true;
