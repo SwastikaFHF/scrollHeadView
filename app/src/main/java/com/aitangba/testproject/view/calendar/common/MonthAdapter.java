@@ -3,7 +3,6 @@ package com.aitangba.testproject.view.calendar.common;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +34,8 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
         return mLayoutInflater;
     }
 
-    private int index;
-
     @Override
     public WeekViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d("CalendarView", "onCreateViewHolder ----- index = " + index++);
         return new WeekViewHolder(getLayoutInflater(parent.getContext()).inflate(R.layout.calendar_week_item, parent, false));
     }
 
