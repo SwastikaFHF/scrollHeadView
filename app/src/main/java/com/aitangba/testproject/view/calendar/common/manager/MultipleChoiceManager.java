@@ -2,7 +2,7 @@ package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.view.View;
 
-import com.aitangba.testproject.view.calendar.CellBean;
+import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
 
 import java.util.Date;
 import java.util.List;

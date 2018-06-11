@@ -15,7 +15,7 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <com.aitangba.testproject.view.calendar.week.WeekView
+    <com.aitangba.testproject.view.calendar.common.view.WeekView
         android:id="@+id/weekView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +49,6 @@
             android:id="@+id/seventhCell"
             layout="@layout/calendar_cell_item" />
 
-    </com.aitangba.testproject.view.calendar.week.WeekView>
+    </com.aitangba.testproject.view.calendar.common.view.WeekView>
 
 </LinearLayout>

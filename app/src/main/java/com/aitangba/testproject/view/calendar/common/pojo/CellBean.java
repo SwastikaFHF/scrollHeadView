@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar;
+package com.aitangba.testproject.view.calendar.common.pojo;
 
 import java.util.Date;
 

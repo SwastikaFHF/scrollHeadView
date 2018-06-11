@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.week;
+package com.aitangba.testproject.view.calendar.common;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.view.calendar.CellBean;
-import com.aitangba.testproject.view.calendar.common.sample.CheckableRelativeLayout;
+import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
+import com.aitangba.testproject.view.calendar.common.pojo.WeekBean;
+import com.aitangba.testproject.view.calendar.common.view.CheckableRelativeLayout;
+import com.aitangba.testproject.view.calendar.common.view.WeekView;
 
 import java.util.ArrayList;
 import java.util.List;

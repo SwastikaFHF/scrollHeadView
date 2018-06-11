@@ -6,17 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.view.calendar.common.manager.RangeChoiceManager;
-import com.aitangba.testproject.view.calendar.week.CalendarView;
+import com.aitangba.testproject.view.calendar.common.view.CalendarView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by fhf11991 on 2017/4/11.

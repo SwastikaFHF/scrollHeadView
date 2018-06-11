@@ -2,9 +2,9 @@ package com.aitangba.testproject.view.calendar.common.manager;
 
 import android.util.Log;
 
-import com.aitangba.testproject.view.calendar.CellBean;
-import com.aitangba.testproject.view.calendar.week.MonthAdapter;
-import com.aitangba.testproject.view.calendar.week.WeekBean;
+import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
+import com.aitangba.testproject.view.calendar.common.MonthAdapter;
+import com.aitangba.testproject.view.calendar.common.pojo.WeekBean;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

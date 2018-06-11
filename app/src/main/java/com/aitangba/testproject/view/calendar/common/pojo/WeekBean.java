@@ -1,6 +1,4 @@
-package com.aitangba.testproject.view.calendar.week;
-
-import com.aitangba.testproject.view.calendar.CellBean;
+package com.aitangba.testproject.view.calendar.common.pojo;
 
 import java.util.ArrayList;
 import java.util.List;

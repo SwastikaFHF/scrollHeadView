@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.common.sample;
+package com.aitangba.testproject.view.calendar.common.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

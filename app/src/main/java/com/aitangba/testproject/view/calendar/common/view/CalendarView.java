@@ -1,4 +1,4 @@
-package com.aitangba.testproject.view.calendar.week;
+package com.aitangba.testproject.view.calendar.common.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,8 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import com.aitangba.testproject.view.calendar.CellBean;
+import com.aitangba.testproject.view.calendar.common.MonthAdapter;
+import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
 import com.aitangba.testproject.view.calendar.common.manager.BaseHolidayManager;
+import com.aitangba.testproject.view.calendar.common.pojo.WeekBean;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
