@@ -8,9 +8,15 @@ import com.aitangba.testproject.R;
 import com.aitangba.testproject.view.calendar.common.manager.RangeChoiceManager;
 import com.aitangba.testproject.view.calendar.common.view.CalendarView;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by fhf11991 on 2017/4/11.
@@ -45,7 +51,7 @@ public class CalendarActivity extends AppCompatActivity {
         Date fromDate = new Date();
 
         Calendar toDateCal = Calendar.getInstance();
-        toDateCal.add(Calendar.DATE, 200);
+        toDateCal.add(Calendar.DATE, 60);
         Date toDate = toDateCal.getTime();
 
         CalendarView calendarView = findViewById(R.id.calendarView);
@@ -53,7 +59,7 @@ public class CalendarActivity extends AppCompatActivity {
         manager.setCellSelectableFilter(new RangeChoiceManager.CellSelectableFilter() {
             @Override
             public boolean onBeyond() {
-                return true;
+                return false;
             }
         });
         calendarView.init(fromDate, toDate).build(manager);

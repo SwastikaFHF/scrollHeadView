@@ -51,13 +51,23 @@ public class RangeChoiceManager extends BaseHolidayManager {
                 monthAdapter.notifyDataSetChanged();
                 return;
             }
+
+            retry:
             for (int i = 0, count = monthAdapter.getItemCount(); i < count; i++) {
                 WeekBean item = monthAdapter.getItem(i);
                 for (int j = 0, itemCount = item.cellBeans.size(); j < itemCount; j++) {
                     CellBean tempCell = item.cellBeans.get(j);
                     Date tempDate = tempCell.date;
-                    if (!tempDate.before(firstSelectedDate) && !tempDate.after(lastSelectedDate)) {
+                    if(tempDate.compareTo(firstSelectedDate) == 0) {
                         tempCell.isSelected = true;
+                        tempCell.option = CellBean.OPTION_FIRST;
+                    } else if (tempDate.after(firstSelectedDate) && tempDate.before(lastSelectedDate)) {
+                        tempCell.isSelected = true;
+                        tempCell.option = CellBean.OPTION_MIDDLE;
+                    } else if(tempDate.compareTo(lastSelectedDate) == 0) {
+                        tempCell.isSelected = true;
+                        tempCell.option = CellBean.OPTION_LAST;
+                        break retry;
                     }
                 }
             }
@@ -65,6 +75,7 @@ public class RangeChoiceManager extends BaseHolidayManager {
         } else {
             for (CellBean itemCell : selectedCells) {
                 itemCell.isSelected = false;
+                itemCell.option = CellBean.OPTION_NONE;
             }
             cellBean.isSelected = true;
             monthAdapter.notifyDataSetChanged();

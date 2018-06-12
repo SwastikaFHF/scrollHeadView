@@ -12,7 +12,15 @@ public class CellBean {
     public boolean isSelected;
     public Date date;
     public boolean enable;
+    public boolean isWeekend;
 
     public String flag;
     public String holiday;
+
+    public int option = OPTION_NONE; // 当前状态
+
+    public static final int OPTION_NONE = 0;
+    public static final int OPTION_FIRST = 1;
+    public static final int OPTION_MIDDLE = 2;
+    public static final int OPTION_LAST = 3;
 }

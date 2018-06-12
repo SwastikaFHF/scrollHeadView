@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
+import com.aitangba.testproject.view.calendar.common.manager.BaseCellManager;
 import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
 import com.aitangba.testproject.view.calendar.common.pojo.WeekBean;
+import com.aitangba.testproject.view.calendar.common.view.CalendarCellView;
 import com.aitangba.testproject.view.calendar.common.view.CheckableRelativeLayout;
 import com.aitangba.testproject.view.calendar.common.view.WeekView;
 
@@ -34,6 +36,12 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
         return mLayoutInflater;
     }
 
+    private BaseCellManager mBaseCellManager;
+
+    public void setBaseCellManager(BaseCellManager baseCellManager) {
+        mBaseCellManager = baseCellManager;
+    }
+
     @Override
     public WeekViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new WeekViewHolder(getLayoutInflater(parent.getContext()).inflate(R.layout.calendar_week_item, parent, false));
@@ -53,8 +61,9 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
         for(int i = 0, count = holder.mWeekViews.size(); i < count; i++) {
             CellViewHolder cellViewHolder = holder.mWeekViews.get(i);
             if(i < item.getSpacingColumn()) {
-                cellViewHolder.cellView.setEnabled(false);
                 cellViewHolder.cellView.setChecked(false);
+                cellViewHolder.cellView.setEnabled(false);
+                cellViewHolder.cellView.setOption(CellBean.OPTION_NONE);
 
                 cellViewHolder.title.setText("");
                 cellViewHolder.flag.setText("");
@@ -63,8 +72,10 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
                 cellViewHolder.cellView.setOnClickListener(null);
             } else {
                 CellBean cellBean = item.cellBeans.get(i - item.getSpacingColumn());
-                cellViewHolder.cellView.setEnabled(cellBean.enable);
                 cellViewHolder.cellView.setChecked(cellBean.isSelected);
+                cellViewHolder.cellView.setWeekend(cellBean.isWeekend);
+                cellViewHolder.cellView.setEnabled(cellBean.enable);
+                cellViewHolder.cellView.setOption(cellBean.option);
 
                 cellViewHolder.title.setText(String.valueOf(cellBean.index));
                 cellViewHolder.flag.setText(TextUtils.isEmpty(cellBean.flag) ? "" : cellBean.flag);
@@ -73,7 +84,9 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
                 cellViewHolder.cellView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        if(mBaseCellManager != null) {
+                            mBaseCellManager.onClick(v, cellBean);
+                        }
                     }
                 });
             }
@@ -124,7 +137,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
                 View child = weekView.getChildAt(i);
                 cellViewHolder = new CellViewHolder();
 
-                cellViewHolder.cellView = (CheckableRelativeLayout) child;
+                cellViewHolder.cellView = (CalendarCellView) child;
                 cellViewHolder.title = child.findViewById(R.id.dayText);
                 cellViewHolder.flag = child.findViewById(R.id.flagText);
                 cellViewHolder.gregorianDayText = child.findViewById(R.id.gregorianDayText);
@@ -134,7 +147,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
     }
 
     public static class CellViewHolder {
-        private CheckableRelativeLayout cellView;
+        private CalendarCellView cellView;
         private TextView title;
         private TextView flag;
         private TextView gregorianDayText;

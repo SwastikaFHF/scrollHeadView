@@ -46,6 +46,7 @@ public class CalendarView extends RecyclerView {
         setHasFixedSize(true);
         setLayoutManager(new LinearLayoutManager(getContext()));
         MonthAdapter adapter = new MonthAdapter();
+        adapter.setBaseCellManager(builder.baseCellManager);
         setAdapter(adapter);
 
         builder.baseCellManager.attachMonthAdapter(adapter);
@@ -90,6 +91,8 @@ public class CalendarView extends RecyclerView {
                     cellBean = new CellBean();
                     cellBean.index = index + 1;
                     cellBean.isToday = nowCalendar.equals(tempCalendar);
+                    int weekDay = tempCalendar.get(Calendar.DAY_OF_WEEK);
+                    cellBean.isWeekend = weekDay == Calendar.SATURDAY || weekDay == Calendar.SUNDAY;
                     cellBean.enable = !tempCalendar.before(startCalendar) && !tempCalendar.after(endCalendar);
                     cellBean.date = tempCalendar.getTime();
                     weekBean.cellBeans.add(cellBean);
