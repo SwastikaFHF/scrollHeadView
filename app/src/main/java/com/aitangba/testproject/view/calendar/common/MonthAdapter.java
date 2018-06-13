@@ -58,9 +58,10 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
             holder.titleText.setVisibility(View.GONE);
         }
 
+        int cellDateCount = item.cellBeans.size();
         for(int i = 0, count = holder.mWeekViews.size(); i < count; i++) {
             CellViewHolder cellViewHolder = holder.mWeekViews.get(i);
-            if(i < item.getSpacingColumn()) {
+            if((item.spacingColumn != 0 && i < item.spacingColumn) || (item.spacingColumn == 0 && i >= cellDateCount)) {
                 cellViewHolder.cellView.setChecked(false);
                 cellViewHolder.cellView.setEnabled(false);
                 cellViewHolder.cellView.setOption(CellBean.OPTION_NONE);
@@ -71,7 +72,7 @@ public class MonthAdapter extends RecyclerView.Adapter<MonthAdapter.WeekViewHold
 
                 cellViewHolder.cellView.setOnClickListener(null);
             } else {
-                CellBean cellBean = item.cellBeans.get(i - item.getSpacingColumn());
+                CellBean cellBean = item.cellBeans.get(i - item.spacingColumn);
                 cellViewHolder.cellView.setChecked(cellBean.isSelected);
                 cellViewHolder.cellView.setWeekend(cellBean.isWeekend);
                 cellViewHolder.cellView.setEnabled(cellBean.enable);

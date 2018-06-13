@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.aitangba.testproject.view.calendar.common.MonthAdapter;
 import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
@@ -75,9 +76,9 @@ public class CalendarView extends RecyclerView {
         for (int i = 0; i < disMonth; i++) {
             int maxDay = tempCalendar.getActualMaximum(Calendar.DATE); // the max day of current month
             final int weekIndex = Math.max(0, tempCalendar.get(Calendar.DAY_OF_WEEK) - 1);
+            Log.d("Calendar", "weekIndex = " + weekIndex);
             WeekBean weekBean;
             int weekCount = (int) Math.ceil((maxDay + weekIndex) / 7d);
-
 
             int index = 0;
             retry:
@@ -85,6 +86,7 @@ public class CalendarView extends RecyclerView {
                 weekBean = new WeekBean();
                 if(j == 0) {
                     weekBean.title = mSimpleDateFormat.format(tempCalendar.getTime());
+                    weekBean.spacingColumn = weekIndex;
                 }
 
                 for (;index < maxDay;) {
@@ -99,7 +101,7 @@ public class CalendarView extends RecyclerView {
                     tempCalendar.add(Calendar.DAY_OF_MONTH, 1); // next day of current month or the first day of next month
 
                     index = index + 1;
-                    if((index + weekIndex) % 7 == 0) {
+                    if((index + weekIndex) % 7 == 0 || index == maxDay) {
                         list.add(weekBean);
                         continue retry;
                     }
