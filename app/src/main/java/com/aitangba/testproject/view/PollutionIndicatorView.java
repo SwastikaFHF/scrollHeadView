@@ -41,7 +41,7 @@ public class PollutionIndicatorView extends View {
     private int mValueBaseline; //
     private int mTextHeight;
 
-    private int value = 100; //数值
+    private int value = 125; //数值
     private String valueText = "轻度污染";
     private Rect valueTextRect = new Rect();
 
@@ -151,7 +151,7 @@ public class PollutionIndicatorView extends View {
         canvas.drawText("500", getMeasuredWidth() - MARGIN_SPACE, mScaleBaseline, mTextPaint);
 
         // 3.气泡
-        int bubbleX = value / 50 * eachDis + MARGIN_SPACE;
+        int bubbleX = (int) (value / 50f * eachDis + MARGIN_SPACE);
         bubbleRectF.left = bubbleX - mBubbleRadius;
         bubbleRectF.top = getPaddingTop();
         bubbleRectF.right = bubbleX + mBubbleRadius;
