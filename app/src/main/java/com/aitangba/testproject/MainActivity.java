@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
@@ -134,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(ViewDemoActivity.class);
             }
         });
+
+        TextView textView = findViewById(R.id.text);
+        textView.setText(Html.fromHtml("马上开通<b><tt>微信通知服务</tt></b>，订单信息实时通知"));
     }
 
     private void startActivity(Class<?> activityClass) {
