@@ -35,19 +35,21 @@ public class PollutionIndicatorView extends View {
     private Path bubblePath = new Path(); // 气泡
     private RectF bubbleRectF = new RectF();
     private Paint bubblePaint;
-    private int mBubbleRadius = 40;
+    private int mBubbleRadius = 43;
 
     private int mScaleBaseline; //刻度
     private int mValueBaseline; //
     private int mTextHeight;
 
-    private int value = 125; //数值
+    private int mValue = 625; //数值
     private String valueText = "轻度污染";
     private Rect valueTextRect = new Rect();
 
     private final int[] middleColor = {
-            Color.parseColor("#F9CF28"), Color.parseColor("#FF9624")
-            , Color.parseColor("#FF3A33"), Color.parseColor("#B10064")};
+            Color.parseColor("#71D315")
+            ,Color.parseColor("#F9CF28"), Color.parseColor("#FF9624")
+            , Color.parseColor("#FF3A33"), Color.parseColor("#B10064")
+            ,Color.parseColor("#8F0029")};
 
     public PollutionIndicatorView(Context context) {
         super(context, null);
@@ -60,13 +62,13 @@ public class PollutionIndicatorView extends View {
     public PollutionIndicatorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         firstPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        firstPaint.setColor(Color.parseColor("#71D315"));
+        firstPaint.setColor(middleColor[0]);
 
         middlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        middlePaint.setStrokeWidth(BRUSH_HEIGHT);
+        middlePaint.setStrokeWidth(BRUSH_HEIGHT * 1f);
 
         lastPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        lastPaint.setColor(Color.parseColor("#8F0029"));
+        lastPaint.setColor(middleColor[middleColor.length - 1]);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setStrokeWidth(3);
@@ -77,11 +79,10 @@ public class PollutionIndicatorView extends View {
         mTextHeight = Math.abs(mFontMetrics.bottom - mFontMetrics.top);
 
         bubblePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bubblePaint.setColor(Color.parseColor("#FF9624"));
     }
 
     public void setValue(int value, String valueText) {
-        this.value = value;
+        this.mValue = value;
         this.valueText = valueText;
 
         invalidate();
@@ -126,16 +127,16 @@ public class PollutionIndicatorView extends View {
         final int eachDis = (getMeasuredWidth() - MARGIN_SPACE * 2) / 10;
         final int middlePartY = startY + BRUSH_HEIGHT / 2;
 
-        middlePaint.setColor(middleColor[0]);
+        middlePaint.setColor(middleColor[1]);
         canvas.drawLine(MARGIN_SPACE + eachDis, middlePartY, MARGIN_SPACE + 2 * eachDis, middlePartY, middlePaint);
 
-        middlePaint.setColor(middleColor[1]);
+        middlePaint.setColor(middleColor[2]);
         canvas.drawLine(MARGIN_SPACE + 2 * eachDis, middlePartY, MARGIN_SPACE + 3 * eachDis, middlePartY, middlePaint);
 
-        middlePaint.setColor(middleColor[2]);
+        middlePaint.setColor(middleColor[3]);
         canvas.drawLine(MARGIN_SPACE + 3 * eachDis, middlePartY, MARGIN_SPACE + 4 * eachDis, middlePartY, middlePaint);
 
-        middlePaint.setColor(middleColor[3]);
+        middlePaint.setColor(middleColor[4]);
         canvas.drawLine(MARGIN_SPACE + 4 * eachDis, middlePartY, MARGIN_SPACE + 6 * eachDis, middlePartY, middlePaint);
 
         canvas.drawPath(lastPartPath, lastPaint);
@@ -151,22 +152,42 @@ public class PollutionIndicatorView extends View {
         canvas.drawText("500", getMeasuredWidth() - MARGIN_SPACE, mScaleBaseline, mTextPaint);
 
         // 3.气泡
+        int value = Math.min(500, Math.max(0, mValue)); // 0~500
         int bubbleX = (int) (value / 50f * eachDis + MARGIN_SPACE);
+        int curveControlY = startY - mBubbleRadius * 7 / 12; // 贝塞尔曲线控制点Y坐标
         bubbleRectF.left = bubbleX - mBubbleRadius;
         bubbleRectF.top = getPaddingTop();
         bubbleRectF.right = bubbleX + mBubbleRadius;
         bubbleRectF.bottom = getPaddingTop() + mBubbleRadius * 2;
         bubblePath.moveTo(bubbleX + mBubbleRadius, getPaddingTop() + mBubbleRadius);
-        bubblePath.quadTo(bubbleX, startY + 50, bubbleX - mBubbleRadius, getPaddingTop() + mBubbleRadius);
+        bubblePath.quadTo(bubbleX + mBubbleRadius, curveControlY, bubbleX, startY); //(x1,y1) 为控制点，(x2,y2)为结束点。
+        bubblePath.quadTo(bubbleX - mBubbleRadius, curveControlY, bubbleX - mBubbleRadius, getPaddingTop() + mBubbleRadius);
         bubblePath.arcTo(bubbleRectF, 180, 180, false);
+        bubblePaint.setColor(getBubbleColor(value));
         canvas.drawPath(bubblePath, bubblePaint);
 
         // 4.数值
-        canvas.drawText(String.valueOf(value), bubbleX, mValueBaseline, mTextPaint);
+        canvas.drawText(String.valueOf(mValue), bubbleX, mValueBaseline, mTextPaint);
 
         // 5.数值对应的信息
         mTextPaint.getTextBounds(valueText, 0, valueText.length(), valueTextRect);
         int valueTextPointX = bubbleX + mBubbleRadius + 20 + valueTextRect.width() / 2;
         canvas.drawText(valueText, valueTextPointX, mValueBaseline, mTextPaint);
+    }
+
+    private int getBubbleColor(int value) {
+        if(value < 50) {
+            return middleColor[0];
+        } else if(value < 100) {
+            return middleColor[1];
+        } else if(value < 150) {
+            return middleColor[2];
+        } else if(value < 200) {
+            return middleColor[3];
+        } else if(value < 300) {
+            return middleColor[4];
+        } else {
+            return middleColor[5];
+        }
     }
 }
