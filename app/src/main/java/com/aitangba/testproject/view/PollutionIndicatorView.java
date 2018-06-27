@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -17,17 +18,23 @@ import android.view.View;
 
 public class PollutionIndicatorView extends View {
 
-    private static final int BRUSH_HEIGHT = 30; //px
-    private static final int MARGIN_SPACE = 100; //px
-    private static final int TEXT_MARGIN = 20; // px
+    private static final int BRUSH_HEIGHT = 10; //dp 刻度盘高度
+    private static final int TEXT_MARGIN = 8; // dp 文字刻度值到刻度盘距离
+    private static final int HORIZONTAL_MARGIN = 15; //dp 刻度盘水平间距
+    private static final int TEXT_SIZE = 14; // sp 文字大小
+    private static final int BUBBLE_RADIUS = 12; // dp 水滴半径
+    private static final int BUBBLE_HEIGHT = 28; // dp 水滴高度
 
-    private Path firstPartPath = new Path(); // 刻度盘
+    private int horizontalMargin;
+    private int brushHeight;
+    private int mBubbleRadius;
+    private int bubbleHeight;
+
+    private Path firstPartPath = new Path(); // 刻度盘部分
     private Path lastPartPath = new Path();
     private Paint firstPaint;
     private Paint middlePaint;
     private Paint lastPaint;
-
-    private int bubbleHeight = 100; // 刻度盘距离
 
     private Paint mTextPaint; // 文字
     private Paint.FontMetricsInt mFontMetrics;
@@ -35,13 +42,12 @@ public class PollutionIndicatorView extends View {
     private Path bubblePath = new Path(); // 气泡
     private RectF bubbleRectF = new RectF();
     private Paint bubblePaint;
-    private int mBubbleRadius = 43;
 
     private int mScaleBaseline; //刻度
-    private int mValueBaseline; //
+    private int mValueBaseline;
     private int mTextHeight;
 
-    private int mValue = 625; //数值
+    private int mValue = 125; //数值
     private String valueText = "轻度污染";
     private Rect valueTextRect = new Rect();
 
@@ -61,18 +67,29 @@ public class PollutionIndicatorView extends View {
 
     public PollutionIndicatorView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        firstPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        horizontalMargin = dp2px(context, HORIZONTAL_MARGIN);
+        brushHeight = dp2px(context, BRUSH_HEIGHT);
+        mBubbleRadius = dp2px(context, BUBBLE_RADIUS);
+        bubbleHeight = dp2px(context, BUBBLE_HEIGHT);
+
+        firstPaint = new Paint();
+        firstPaint.setAntiAlias(true);
+        firstPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         firstPaint.setColor(middleColor[0]);
 
-        middlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        middlePaint.setStrokeWidth(BRUSH_HEIGHT * 1f);
+        middlePaint = new Paint();
+        middlePaint.setAntiAlias(true);
+        middlePaint.setStyle(Paint.Style.FILL);
+        middlePaint.setStrokeWidth(brushHeight * 1f);
 
-        lastPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        lastPaint = new Paint();
+        lastPaint.setAntiAlias(true);
+        lastPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         lastPaint.setColor(middleColor[middleColor.length - 1]);
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setStrokeWidth(3);
-        mTextPaint.setTextSize(40);
+        mTextPaint.setTextSize(sp2px(context, TEXT_SIZE));
         mTextPaint.setColor(Color.WHITE);
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mFontMetrics = mTextPaint.getFontMetricsInt();
@@ -90,10 +107,12 @@ public class PollutionIndicatorView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height = bubbleHeight + BRUSH_HEIGHT + TEXT_MARGIN + mTextHeight;
+        int textTopMargin = dp2px(getContext(), TEXT_MARGIN);
+
+        int height = bubbleHeight + brushHeight + textTopMargin + mTextHeight;
         int width = MeasureSpec.getSize(widthMeasureSpec);
 
-        mScaleBaseline = getPaddingTop() + bubbleHeight + BRUSH_HEIGHT + TEXT_MARGIN + Math.abs(mFontMetrics.top);
+        mScaleBaseline = getPaddingTop() + bubbleHeight + brushHeight + textTopMargin + Math.abs(mFontMetrics.top);
         mValueBaseline = getPaddingTop() + mBubbleRadius + Math.abs(mFontMetrics.top) - mTextHeight / 2;
 
         setMeasuredDimension(width, getPaddingTop() + height + getPaddingBottom());
@@ -103,17 +122,17 @@ public class PollutionIndicatorView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         final int startY = getPaddingTop() + bubbleHeight;
-        final int eachDis = (w - MARGIN_SPACE * 2) / 10;
+        final int eachDis = (w - horizontalMargin * 2) / 10;
 
         firstPartPath.reset();
-        firstPartPath.moveTo(MARGIN_SPACE + eachDis, startY);
-        firstPartPath.lineTo(MARGIN_SPACE + eachDis, startY + BRUSH_HEIGHT);
-        firstPartPath.arcTo(new RectF(MARGIN_SPACE, startY, MARGIN_SPACE + BRUSH_HEIGHT, startY + BRUSH_HEIGHT), 90, 180, false);
+        firstPartPath.moveTo(horizontalMargin + eachDis, startY);
+        firstPartPath.lineTo(horizontalMargin + eachDis, startY + brushHeight);
+        firstPartPath.arcTo(new RectF(horizontalMargin, startY, horizontalMargin + brushHeight, startY + brushHeight), 90, 180, false);
 
         lastPartPath.reset();
-        lastPartPath.moveTo(MARGIN_SPACE + 6 * eachDis, startY + BRUSH_HEIGHT);
-        lastPartPath.lineTo(MARGIN_SPACE + 6 * eachDis, startY);
-        lastPartPath.arcTo(new RectF(w - MARGIN_SPACE - BRUSH_HEIGHT, startY, w - MARGIN_SPACE, startY + BRUSH_HEIGHT), -90, 180, false);
+        lastPartPath.moveTo(horizontalMargin + 6 * eachDis, startY + brushHeight);
+        lastPartPath.lineTo(horizontalMargin + 6 * eachDis, startY);
+        lastPartPath.arcTo(new RectF(w - horizontalMargin - brushHeight, startY, w - horizontalMargin, startY + brushHeight), -90, 180, false);
     }
 
     @Override
@@ -124,36 +143,36 @@ public class PollutionIndicatorView extends View {
         // 1.刻度盘
         canvas.drawPath(firstPartPath, firstPaint);
 
-        final int eachDis = (getMeasuredWidth() - MARGIN_SPACE * 2) / 10;
-        final int middlePartY = startY + BRUSH_HEIGHT / 2;
+        final int eachDis = (getMeasuredWidth() - horizontalMargin * 2) / 10;
+        final int middlePartY = startY + brushHeight / 2;
 
         middlePaint.setColor(middleColor[1]);
-        canvas.drawLine(MARGIN_SPACE + eachDis, middlePartY, MARGIN_SPACE + 2 * eachDis, middlePartY, middlePaint);
+        canvas.drawLine(horizontalMargin + eachDis, middlePartY, horizontalMargin + 2 * eachDis, middlePartY, middlePaint);
 
         middlePaint.setColor(middleColor[2]);
-        canvas.drawLine(MARGIN_SPACE + 2 * eachDis, middlePartY, MARGIN_SPACE + 3 * eachDis, middlePartY, middlePaint);
+        canvas.drawLine(horizontalMargin + 2 * eachDis, middlePartY, horizontalMargin + 3 * eachDis, middlePartY, middlePaint);
 
         middlePaint.setColor(middleColor[3]);
-        canvas.drawLine(MARGIN_SPACE + 3 * eachDis, middlePartY, MARGIN_SPACE + 4 * eachDis, middlePartY, middlePaint);
+        canvas.drawLine(horizontalMargin + 3 * eachDis, middlePartY, horizontalMargin + 4 * eachDis, middlePartY, middlePaint);
 
         middlePaint.setColor(middleColor[4]);
-        canvas.drawLine(MARGIN_SPACE + 4 * eachDis, middlePartY, MARGIN_SPACE + 6 * eachDis, middlePartY, middlePaint);
+        canvas.drawLine(horizontalMargin + 4 * eachDis, middlePartY, horizontalMargin + 6 * eachDis, middlePartY, middlePaint);
 
         canvas.drawPath(lastPartPath, lastPaint);
 
 
         // 2.刻度
-        canvas.drawText("0", MARGIN_SPACE, mScaleBaseline, mTextPaint);
-        canvas.drawText("50", MARGIN_SPACE + eachDis, mScaleBaseline, mTextPaint);
-        canvas.drawText("100", MARGIN_SPACE + 2 * eachDis, mScaleBaseline, mTextPaint);
-        canvas.drawText("150", MARGIN_SPACE + 3 * eachDis, mScaleBaseline, mTextPaint);
-        canvas.drawText("200", MARGIN_SPACE + 4 * eachDis, mScaleBaseline, mTextPaint);
-        canvas.drawText("300", MARGIN_SPACE + 6 * eachDis, mScaleBaseline, mTextPaint);
-        canvas.drawText("500", getMeasuredWidth() - MARGIN_SPACE, mScaleBaseline, mTextPaint);
+        canvas.drawText("0", horizontalMargin, mScaleBaseline, mTextPaint);
+        canvas.drawText("50", horizontalMargin + eachDis, mScaleBaseline, mTextPaint);
+        canvas.drawText("100", horizontalMargin + 2 * eachDis, mScaleBaseline, mTextPaint);
+        canvas.drawText("150", horizontalMargin + 3 * eachDis, mScaleBaseline, mTextPaint);
+        canvas.drawText("200", horizontalMargin + 4 * eachDis, mScaleBaseline, mTextPaint);
+        canvas.drawText("300", horizontalMargin + 6 * eachDis, mScaleBaseline, mTextPaint);
+        canvas.drawText("500", getMeasuredWidth() - horizontalMargin, mScaleBaseline, mTextPaint);
 
         // 3.气泡
         int value = Math.min(500, Math.max(0, mValue)); // 0~500
-        int bubbleX = (int) (value / 50f * eachDis + MARGIN_SPACE);
+        int bubbleX = (int) (value / 50f * eachDis + horizontalMargin);
         int curveControlY = startY - mBubbleRadius * 7 / 12; // 贝塞尔曲线控制点Y坐标
         bubbleRectF.left = bubbleX - mBubbleRadius;
         bubbleRectF.top = getPaddingTop();
@@ -189,5 +208,14 @@ public class PollutionIndicatorView extends View {
         } else {
             return middleColor[5];
         }
+    }
+
+    private static int dp2px(Context context, float dpValue) {
+        final float scale = context.getApplicationContext().getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    private static int sp2px(Context context, float spVal) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal, context.getApplicationContext().getResources().getDisplayMetrics());
     }
 }
