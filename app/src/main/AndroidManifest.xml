@@ -75,7 +75,8 @@
         <activity android:name=".paging.PagingRecyclerViewActivity"></activity>
         <activity android:name=".threadpool.volley.VolleyActivity"></activity>
         <activity android:name=".view.flowlayout.FlowViewActivity"></activity>
-        <activity android:name=".fragment.FragmentTestActivity"></activity>
+        <activity android:name=".fragment.FragmentTestActivity"
+            android:launchMode="singleTask"></activity>
         <activity android:name=".view.drawable.DrawableTestActivity"></activity>
         <activity android:name=".runnablemanager.RunnableManagerActivity"></activity>
 
