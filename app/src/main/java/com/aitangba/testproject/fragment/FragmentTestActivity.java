@@ -1,10 +1,12 @@
 package com.aitangba.testproject.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.aitangba.testproject.MainActivity;
 import com.aitangba.testproject.R;
 
 /**
@@ -33,6 +35,16 @@ public class FragmentTestActivity extends AppCompatActivity {
                 mMainTabAdapter.show(1);
             }
         });
-        mMainTabAdapter.show(0);
+
+        if(savedInstanceState == null) {
+            mMainTabAdapter.show(0);
+        }
+
+        findViewById(R.id.thirdButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FragmentTestActivity.this, MainActivity.class));
+            }
+        });
     }
 }

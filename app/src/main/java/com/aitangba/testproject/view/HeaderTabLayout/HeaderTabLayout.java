@@ -108,23 +108,23 @@ public class HeaderTabLayout extends LinearLayout {
         final int childCount = getChildCount();
         for(int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
-            if(i == mCurrentPosition) {
-                if(i == 0) {
-                    child.setBackgroundResource(R.drawable.bg_left_tab_pressed);
-                } else if(i == childCount - 1){
-                    child.setBackgroundResource(R.drawable.bg_right_tab_pressed);
-                } else {
-                    child.setBackgroundResource(R.drawable.bg_middle_tab_pressed);
-                }
-            } else {
-                if(i == 0) {
-                    child.setBackgroundResource(R.drawable.bg_left_tab);
-                } else if(i == childCount - 1){
-                    child.setBackgroundResource(R.drawable.bg_right_tab);
-                } else {
-                    child.setBackgroundResource(R.drawable.bg_middle_tab);
-                }
-            }
+//            if(i == mCurrentPosition) {
+//                if(i == 0) {
+//                    child.setBackgroundResource(R.drawable.bg_left_tab_pressed);
+//                } else if(i == childCount - 1){
+//                    child.setBackgroundResource(R.drawable.bg_right_tab_pressed);
+//                } else {
+//                    child.setBackgroundResource(R.drawable.bg_middle_tab_pressed);
+//                }
+//            } else {
+//                if(i == 0) {
+//                    child.setBackgroundResource(R.drawable.bg_left_tab);
+//                } else if(i == childCount - 1){
+//                    child.setBackgroundResource(R.drawable.bg_right_tab);
+//                } else {
+//                    child.setBackgroundResource(R.drawable.bg_middle_tab);
+//                }
+//            }
         }
         invalidate();
     }
