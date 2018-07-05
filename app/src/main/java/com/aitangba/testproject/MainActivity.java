@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
@@ -47,6 +48,7 @@ import com.aitangba.testproject.view.viewpager.ViewPageActivity;
 import com.aitangba.testproject.view.wheelview.WheelViewActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -139,6 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.text);
         textView.setText(Html.fromHtml("马上开通<b><tt>微信通知服务</tt></b>，订单信息实时通知"));
+        ImageView imageView = findViewById(R.id.image);
+        //http:\/\/101.201.209.48:81\/Public\/LifeNewsImg\/2018-05-10\/5af3abeaba68a.jpg
+        String url = "http:\\/\\/101.201.209.48:81\\/Public\\/LifeNewsImg\\/2018-05-10\\/5af3abeaba68a.jpg".replace("\\", "");
+        String path = "\\/Public\\/goods\\/5b03ead4cd5d1.jpeg".replace("\\", "");
+        Glide.with(this).load("http://shedt.yunmeo.cn:81" + path).into(imageView);
     }
 
     private void startActivity(Class<?> activityClass) {
