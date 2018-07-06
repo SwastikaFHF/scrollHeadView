@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,42 +14,44 @@ import android.widget.TextView;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
-import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
-import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
-import com.aitangba.testproject.view.drawable.DrawableTestActivity;
-import com.aitangba.testproject.view.edgeeffect.EffectActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
-import com.aitangba.testproject.view.horizonscroll.HorizonScrollActivity;
-import com.aitangba.testproject.view.horizonscroll.HorizonScrollTestActivity;
-import com.aitangba.testproject.view.horizonscrollview.HorizonScrollAdActivity;
-import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
 import com.aitangba.testproject.job.JobListActivity;
 import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
-import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
 import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
-import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
-import com.aitangba.testproject.view.path.PathActivity;
-import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
+import com.aitangba.testproject.view.calendar.CalendarActivity;
+import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
+import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
+import com.aitangba.testproject.view.drawable.DrawableTestActivity;
+import com.aitangba.testproject.view.edgeeffect.EffectActivity;
+import com.aitangba.testproject.view.flowlayout.FlowViewActivity;
+import com.aitangba.testproject.view.horizonscroll.HorizonScrollActivity;
+import com.aitangba.testproject.view.horizonscroll.HorizonScrollTestActivity;
+import com.aitangba.testproject.view.horizonscrollview.HorizonScrollAdActivity;
+import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
+import com.aitangba.testproject.view.loadingview.LoadViewActivity;
+import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
+import com.aitangba.testproject.view.path.PathActivity;
+import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
-import com.aitangba.testproject.view.ViewDemoActivity;
-import com.aitangba.testproject.view.calendar.CalendarActivity;
-import com.aitangba.testproject.view.flowlayout.FlowViewActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
 import com.aitangba.testproject.view.wheelview.WheelViewActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
 import com.aitangba.testproject.youtube.YoutubeActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.ArrayList;
 
@@ -140,12 +143,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView textView = findViewById(R.id.text);
-        textView.setText(Html.fromHtml("马上开通<b><tt>微信通知服务</tt></b>，订单信息实时通知"));
-        ImageView imageView = findViewById(R.id.image);
-        //http:\/\/101.201.209.48:81\/Public\/LifeNewsImg\/2018-05-10\/5af3abeaba68a.jpg
-        String url = "http:\\/\\/101.201.209.48:81\\/Public\\/LifeNewsImg\\/2018-05-10\\/5af3abeaba68a.jpg".replace("\\", "");
-        String path = "\\/Public\\/goods\\/5b03ead4cd5d1.jpeg".replace("\\", "");
-        Glide.with(this).load("http://shedt.yunmeo.cn:81" + path).into(imageView);
+        textView.setText(Html.fromHtml(getString(R.string.debug_string)));
     }
 
     private void startActivity(Class<?> activityClass) {
@@ -163,4 +161,6 @@ public class MainActivity extends AppCompatActivity {
             this.activityClass = activityClass;
         }
     }
+
+
 }
