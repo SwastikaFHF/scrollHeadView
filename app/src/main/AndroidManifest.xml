@@ -87,6 +87,7 @@
         <activity android:name=".tracktask.TrackedActivity"></activity>
         <activity android:name=".screenshot.ScreenShotActivity"></activity>
         <activity android:name=".view.ViewDemoActivity"></activity>
+        <activity android:name=".view.keyboard.KeyboardActivity"></activity>
 
     </application>
 

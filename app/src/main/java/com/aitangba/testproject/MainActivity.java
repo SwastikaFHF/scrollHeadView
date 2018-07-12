@@ -38,6 +38,7 @@ import com.aitangba.testproject.view.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.view.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.view.horizonscrollview.HorizonScrollAdActivity;
 import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
+import com.aitangba.testproject.view.keyboard.KeyboardActivity;
 import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(FragmentTestActivity.class);
+                startActivity(KeyboardActivity.class);
             }
         });
 

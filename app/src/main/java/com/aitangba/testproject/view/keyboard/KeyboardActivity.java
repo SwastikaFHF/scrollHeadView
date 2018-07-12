@@ -1,6 +1,5 @@
 package com.aitangba.testproject.view.keyboard;
 
-import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +14,6 @@ public class KeyboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Keyboard keyboard = new Keyboard(this, R.xml.number);
+        setContentView(R.layout.activity_keyboard);
     }
 }
