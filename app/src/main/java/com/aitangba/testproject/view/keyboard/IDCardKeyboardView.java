@@ -64,7 +64,9 @@ public class IDCardKeyboardView extends KeyboardView {
 
             @Override
             public void onKey(int primaryCode, int[] keyCodes) {
-
+                if(mOnKeyClickListener != null) {
+                    mOnKeyClickListener.onKey(primaryCode);
+                }
             }
 
             @Override
@@ -142,7 +144,13 @@ public class IDCardKeyboardView extends KeyboardView {
         }
     }
 
-    public interface OnClickListener {
-        on
+    private OnKeyClickListener mOnKeyClickListener;
+
+    public void setOnKeyClickListener(OnKeyClickListener onKeyClickListener) {
+        mOnKeyClickListener = onKeyClickListener;
+    }
+
+    public interface OnKeyClickListener {
+        void onKey(int primaryCode);
     }
 }

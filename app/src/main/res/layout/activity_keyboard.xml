@@ -14,9 +14,10 @@
             android:layout_height="wrap_content"
             android:text="@string/debug_short_string" />
 
-        <com.aitangba.testproject.view.keyboard.IDCardKeyboardView
-            android:id="@+id/keyView"
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/debug_short_string" />
+
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
