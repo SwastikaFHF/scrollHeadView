@@ -64,7 +64,7 @@ public class IDCardKeyboardView extends KeyboardView {
 
             @Override
             public void onKey(int primaryCode, int[] keyCodes) {
-                if(mOnKeyClickListener != null) {
+                if (mOnKeyClickListener != null) {
                     mOnKeyClickListener.onKey(primaryCode);
                 }
             }
@@ -127,7 +127,7 @@ public class IDCardKeyboardView extends KeyboardView {
         if (key.pressed) {
             mKeyBackgroundPaint.setColor(mPressedColor);
         } else {
-            mKeyBackgroundPaint.setColor(key.codes[0] == 101 || key.codes[0] == 102 ? mSpecialKeyBgColor : Color.WHITE);
+            mKeyBackgroundPaint.setColor(key.codes[0] == 101 || key.codes[0] == Keyboard.KEYCODE_DELETE ? mSpecialKeyBgColor : Color.WHITE);
         }
         // draw the background of the key
         canvas.drawRect(mKeyBackgroundBounds, mKeyBackgroundPaint);

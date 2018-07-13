@@ -5,16 +5,19 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,12 +42,16 @@ import java.lang.reflect.Method;
  */
 public class IDCardInputHelper {
 
-    private Activity mActivity;
+    private static final String TAG ="IDCardFragment";
+
+    private FragmentActivity mActivity;
     private EditText mEditText;
     private View mContentView;
     private InnerHandler mInnerHandler;
     private int mContentViewHeight;
     private boolean mShowing = false;
+
+    private static final String TAG_INNER_FRAGMENT = "TagIDCardInput";
 
     private SparseArray<String> mSparseArray = new SparseArray<>();
 
@@ -63,11 +70,20 @@ public class IDCardInputHelper {
 
     }
 
-    public IDCardInputHelper(@NonNull Activity activity, @NonNull EditText editText) {
-        mActivity = activity;
-        mEditText = editText;
-        initEditText();
+    private IDCardInputHelper(FragmentActivity fragmentActivity) {
+        mActivity = fragmentActivity;
         mInnerHandler = new InnerHandler(this);
+    }
+
+    public static IDCardInputHelper with(FragmentActivity fragmentActivity) {
+        return new IDCardInputHelper(fragmentActivity);
+    }
+
+    public void bind(@NonNull EditText editText) {
+        mEditText = editText;
+
+        initEditText();
+        removeFragment();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -85,6 +101,7 @@ public class IDCardInputHelper {
         mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                Log.d(TAG, "hasFocus = " + hasFocus);
                 if (!hasFocus && mContentView != null) {
                     dismiss();
                 }
@@ -113,6 +130,15 @@ public class IDCardInputHelper {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void removeFragment() {
+        IDCardFragment current = (IDCardFragment) mActivity.getSupportFragmentManager().findFragmentByTag(TAG_INNER_FRAGMENT);
+        if(current != null) {
+            mActivity.getSupportFragmentManager().popBackStack();
+            FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
+            transaction.remove(current).commitAllowingStateLoss();
         }
     }
 
@@ -190,6 +216,17 @@ public class IDCardInputHelper {
             targetViewYAnimator.setTarget(scrollToView);
             builder.with(targetViewYAnimator);
         }
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                removeFragment();
+                IDCardFragment fragment = new IDCardFragment();
+                fragment.setIdCardInputHelper(IDCardInputHelper.this);
+                FragmentTransaction transaction = mActivity.getSupportFragmentManager().beginTransaction();
+                transaction.add(fragment, TAG_INNER_FRAGMENT).addToBackStack(null).commitAllowingStateLoss();
+            }
+        });
         animatorSet.setDuration(300);
         animatorSet.start();
     }
@@ -220,19 +257,18 @@ public class IDCardInputHelper {
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mShowing = false;
+                removeFragment();
             }
         });
         animatorSet.setDuration(300);
         animatorSet.start();
     }
 
-    public boolean dispatchBackEvent() {
+    private void dispatchBackEvent() {
         if (mShowing) {
             dismiss();
             mInnerHandler.removeCallbacksAndMessages(null);
-            return true;
         }
-        return false;
     }
 
     private static final int MSG_PLAY_NOW = 1;
@@ -263,6 +299,24 @@ public class IDCardInputHelper {
 
         private void startLatter() {
             sendEmptyMessageDelayed(MSG_PLAY_LATTER, 250);
+        }
+    }
+
+    public static class IDCardFragment extends Fragment {
+
+        private WeakReference<IDCardInputHelper> mWeakReference;
+
+        public void setIdCardInputHelper(IDCardInputHelper idCardInputHelper) {
+            mWeakReference = new WeakReference<>(idCardInputHelper);
+        }
+
+        @Override
+        public void onDetach() {
+            super.onDetach();
+            Log.d(TAG, "onDetach");
+            if(mWeakReference != null && mWeakReference.get() != null) {
+                mWeakReference.get().dispatchBackEvent();
+            }
         }
     }
 }
