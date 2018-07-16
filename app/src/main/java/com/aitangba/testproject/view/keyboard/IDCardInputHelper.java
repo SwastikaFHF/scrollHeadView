@@ -311,6 +311,18 @@ public class IDCardInputHelper {
         }
 
         @Override
+        public void onAttach(Context context) {
+            super.onAttach(context);
+            // 避免在页面重建后，不需要显示输入法的问题
+            if(mWeakReference != null && mWeakReference.get() != null) {
+                IDCardInputHelper helper = mWeakReference.get();
+                if(!helper.mShowing) {
+                    helper.removeFragment();
+                }
+            }
+        }
+
+        @Override
         public void onDetach() {
             super.onDetach();
             Log.d(TAG, "onDetach");
