@@ -25,5 +25,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <com.aitangba.testproject.view.NumberProgressView
+            android:layout_height="70dp"
+            android:layout_width="70dp" />
+
     </LinearLayout>
 </ScrollView>
