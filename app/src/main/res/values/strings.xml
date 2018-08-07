@@ -5,4 +5,6 @@
     <string name="debug_long_string">从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。</string>
     <string name="debug_string"><![CDATA[马上开通<b><tt>微信通知服务</tt></b>，订单信息实时通知]]></string>
     <string name="debug_image_string">\/Public\/goods\/5b03ead4cd5d1.jpeg</string>
+
+    <string name="avatar_behavior"></string>
 </resources>
