@@ -18,6 +18,10 @@ public class DragActivity extends AppCompatActivity {
 
         DragFrameLayout dragFrameLayout = findViewById(R.id.dragLayout);
         dragFrameLayout.bindImageView(findViewById(R.id.image));
-        dragFrameLayout.bindTextView(findViewById(R.id.text));
+
+        ObserverSizeTextView textView = findViewById(R.id.text2);
+        dragFrameLayout.bindTextView(findViewById(R.id.text2));
+
+        dragFrameLayout.setCardView(findViewById(R.id.text1));
     }
 }
