@@ -4,67 +4,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="44dp"
+        android:background="@android:color/white">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/debug_short_string" />
 
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:background="@android:color/white">
+    </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/debug_short_string" />
+    <com.aitangba.testproject.view.drag.CircleImageView
+        android:id="@+id/image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="44dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_red" />
 
-            </RelativeLayout>
+    <com.aitangba.testproject.view.drag.ObserverSizeTextView
+        android:id="@+id/text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="115dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="90dp"
+        android:text="@string/app_name"
+        android:textSize="20dp" />
 
-            <com.aitangba.testproject.view.drag.CircleImageView
-                android:id="@+id/image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="44dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/bg_red" />
-
-            <com.aitangba.testproject.view.drag.ObserverSizeTextView
-                android:id="@+id/text2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="115dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="90dp"
-                android:text="@string/app_name"
-                android:textSize="20dp" />
-        </FrameLayout>
-    </android.support.v4.widget.NestedScrollView>
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="144dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_red" />
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="144dp"
         android:orientation="vertical">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                android:src="@drawable/bg_red" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/text1"
@@ -83,7 +75,9 @@
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 "
                 android:textSize="20dp" />
-        </FrameLayout>
+
+        </LinearLayout>
+
 
     </android.support.v4.widget.NestedScrollView>
 

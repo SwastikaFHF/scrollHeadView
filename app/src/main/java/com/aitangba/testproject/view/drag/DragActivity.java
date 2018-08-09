@@ -1,8 +1,13 @@
 package com.aitangba.testproject.view.drag;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ScrollView;
 
 import com.aitangba.testproject.R;
 
@@ -22,6 +27,13 @@ public class DragActivity extends AppCompatActivity {
         ObserverSizeTextView textView = findViewById(R.id.text2);
         dragFrameLayout.bindTextView(findViewById(R.id.text2));
 
-        dragFrameLayout.setCardView(findViewById(R.id.text1));
+        NestedScrollView scrollView = findViewById(R.id.scrollView);
+        dragFrameLayout.setNestedScrollView(scrollView);
+
+    }
+
+    private static float dp2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return dpValue * scale + 0.5F;
     }
 }
