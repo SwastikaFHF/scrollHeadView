@@ -2,34 +2,22 @@ package com.aitangba.testproject.view.drag;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.support.animation.DynamicAnimation;
 import android.support.animation.FloatPropertyCompat;
 import android.support.animation.SpringAnimation;
 import android.support.animation.SpringForce;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.NestedScrollingParentHelper;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewParentCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.FloatProperty;
 import android.util.IntProperty;
 import android.util.Log;
 import android.util.Property;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 /**
  * Created by fhf11991 on 2018/8/6
@@ -37,10 +25,26 @@ import android.widget.TextView;
 public class DragFrameLayout extends FrameLayout {
 
     private static final String TAG = "DragFrameLayout";
+
+    private static final float HEAD_VIEW_HEIGHT = 44F; // dp
+    private static final float MIDDLE_SPACE_HEIGHT = 100F; // dp
+    private static final float HIDE_SPACE_HEIGHT = 100F; // dp
+    private static final float IMAGE_RADIUS = 40F; // dp
+
     private ImageView mImageView;
     private ObserverSizeTextView mTextView;
     private NestedScrollView mNestedScrollView;
+
     private int mLastMotionY;
+
+    private final int mMinTopMargin;
+    private final int mMiddleTopMargin;
+    private final int mMaxTopMargin;
+
+    private final int mHeadViewHeight;
+    private final int mMiddleSpaceHeight;
+    private final int mHideSpaceHeight;
+    private final int mImageRadius;
 
     public DragFrameLayout(@NonNull Context context) {
         this(context, null);
@@ -52,14 +56,20 @@ public class DragFrameLayout extends FrameLayout {
 
     public DragFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mImageRadius = (int) dp2px(context, IMAGE_RADIUS);
+
+        mHeadViewHeight = (int) dp2px(context, HEAD_VIEW_HEIGHT);
+        mMiddleSpaceHeight = (int) dp2px(context, MIDDLE_SPACE_HEIGHT);
+        mHideSpaceHeight = (int) dp2px(context, HIDE_SPACE_HEIGHT);
+
+        mMinTopMargin = mHeadViewHeight; // 132
+        mMiddleTopMargin = mHeadViewHeight + mMiddleSpaceHeight;// 432
+        mMaxTopMargin = mHeadViewHeight + mMiddleSpaceHeight + mHideSpaceHeight;  //732
     }
 
     public void bindImageView(ImageView imageView) {
         mImageView = imageView;
-    }
-
-    public void setNestedScrollView(NestedScrollView nestedScrollView) {
-        mNestedScrollView = nestedScrollView;
     }
 
     public void bindTextView(ObserverSizeTextView textView) {
@@ -68,16 +78,20 @@ public class DragFrameLayout extends FrameLayout {
             @Override
             public void onSizeChanged(ObserverSizeTextView textView, int w, int h, int oldw, int oldh) {
                 MarginLayoutParams params = (MarginLayoutParams) textView.getLayoutParams();
-                params.topMargin = (int) (dp2px(textView.getContext(), 44 + 100 / 2) - h / 2);
+                params.topMargin = mHeadViewHeight + mImageRadius - h / 2;
             }
         });
+    }
+
+    public void bindNestedScrollView(NestedScrollView nestedScrollView) {
+        mNestedScrollView = nestedScrollView;
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         final int actionMasked = ev.getActionMasked();
         final int actionIndex = ev.getActionIndex();
-        if(actionIndex != 0) {
+        if (actionIndex != 0) {
             return true;
         }
         switch (actionMasked) {
@@ -89,9 +103,6 @@ public class DragFrameLayout extends FrameLayout {
                 final int y = (int) ev.getRawY();
                 int dy = mLastMotionY - y;
                 mLastMotionY = y;
-                final int minTopMargin = (int) dp2px(getContext(), 44); // 132
-                final int middleTopMargin = (int) dp2px(getContext(), 100 + 44); // 432
-                final int maxTopMargin = (int) dp2px(getContext(), 100 + 44 + 100); //732
                 MarginLayoutParams params = (MarginLayoutParams) mNestedScrollView.getLayoutParams();
 
                 Log.d(TAG, "dispatchTouchEvent --- "
@@ -100,31 +111,31 @@ public class DragFrameLayout extends FrameLayout {
                         + "  scrollY = " + mNestedScrollView.getScrollY());
 
                 if (mNestedScrollView.getScrollY() == 0) {
-                    if (params.topMargin == minTopMargin) {
+                    if (params.topMargin == mMinTopMargin) {
                         if (dy > 0) {
                             return super.dispatchTouchEvent(ev);
                         } else {
-                            params.topMargin = Math.max(minTopMargin, params.topMargin - dy);
-                            params.topMargin = Math.min(maxTopMargin, params.topMargin);
+                            params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
+                            params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
 
                             mNestedScrollView.requestLayout();
-                            refreshViews(dy, middleTopMargin, params.topMargin);
+                            refreshViews(dy, params.topMargin);
                             return true;
                         }
-                    } else if (params.topMargin > minTopMargin && params.topMargin < maxTopMargin) {
-                        params.topMargin = Math.max(minTopMargin, params.topMargin - dy);
-                        params.topMargin = Math.min(maxTopMargin, params.topMargin);
+                    } else if (params.topMargin > mMinTopMargin && params.topMargin < mMaxTopMargin) {
+                        params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
+                        params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
 
                         mNestedScrollView.requestLayout();
-                        refreshViews(dy, middleTopMargin, params.topMargin);
+                        refreshViews(dy, params.topMargin);
                         return true;
-                    } else if (params.topMargin == maxTopMargin) {
+                    } else if (params.topMargin == mMaxTopMargin) {
                         if (dy > 0) {
-                            params.topMargin = Math.max(minTopMargin, params.topMargin - dy);
-                            params.topMargin = Math.min(maxTopMargin, params.topMargin);
+                            params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
+                            params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
 
                             mNestedScrollView.requestLayout();
-                            refreshViews(dy, middleTopMargin, params.topMargin);
+                            refreshViews(dy, params.topMargin);
                             return true;
                         } else {
                             return super.dispatchTouchEvent(ev);
@@ -134,24 +145,24 @@ public class DragFrameLayout extends FrameLayout {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                recoveryViews(getContext());
+                recoveryViews();
                 break;
         }
 
         return super.dispatchTouchEvent(ev);
     }
 
-    private void refreshViews(int dy, int middleTopMargin, int topMargin) {
-        if (topMargin <= middleTopMargin && topMargin >= dp2px(getContext(), 72)) {
-            refreshImageView(getContext(), dy);
-            refreshTextView(getContext(), dy);
+    private void refreshViews(int dy, int topMargin) {
+        if (topMargin <= mMiddleTopMargin && topMargin >= mMiddleSpaceHeight - mImageRadius - mHeadViewHeight / 2 + mHeadViewHeight) {
+            refreshImageView(dy);
+            refreshTextView(dy);
         }
     }
 
-    private void refreshImageView(Context context, int dyConsumed) {
+    private void refreshImageView(int dyConsumed) {
         final float scaleFactor = 0.4F;
-        final float maxImageTranslationY = dp2px(context, 44 / 2 + 100 / 2);
-        final float maxImageTranslationX = dp2px(context, 100 / 2 - 40 / 2);
+        final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
+        final float maxImageTranslationX = (1 - scaleFactor) * mImageRadius;
         if (dyConsumed > 0) {
             float translationY = Math.abs(mImageView.getTranslationY()) + Math.abs(dyConsumed);
             if (translationY > maxImageTranslationY) {
@@ -176,11 +187,12 @@ public class DragFrameLayout extends FrameLayout {
         }
     }
 
-    private void refreshTextView(Context context, int dyConsumed) {
+    private void refreshTextView(int dyConsumed) {
         final float scaleFactor = 0.8F;
-        final float maxTextTranslationY = dp2px(context, 44 / 2 + 100 / 2);
+        final float maxTextTranslationY = mHeadViewHeight / 2 + mImageRadius;
         final int width = mTextView.getMeasuredWidth();
-        final float maxTextTranslationX = getMeasuredWidth() / 2 - dp2px(context, 100) - width / 2 - (1 - scaleFactor) / 2 * width;
+        MarginLayoutParams textLayoutParams = (MarginLayoutParams) mTextView.getLayoutParams();
+        final float maxTextTranslationX = getMeasuredWidth() / 2 - textLayoutParams.leftMargin - width / 2 - (1 - scaleFactor) / 2 * width;
 
         if (dyConsumed > 0) {
             float translationY = Math.abs(mTextView.getTranslationY()) + Math.abs(dyConsumed);
@@ -206,31 +218,29 @@ public class DragFrameLayout extends FrameLayout {
         }
     }
 
-    private void recoveryViews(Context context) {
-        final int minTopMargin = (int) dp2px(getContext(), 44); // 132
-        final int middleTopMargin = (int) dp2px(getContext(), 100 + 44); // 432
-
-        final int limitMargin = (int) dp2px(getContext(), 100 / 2 + 44); // 432
+    private void recoveryViews() {
+        final int limitMargin = mMiddleSpaceHeight / 2 + mHeadViewHeight;
 
         MarginLayoutParams params = (MarginLayoutParams) mNestedScrollView.getLayoutParams();
-        if (params.topMargin > minTopMargin && params.topMargin <= limitMargin) {
-            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, minTopMargin);
+        if (params.topMargin > mMinTopMargin && params.topMargin <= limitMargin) {
+            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, mMinTopMargin);
 
-            final float maxTranslationY = dp2px(context, 44 / 2 + 100 / 2);
-            final float maxImageTranslationX = dp2px(context, 100 / 2 - 40 / 2);
             final float imageScaleFactor = 0.4F;
+            final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
+            final float maxImageTranslationX = (1 - imageScaleFactor) * mImageRadius;
 
             ObjectAnimator imageTranXAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_X, mImageView.getTranslationX(), -maxImageTranslationX);
-            ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), -maxTranslationY);
+            ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), -maxImageTranslationY);
             ObjectAnimator imageScaleXAnim = ObjectAnimator.ofFloat(mImageView, SCALE_X, mImageView.getScaleX(), imageScaleFactor);
             ObjectAnimator imageScaleYAnim = ObjectAnimator.ofFloat(mImageView, SCALE_Y, mImageView.getScaleY(), imageScaleFactor);
 
             final float textScaleFactor = 0.8F;
             final int width = mTextView.getMeasuredWidth();
-            final float maxTextTranslationX = getMeasuredWidth() / 2 - dp2px(context, 100) - width / 2 - (1 - textScaleFactor) / 2 * width;
+            MarginLayoutParams textLayoutParams = (MarginLayoutParams) mTextView.getLayoutParams();
+            final float maxTextTranslationX = getMeasuredWidth() / 2 - textLayoutParams.leftMargin - width / 2 - (1 - textScaleFactor) / 2 * width;
 
             ObjectAnimator textTranXAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_X, mTextView.getTranslationX(), maxTextTranslationX);
-            ObjectAnimator textTranYAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_Y, mTextView.getTranslationY(), -maxTranslationY);
+            ObjectAnimator textTranYAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_Y, mTextView.getTranslationY(), -maxImageTranslationY);
             ObjectAnimator textScaleXAnim = ObjectAnimator.ofFloat(mTextView, SCALE_X, mTextView.getScaleX(), textScaleFactor);
             ObjectAnimator textScaleYAnim = ObjectAnimator.ofFloat(mTextView, SCALE_Y, mTextView.getScaleY(), textScaleFactor);
 
@@ -242,7 +252,7 @@ public class DragFrameLayout extends FrameLayout {
                     textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
             animatorSet.start();
 
-        } else if (params.topMargin > limitMargin && params.topMargin != middleTopMargin) {
+        } else if (params.topMargin > limitMargin && params.topMargin != mMiddleTopMargin) {
             ObjectAnimator imageTranXAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_X, mImageView.getTranslationX(), 0);
             ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), 0);
             ObjectAnimator imageScaleXAnim = ObjectAnimator.ofFloat(mImageView, SCALE_X, mImageView.getScaleX(), 1);
@@ -257,9 +267,8 @@ public class DragFrameLayout extends FrameLayout {
             animatorSet.setDuration(200);
             animatorSet.setInterpolator(new DecelerateInterpolator(2f));
 
-            final int maxTopMargin = (int) dp2px(getContext(), 100 + 44 + 100); //732
-            if(params.topMargin - middleTopMargin > (maxTopMargin - middleTopMargin) * 0.4) {
-                SpringAnimation anim = new SpringAnimation(mNestedScrollView, SPRING_MARGIN_TOP, middleTopMargin);
+            if (params.topMargin - mMiddleTopMargin > (mMaxTopMargin - mMiddleTopMargin) * 0.4) {
+                SpringAnimation anim = new SpringAnimation(mNestedScrollView, SPRING_MARGIN_TOP, mMiddleTopMargin);
                 anim.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY);
                 anim.setStartValue(params.topMargin);
                 anim.start();
@@ -269,7 +278,7 @@ public class DragFrameLayout extends FrameLayout {
                         textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
                 animatorSet.start();
             } else {
-                ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, middleTopMargin);
+                ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, mMiddleTopMargin);
                 animatorSet.playTogether(marginTopAnim,
                         imageTranXAnim, imageTranYAnim, imageScaleXAnim, imageScaleYAnim,
                         textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);

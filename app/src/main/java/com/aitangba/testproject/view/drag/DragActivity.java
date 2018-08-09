@@ -1,13 +1,10 @@
 package com.aitangba.testproject.view.drag;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ScrollView;
 
 import com.aitangba.testproject.R;
 
@@ -28,7 +25,7 @@ public class DragActivity extends AppCompatActivity {
         dragFrameLayout.bindTextView(findViewById(R.id.text2));
 
         NestedScrollView scrollView = findViewById(R.id.scrollView);
-        dragFrameLayout.setNestedScrollView(scrollView);
+        dragFrameLayout.bindNestedScrollView(scrollView);
 
     }
 
