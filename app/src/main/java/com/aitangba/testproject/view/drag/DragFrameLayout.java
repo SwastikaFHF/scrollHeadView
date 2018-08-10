@@ -8,6 +8,9 @@ import android.support.animation.SpringAnimation;
 import android.support.animation.SpringForce;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.NestedScrollingChildHelper;
+import android.support.v4.view.NestedScrollingParent;
+import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.IntProperty;
@@ -15,6 +18,7 @@ import android.util.Log;
 import android.util.Property;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -22,7 +26,7 @@ import android.widget.ImageView;
 /**
  * Created by fhf11991 on 2018/8/6
  */
-public class DragFrameLayout extends FrameLayout {
+public class DragFrameLayout extends FrameLayout implements NestedScrollingParent {
 
     private static final String TAG = "DragFrameLayout";
 
@@ -63,9 +67,9 @@ public class DragFrameLayout extends FrameLayout {
         mMiddleSpaceHeight = (int) dp2px(context, MIDDLE_SPACE_HEIGHT);
         mHideSpaceHeight = (int) dp2px(context, HIDE_SPACE_HEIGHT);
 
-        mMinTopMargin = mHeadViewHeight; // 132
-        mMiddleTopMargin = mHeadViewHeight + mMiddleSpaceHeight;// 432
-        mMaxTopMargin = mHeadViewHeight + mMiddleSpaceHeight + mHideSpaceHeight;  //732
+        mMinTopMargin = 0; // 132
+        mMiddleTopMargin = mMiddleSpaceHeight;// 432
+        mMaxTopMargin = mMiddleSpaceHeight + mHideSpaceHeight;  //732
     }
 
     public void bindImageView(ImageView imageView) {
@@ -87,69 +91,16 @@ public class DragFrameLayout extends FrameLayout {
         mNestedScrollView = nestedScrollView;
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        final int actionMasked = ev.getActionMasked();
-        final int actionIndex = ev.getActionIndex();
-        if (actionIndex != 0) {
-            return true;
-        }
-        switch (actionMasked) {
-            case MotionEvent.ACTION_DOWN:
-                mLastMotionY = (int) ev.getRawY();
-                break;
+    private void onDragging(MarginLayoutParams params, int dy) {
+        params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
+        params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
 
-            case MotionEvent.ACTION_MOVE:
-                final int y = (int) ev.getRawY();
-                int dy = mLastMotionY - y;
-                mLastMotionY = y;
-                MarginLayoutParams params = (MarginLayoutParams) mNestedScrollView.getLayoutParams();
-
-                Log.d(TAG, "dispatchTouchEvent --- "
-                        + "  dy = " + dy
-                        + "  topMargin = " + params.topMargin
-                        + "  scrollY = " + mNestedScrollView.getScrollY());
-
-                if (mNestedScrollView.getScrollY() == 0) {
-                    if (params.topMargin == mMinTopMargin) {
-                        if (dy > 0) {
-                            return super.dispatchTouchEvent(ev);
-                        } else {
-                            params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
-                            params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
-
-                            mNestedScrollView.requestLayout();
-                            refreshViews(dy, params.topMargin);
-                            return true;
-                        }
-                    } else if (params.topMargin > mMinTopMargin && params.topMargin < mMaxTopMargin) {
-                        params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
-                        params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
-
-                        mNestedScrollView.requestLayout();
-                        refreshViews(dy, params.topMargin);
-                        return true;
-                    } else if (params.topMargin == mMaxTopMargin) {
-                        if (dy > 0) {
-                            params.topMargin = Math.max(mMinTopMargin, params.topMargin - dy);
-                            params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
-
-                            mNestedScrollView.requestLayout();
-                            refreshViews(dy, params.topMargin);
-                            return true;
-                        } else {
-                            return super.dispatchTouchEvent(ev);
-                        }
-                    }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                recoveryViews();
-                break;
-        }
-
-        return super.dispatchTouchEvent(ev);
+        mNestedScrollView.getChildAt(0).requestLayout();
+//        refreshViews(dy, params.topMargin);
+//        final ViewParent parent = getParent();
+//        if (parent != null) {
+//            parent.requestDisallowInterceptTouchEvent(true);
+//        }
     }
 
     private void refreshViews(int dy, int topMargin) {
@@ -219,11 +170,17 @@ public class DragFrameLayout extends FrameLayout {
     }
 
     private void recoveryViews() {
-        final int limitMargin = mMiddleSpaceHeight / 2 + mHeadViewHeight;
+        final int limitMargin = mImageRadius;
 
-        MarginLayoutParams params = (MarginLayoutParams) mNestedScrollView.getLayoutParams();
-        if (params.topMargin > mMinTopMargin && params.topMargin <= limitMargin) {
-            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, mMinTopMargin);
+        View view = mNestedScrollView;
+        MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
+        final int topMargin = params.topMargin;
+        Log.d(TAG, "recoveryViews ------ "
+                + " params.topMargin = " + topMargin
+                + " limitMargin = " + limitMargin
+                + " mMiddleTopMargin = " + mMiddleTopMargin);
+        if (topMargin <= limitMargin) {
+            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, mMinTopMargin);
 
             final float imageScaleFactor = 0.4F;
             final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
@@ -252,7 +209,7 @@ public class DragFrameLayout extends FrameLayout {
                     textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
             animatorSet.start();
 
-        } else if (params.topMargin > limitMargin && params.topMargin != mMiddleTopMargin) {
+        } else {
             ObjectAnimator imageTranXAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_X, mImageView.getTranslationX(), 0);
             ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), 0);
             ObjectAnimator imageScaleXAnim = ObjectAnimator.ofFloat(mImageView, SCALE_X, mImageView.getScaleX(), 1);
@@ -267,10 +224,10 @@ public class DragFrameLayout extends FrameLayout {
             animatorSet.setDuration(200);
             animatorSet.setInterpolator(new DecelerateInterpolator(2f));
 
-            if (params.topMargin - mMiddleTopMargin > (mMaxTopMargin - mMiddleTopMargin) * 0.4) {
-                SpringAnimation anim = new SpringAnimation(mNestedScrollView, SPRING_MARGIN_TOP, mMiddleTopMargin);
+            if (topMargin - mMiddleTopMargin > (mMaxTopMargin - mMiddleTopMargin) * 0.4) {
+                SpringAnimation anim = new SpringAnimation(view, SPRING_MARGIN_TOP, mMiddleTopMargin);
                 anim.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY);
-                anim.setStartValue(params.topMargin);
+                anim.setStartValue(topMargin);
                 anim.start();
 
                 animatorSet.playTogether(
@@ -278,7 +235,7 @@ public class DragFrameLayout extends FrameLayout {
                         textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
                 animatorSet.start();
             } else {
-                ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(mNestedScrollView, MARGIN_TOP, params.topMargin, mMiddleTopMargin);
+                ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, mMiddleTopMargin);
                 animatorSet.playTogether(marginTopAnim,
                         imageTranXAnim, imageTranYAnim, imageScaleXAnim, imageScaleYAnim,
                         textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
@@ -308,19 +265,120 @@ public class DragFrameLayout extends FrameLayout {
         }
     };
 
-    private static final FloatPropertyCompat SPRING_MARGIN_TOP = new FloatPropertyCompat<NestedScrollView>("margin_top") {
+    private static final FloatPropertyCompat SPRING_MARGIN_TOP = new FloatPropertyCompat<View>("margin_top") {
 
         @Override
-        public float getValue(NestedScrollView object) {
+        public float getValue(View object) {
             MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
             return params.topMargin;
         }
 
         @Override
-        public void setValue(NestedScrollView object, float value) {
+        public void setValue(View object, float value) {
             MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
             params.topMargin = (int) value;
             object.requestLayout();
         }
     };
+
+
+    /**
+     * 回调开始滑动
+     *
+     * @param child            该父VIew 的子View
+     * @param target           支持嵌套滑动的 VIew
+     * @param nestedScrollAxes 滑动方向
+     * @return 是否支持 嵌套滑动
+     */
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        return true;
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
+    }
+
+    @Override
+    public void onStopNestedScroll(View target) {
+        recoveryViews();
+    }
+
+    /**
+     * 这里 主要处理 dyUnconsumed dxUnconsumed 这两个值对应的数据
+     *
+     * @param target
+     * @param dxConsumed
+     * @param dyConsumed
+     * @param dxUnconsumed
+     * @param dyUnconsumed
+     */
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+    }
+
+    private int screenY = 0;
+    private boolean offScreen = false;
+    /**
+     * 这里 传来了 x y 方向上的滑动距离
+     * 并且 先与 子VIew  处理滑动,  并且 consumed  中可以设置相应的 除了的距离
+     * 然后 子View  需要更具这感觉, 来处理自己滑动
+     *
+     * @param target
+     * @param dx
+     * @param dy
+     * @param consumed
+     */
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        MarginLayoutParams params = (MarginLayoutParams) mNestedScrollView.getChildAt(0).getLayoutParams();
+        Log.d(TAG, "onNestedPreScroll "
+                + " dy = " + dy
+                + " topMargin = " + params.topMargin
+                + " ScrollY = " + mNestedScrollView.getScrollY());
+        int diffDy = dy - screenY;
+
+        if(params.topMargin == mMinTopMargin) {
+            if(dy > 0) {
+                consumed[1] = screenY;
+            } else {
+                onDragging(params, offScreen ? diffDy : dy);
+                consumed[1] = dy;
+                screenY = dy;
+            }
+            offScreen = false;
+        } else if(params.topMargin == mMaxTopMargin) {
+            if(dy > 0) {
+                onDragging(params, offScreen ? diffDy : dy);
+                consumed[1] = dy;
+                screenY = dy;
+            } else {
+                if(offScreen) {
+                    consumed[1] = screenY;
+                }
+            }
+            offScreen = false;
+        } else {
+            offScreen = true;
+            onDragging(params, diffDy);
+            consumed[1] = dy;
+            screenY = dy;
+        }
+    }
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        return false;
+    }
+
+    @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        return false;
+    }
+
+    @Override
+    public int getNestedScrollAxes() {
+        return 1 << 1;
+    }
+
 }

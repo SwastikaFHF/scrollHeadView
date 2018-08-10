@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Toast;
 
 import com.aitangba.testproject.R;
 
@@ -18,15 +20,28 @@ public class DragActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drag);
 
-        DragFrameLayout dragFrameLayout = findViewById(R.id.dragLayout);
-        dragFrameLayout.bindImageView(findViewById(R.id.image));
+//        DragFrameLayout dragFrameLayout = findViewById(R.id.dragLayout);
+//        dragFrameLayout.bindImageView(findViewById(R.id.image));
+//
+//        ObserverSizeTextView textView = findViewById(R.id.text2);
+//        dragFrameLayout.bindTextView(findViewById(R.id.text2));
+//
+//        NestedScrollView scrollView = findViewById(R.id.scrollView);
+//        dragFrameLayout.bindNestedScrollView(scrollView);
 
-        ObserverSizeTextView textView = findViewById(R.id.text2);
-        dragFrameLayout.bindTextView(findViewById(R.id.text2));
+//        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(v.getContext(), "触发了点击", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-        NestedScrollView scrollView = findViewById(R.id.scrollView);
-        dragFrameLayout.bindNestedScrollView(scrollView);
-
+//        scrollView.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                scrollView.setScrollY((int) dp2px(scrollView.getContext(), 100));
+//            }
+//        });
     }
 
     private static float dp2px(Context context, float dpValue) {
