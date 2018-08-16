@@ -27,8 +27,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="44dp"
         android:scaleType="fitXY"
-        android:src="@drawable/bg_red"
-        app:layout_behavior="com.aitangba.testproject.view.drag.AvatarBehavior" />
+        android:src="@drawable/bg_red"/>
 
     <com.aitangba.testproject.view.drag.ObserverSizeTextView
         android:id="@+id/text2"
@@ -38,8 +37,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginTop="90dp"
         android:text="@string/app_name"
-        android:textSize="20dp"
-        app:layout_behavior="com.aitangba.testproject.view.drag.TextBehavior" />
+        android:textSize="20dp"/>
 
     <ImageView
         android:layout_width="match_parent"
@@ -56,6 +54,7 @@
         android:orientation="vertical">
 
         <com.aitangba.testproject.view.drag.ScrollChildView
+            android:id="@+id/scrollChildView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"

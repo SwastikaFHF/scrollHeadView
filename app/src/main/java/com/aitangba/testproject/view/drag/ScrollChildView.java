@@ -1,16 +1,26 @@
 package com.aitangba.testproject.view.drag;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.support.animation.FloatPropertyCompat;
+import android.support.animation.SpringAnimation;
+import android.support.animation.SpringForce;
 import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.IntProperty;
 import android.util.Log;
+import android.util.Property;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 /**
@@ -18,12 +28,23 @@ import android.widget.LinearLayout;
  */
 public class ScrollChildView extends LinearLayout implements NestedScrollingChild {
 
-
     private static final String TAG = "ScrollChildView";
-    private int mTouchSlop;
+    private static final float HEAD_VIEW_HEIGHT = 44F; // dp
+    private static final float IMAGE_RADIUS = 40F; // dp
+    private static final float MIDDLE_SPACE_HEIGHT = 100F; // dp
+    private static final float HIDE_SPACE_HEIGHT = 100F; // dp
+
     private NestedScrollingChildHelper mScrollingChildHelper;
+    private VelocityTracker mVelocityTracker = VelocityTracker.obtain();
+
+    private int mTouchSlop;
+    private int mMinimumVelocity;
+    private int mMaximumVelocity;
 
     private final int mMaxTopMargin;
+    private final int mHeadViewHeight;
+    private final int mImageRadius;
+    private final int mMiddleSpaceHeight;
 
     public ScrollChildView(Context context) {
         this(context, null);
@@ -40,8 +61,31 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
 
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
+        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
+        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 
-        mMaxTopMargin =  (int) dp2px(context, 100);
+        mHeadViewHeight = (int) dp2px(context, HEAD_VIEW_HEIGHT);
+        mMaxTopMargin = (int) dp2px(context, MIDDLE_SPACE_HEIGHT + HIDE_SPACE_HEIGHT);
+        mImageRadius = (int) dp2px(context, IMAGE_RADIUS);
+        mMiddleSpaceHeight = (int) dp2px(context, MIDDLE_SPACE_HEIGHT);
+    }
+
+    private ImageView mImageView;
+    private ObserverSizeTextView mTextView;
+
+    public void bindImageView(ImageView imageView) {
+        mImageView = imageView;
+    }
+
+    public void bindTextView(ObserverSizeTextView textView) {
+        mTextView = textView;
+        mTextView.setOnSizeChangedListener(new ObserverSizeTextView.OnSizeChangedListener() {
+            @Override
+            public void onSizeChanged(ObserverSizeTextView textView, int w, int h, int oldw, int oldh) {
+                MarginLayoutParams params = (MarginLayoutParams) textView.getLayoutParams();
+                params.topMargin = mHeadViewHeight + mImageRadius - h / 2;
+            }
+        });
     }
 
     private static float dp2px(Context context, float dpValue) {
@@ -56,32 +100,44 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
     public boolean onInterceptTouchEvent(MotionEvent event) {
         final int actionMasked = event.getActionMasked();
 
-            final int action = event.getAction();
-            if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
-                return true;
-            }
-
-            switch (actionMasked) {
-                case MotionEvent.ACTION_DOWN:
-                    mLastMotionY = event.getRawY();
-                    MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
-                    mIsBeingDragged = params.topMargin == 0;
-                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    final float y = event.getRawY();
-
-                    final float yDiff = Math.abs(y - mLastMotionY);
-                    if (yDiff > mTouchSlop) {
-                        mIsBeingDragged = true;
-                        final ViewParent parent = getParent();
-                        if (parent != null) {
-                            parent.requestDisallowInterceptTouchEvent(true);
-                        }
-                    }
-                    break;
+        final int action = event.getAction();
+        if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
+            return true;
         }
+
+        switch (actionMasked) {
+            case MotionEvent.ACTION_DOWN:
+                mLastMotionY = event.getRawY();
+                MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
+                mIsBeingDragged = params.topMargin == 0;
+                startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                mVelocityTracker = VelocityTracker.obtain();
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                final float y = event.getRawY();
+
+                final float yDiff = Math.abs(y - mLastMotionY);
+                if (yDiff > mTouchSlop) {
+                    mIsBeingDragged = true;
+                    final ViewParent parent = getParent();
+                    if (parent != null) {
+                        parent.requestDisallowInterceptTouchEvent(true);
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                /* Release the drag */
+                mIsBeingDragged = false;
+                stopNestedScroll();
+
+                final VelocityTracker velocityTracker = mVelocityTracker;
+                Log.d(TAG, "onInterceptTouchEvent --- " + velocityTracker.getYVelocity());
+                velocityTracker.recycle();
+                break;
+        }
+
         return mIsBeingDragged;
     }
 
@@ -107,14 +163,14 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                         + " dy = " + dy
                         + " topMargin = " + params.topMargin
                         + " ScrollY = " + view.getScrollY());
-                if(params.topMargin == 0) {
-                    if(dy < 0) {
+                if (params.topMargin == 0) {
+                    if (dy < 0) {
                         int dyConsumed = 0;
                         int dyUnConsumed = dy - dyConsumed;
 
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
                     } else {
-                        if(view.getScrollY() != 0) {
+                        if (view.getScrollY() != 0) {
                             int dyConsumed = 0;
                             int dyUnConsumed = dy - dyConsumed;
 
@@ -128,7 +184,7 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                         }
                     }
                 } else if (params.topMargin == mMaxTopMargin) {
-                    if(dy < 0) {
+                    if (dy < 0) {
                         int dyConsumed = dy;
                         int dyUnConsumed = dy - dyConsumed;
 
@@ -140,13 +196,13 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
                     }
                 } else {
-                    if(params.topMargin + dy < 0) {
+                    if (params.topMargin + dy < 0) {
                         int dyConsumed = 0 - params.topMargin;
                         int dyUnConsumed = dy - dyConsumed;
 
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
                         break;
-                    } else if(params.topMargin + dy > mMaxTopMargin) {
+                    } else if (params.topMargin + dy > mMaxTopMargin) {
                         int dyConsumed = mMaxTopMargin - params.topMargin;
                         int dyUnConsumed = dy - dyConsumed;
 
@@ -157,9 +213,35 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
 
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
                     }
+
+                    final VelocityTracker velocityTracker = mVelocityTracker;
+                    velocityTracker.addMovement(event);
+                    velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                }
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_UP:
+                /* Release the drag */
+                mIsBeingDragged = false;
+                stopNestedScroll();
+                recoveryViews();
+
+                final VelocityTracker velocityTracker = mVelocityTracker;
+                velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
+                final int initialVelocity = (int) velocityTracker.getYVelocity();
+                Log.d(TAG, "onTouchEvent --- " + velocityTracker.getYVelocity());
+                velocityTracker.clear();
+                velocityTracker.recycle();
+                if (params.topMargin == 0 && (Math.abs(initialVelocity) > mMinimumVelocity)) {
+                    int velocityY = -initialVelocity;
+                    startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
+                    dispatchNestedFling(0, velocityY, false);
                 }
                 break;
         }
+
+        mVelocityTracker.addMovement(event);
         return true;
     }
 
@@ -168,6 +250,148 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
         requestLayout();
 
         dispatchNestedScroll(0, -dyConsumed, 0, -dyUnConsumed, null);
+        refreshViews(-dyConsumed, params.topMargin);
+    }
+
+    private void refreshViews(int dy, int topMargin) {
+        if (topMargin <= mMiddleSpaceHeight && topMargin >= mMiddleSpaceHeight - mImageRadius - mHeadViewHeight / 2) {
+            refreshImageView(dy);
+            refreshTextView(dy);
+        }
+    }
+
+    private void refreshImageView(int dyConsumed) {
+        final float scaleFactor = 0.4F;
+        final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
+        final float maxImageTranslationX = (1 - scaleFactor) * mImageRadius;
+        if (dyConsumed > 0) {
+            float translationY = Math.abs(mImageView.getTranslationY()) + Math.abs(dyConsumed);
+            if (translationY > maxImageTranslationY) {
+                translationY = maxImageTranslationY;
+            }
+            mImageView.setTranslationY(-translationY);
+            mImageView.setTranslationX(-maxImageTranslationX * translationY / maxImageTranslationY);
+            float scale = 1 - (1 - scaleFactor) * translationY / maxImageTranslationY;
+            mImageView.setScaleX(scale);
+            mImageView.setScaleY(scale);
+        } else if (dyConsumed < 0) {
+            int minTranslationY = 0;
+            float translationY = Math.abs(mImageView.getTranslationY()) - Math.abs(dyConsumed);
+            if (translationY < minTranslationY) {
+                translationY = minTranslationY;
+            }
+            mImageView.setTranslationY(-translationY);
+            mImageView.setTranslationX(-maxImageTranslationX * translationY / maxImageTranslationY);
+            float scale = 1 - (1 - scaleFactor) * translationY / maxImageTranslationY;
+            mImageView.setScaleX(scale);
+            mImageView.setScaleY(scale);
+        }
+    }
+
+    private void refreshTextView(int dyConsumed) {
+        final float scaleFactor = 0.8F;
+        final float maxTextTranslationY = mHeadViewHeight / 2 + mImageRadius;
+        final int width = mTextView.getMeasuredWidth();
+        MarginLayoutParams textLayoutParams = (MarginLayoutParams) mTextView.getLayoutParams();
+        final float maxTextTranslationX = getMeasuredWidth() / 2 - textLayoutParams.leftMargin - width / 2 - (1 - scaleFactor) / 2 * width;
+
+        if (dyConsumed > 0) {
+            float translationY = Math.abs(mTextView.getTranslationY()) + Math.abs(dyConsumed);
+            if (translationY > maxTextTranslationY) {
+                translationY = maxTextTranslationY;
+            }
+            mTextView.setTranslationY(-translationY);
+            mTextView.setTranslationX(maxTextTranslationX * translationY / maxTextTranslationY);
+            float scale = 1 - (1 - scaleFactor) * translationY / maxTextTranslationY;
+            mTextView.setScaleX(scale);
+            mTextView.setScaleY(scale);
+        } else if (dyConsumed < 0) {
+            int minTranslationY = 0;
+            float translationY = Math.abs(mTextView.getTranslationY()) - Math.abs(dyConsumed);
+            if (translationY < minTranslationY) {
+                translationY = minTranslationY;
+            }
+            mTextView.setTranslationY(-translationY);
+            mTextView.setTranslationX(maxTextTranslationX * translationY / maxTextTranslationY);
+            float scale = 1 - (1 - scaleFactor) * translationY / maxTextTranslationY;
+            mTextView.setScaleX(scale);
+            mTextView.setScaleY(scale);
+        }
+    }
+
+    private void recoveryViews() {
+        final int limitMargin = mImageRadius;
+
+        View view = this;
+        MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
+        final int topMargin = params.topMargin;
+        Log.d(TAG, "recoveryViews ------ "
+                + " params.topMargin = " + topMargin
+                + " limitMargin = " + limitMargin
+                + " mMiddleTopMargin = " + mMiddleSpaceHeight);
+        if (topMargin <= limitMargin) {
+            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, 0);
+
+            final float imageScaleFactor = 0.4F;
+            final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
+            final float maxImageTranslationX = (1 - imageScaleFactor) * mImageRadius;
+
+            ObjectAnimator imageTranXAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_X, mImageView.getTranslationX(), -maxImageTranslationX);
+            ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), -maxImageTranslationY);
+            ObjectAnimator imageScaleXAnim = ObjectAnimator.ofFloat(mImageView, SCALE_X, mImageView.getScaleX(), imageScaleFactor);
+            ObjectAnimator imageScaleYAnim = ObjectAnimator.ofFloat(mImageView, SCALE_Y, mImageView.getScaleY(), imageScaleFactor);
+
+            final float textScaleFactor = 0.8F;
+            final int width = mTextView.getMeasuredWidth();
+            MarginLayoutParams textLayoutParams = (MarginLayoutParams) mTextView.getLayoutParams();
+            final float maxTextTranslationX = getMeasuredWidth() / 2 - textLayoutParams.leftMargin - width / 2 - (1 - textScaleFactor) / 2 * width;
+
+            ObjectAnimator textTranXAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_X, mTextView.getTranslationX(), maxTextTranslationX);
+            ObjectAnimator textTranYAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_Y, mTextView.getTranslationY(), -maxImageTranslationY);
+            ObjectAnimator textScaleXAnim = ObjectAnimator.ofFloat(mTextView, SCALE_X, mTextView.getScaleX(), textScaleFactor);
+            ObjectAnimator textScaleYAnim = ObjectAnimator.ofFloat(mTextView, SCALE_Y, mTextView.getScaleY(), textScaleFactor);
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.setDuration(200);
+            animatorSet.setInterpolator(new DecelerateInterpolator(2f));
+            animatorSet.playTogether(marginTopAnim,
+                    imageTranXAnim, imageTranYAnim, imageScaleXAnim, imageScaleYAnim,
+                    textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
+            animatorSet.start();
+
+        } else {
+            ObjectAnimator imageTranXAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_X, mImageView.getTranslationX(), 0);
+            ObjectAnimator imageTranYAnim = ObjectAnimator.ofFloat(mImageView, TRANSLATION_Y, mImageView.getTranslationY(), 0);
+            ObjectAnimator imageScaleXAnim = ObjectAnimator.ofFloat(mImageView, SCALE_X, mImageView.getScaleX(), 1);
+            ObjectAnimator imageScaleYAnim = ObjectAnimator.ofFloat(mImageView, SCALE_Y, mImageView.getScaleY(), 1);
+
+            ObjectAnimator textTranXAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_X, mTextView.getTranslationX(), 0);
+            ObjectAnimator textTranYAnim = ObjectAnimator.ofFloat(mTextView, TRANSLATION_Y, mTextView.getTranslationY(), 0);
+            ObjectAnimator textScaleXAnim = ObjectAnimator.ofFloat(mTextView, SCALE_X, mTextView.getScaleX(), 1);
+            ObjectAnimator textScaleYAnim = ObjectAnimator.ofFloat(mTextView, SCALE_Y, mTextView.getScaleY(), 1);
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.setDuration(200);
+            animatorSet.setInterpolator(new DecelerateInterpolator(2f));
+
+            if (topMargin - mMiddleSpaceHeight > (mMaxTopMargin - mMiddleSpaceHeight) * 0.4) {
+                SpringAnimation anim = new SpringAnimation(view, SPRING_MARGIN_TOP, mMiddleSpaceHeight);
+                anim.getSpring().setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY);
+                anim.setStartValue(topMargin);
+                anim.start();
+
+                animatorSet.playTogether(
+                        imageTranXAnim, imageTranYAnim, imageScaleXAnim, imageScaleYAnim,
+                        textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
+                animatorSet.start();
+            } else {
+                ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, mMiddleSpaceHeight);
+                animatorSet.playTogether(marginTopAnim,
+                        imageTranXAnim, imageTranYAnim, imageScaleXAnim, imageScaleYAnim,
+                        textTranXAnim, textTranYAnim, textScaleXAnim, textScaleYAnim);
+                animatorSet.start();
+            }
+        }
     }
 
     /**
@@ -221,23 +445,6 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
     }
 
     /**
-     * 在嵌套滑动的子View滑动之后再调用该函数向父View汇报滑动情况。
-     *
-     * @param dxConsumed     子View水平方向滑动的距离
-     * @param dyConsumed     子View垂直方向滑动的距离
-     * @param dxUnconsumed   子View水平方向没有滑动的距离
-     * @param dyUnconsumed   子View垂直方向没有滑动的距离
-     * @param offsetInWindow 出参 如果父View滑动导致子View的窗口发生了变化（子View的位置发生了变化）
-     *                       该参数返回x(offsetInWindow[0]) y(offsetInWindow[1])方向的变化
-     *                       如果你记录了手指最后的位置，需要根据参数offsetInWindow计算偏移量，才能保证下一次的touch事件的计算是正确的。
-     * @return true 如果父View有滑动做了相应的处理, false 父View没有滑动.
-     */
-    @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
-        return mScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
-    }
-
-    /**
      * 在嵌套滑动的子View滑动之前，告诉父View滑动的距离，让父View做相应的处理。
      *
      * @param dx             告诉父View水平方向需要滑动的距离
@@ -255,16 +462,20 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
     }
 
     /**
-     * 在嵌套滑动的子View fling之后再调用该函数向父View汇报fling情况。
+     * 在嵌套滑动的子View滑动之后再调用该函数向父View汇报滑动情况。
      *
-     * @param velocityX 水平方向的速度
-     * @param velocityY 垂直方向的速度
-     * @param consumed  true 如果子View fling了, false 如果子View没有fling
-     * @return true 如果父View fling了
+     * @param dxConsumed     子View水平方向滑动的距离
+     * @param dyConsumed     子View垂直方向滑动的距离
+     * @param dxUnconsumed   子View水平方向没有滑动的距离
+     * @param dyUnconsumed   子View垂直方向没有滑动的距离
+     * @param offsetInWindow 出参 如果父View滑动导致子View的窗口发生了变化（子View的位置发生了变化）
+     *                       该参数返回x(offsetInWindow[0]) y(offsetInWindow[1])方向的变化
+     *                       如果你记录了手指最后的位置，需要根据参数offsetInWindow计算偏移量，才能保证下一次的touch事件的计算是正确的。
+     * @return true 如果父View有滑动做了相应的处理, false 父View没有滑动.
      */
     @Override
-    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        return mScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
+        return mScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
 
     /**
@@ -279,9 +490,54 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
         return mScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
+    /**
+     * 在嵌套滑动的子View fling之后再调用该函数向父View汇报fling情况。
+     *
+     * @param velocityX 水平方向的速度
+     * @param velocityY 垂直方向的速度
+     * @param consumed  true 如果子View fling了, false 如果子View没有fling
+     * @return true 如果父View fling了
+     */
+    @Override
+    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        return mScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mScrollingChildHelper.onDetachedFromWindow();
     }
+
+    private static final Property<View, Integer> MARGIN_TOP = new IntProperty<View>("margin_top") {
+
+        @Override
+        public Integer get(View object) {
+            MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
+            return params.topMargin;
+        }
+
+        @Override
+        public void setValue(View object, int value) {
+            MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
+            params.topMargin = value;
+            object.requestLayout();
+        }
+    };
+
+    private static final FloatPropertyCompat SPRING_MARGIN_TOP = new FloatPropertyCompat<View>("margin_top") {
+
+        @Override
+        public float getValue(View object) {
+            MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
+            return params.topMargin;
+        }
+
+        @Override
+        public void setValue(View object, float value) {
+            MarginLayoutParams params = (MarginLayoutParams) object.getLayoutParams();
+            params.topMargin = (int) value;
+            object.requestLayout();
+        }
+    };
 }

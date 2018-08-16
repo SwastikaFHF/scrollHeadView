@@ -23,7 +23,7 @@ public class DragActivity extends AppCompatActivity {
 //        DragFrameLayout dragFrameLayout = findViewById(R.id.dragLayout);
 //        dragFrameLayout.bindImageView(findViewById(R.id.image));
 //
-//        ObserverSizeTextView textView = findViewById(R.id.text2);
+        ObserverSizeTextView textView = findViewById(R.id.text2);
 //        dragFrameLayout.bindTextView(findViewById(R.id.text2));
 //
 //        NestedScrollView scrollView = findViewById(R.id.scrollView);
@@ -42,6 +42,10 @@ public class DragActivity extends AppCompatActivity {
 //                scrollView.setScrollY((int) dp2px(scrollView.getContext(), 100));
 //            }
 //        });
+
+        ScrollChildView childView = findViewById(R.id.scrollChildView);
+        childView.bindImageView(findViewById(R.id.image));
+        childView.bindTextView(findViewById(R.id.text2));
     }
 
     private static float dp2px(Context context, float dpValue) {
