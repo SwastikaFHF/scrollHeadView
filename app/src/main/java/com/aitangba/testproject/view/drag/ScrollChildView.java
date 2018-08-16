@@ -64,10 +64,10 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 
-        mHeadViewHeight = (int) dp2px(context, HEAD_VIEW_HEIGHT);
-        mMaxTopMargin = (int) dp2px(context, MIDDLE_SPACE_HEIGHT + HIDE_SPACE_HEIGHT);
         mImageRadius = (int) dp2px(context, IMAGE_RADIUS);
-        mMiddleSpaceHeight = (int) dp2px(context, MIDDLE_SPACE_HEIGHT);
+        mHeadViewHeight = (int) dp2px(context, HEAD_VIEW_HEIGHT);
+        mMiddleSpaceHeight = (int) dp2px(context, HEAD_VIEW_HEIGHT + MIDDLE_SPACE_HEIGHT);
+        mMaxTopMargin = (int) dp2px(context, HEAD_VIEW_HEIGHT + MIDDLE_SPACE_HEIGHT + HIDE_SPACE_HEIGHT);
     }
 
     private ImageView mImageView;
@@ -163,7 +163,8 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                         + " dy = " + dy
                         + " topMargin = " + params.topMargin
                         + " ScrollY = " + view.getScrollY());
-                if (params.topMargin == 0) {
+                int minTopMargin = mHeadViewHeight;
+                if (params.topMargin == minTopMargin) {
                     if (dy < 0) {
                         int dyConsumed = 0;
                         int dyUnConsumed = dy - dyConsumed;
@@ -196,8 +197,8 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
                     }
                 } else {
-                    if (params.topMargin + dy < 0) {
-                        int dyConsumed = 0 - params.topMargin;
+                    if (params.topMargin + dy < minTopMargin) {
+                        int dyConsumed = minTopMargin - params.topMargin;
                         int dyUnConsumed = dy - dyConsumed;
 
                         dispatchDragEvent(params, dyConsumed, dyUnConsumed);
@@ -254,9 +255,39 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
     }
 
     private void refreshViews(int dy, int topMargin) {
-        if (topMargin <= mMiddleSpaceHeight && topMargin >= mMiddleSpaceHeight - mImageRadius - mHeadViewHeight / 2) {
+        int maxTranslationY = mMiddleSpaceHeight - (mImageRadius + mHeadViewHeight / 2);
+        int middleMargin = mMiddleSpaceHeight;
+        if(topMargin <= maxTranslationY) {
+            final float scaleFactor = 0.4F;
+            final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
+            final float maxImageTranslationX = (1 - scaleFactor) * mImageRadius;
+            mImageView.setTranslationY(-maxImageTranslationY);
+            mImageView.setTranslationX(-maxImageTranslationX);
+            mImageView.setScaleX(scaleFactor);
+            mImageView.setScaleY(scaleFactor);
+
+            final float textScaleFactor = 0.8F;
+            final float maxTextTranslationY = mHeadViewHeight / 2 + mImageRadius;
+            final int width = mTextView.getMeasuredWidth();
+            MarginLayoutParams textLayoutParams = (MarginLayoutParams) mTextView.getLayoutParams();
+            final float maxTextTranslationX = getMeasuredWidth() / 2 - textLayoutParams.leftMargin - width / 2 - (1 - scaleFactor) / 2 * width;
+            mTextView.setTranslationY(-maxTextTranslationY);
+            mTextView.setTranslationX(maxTextTranslationX);
+            mTextView.setScaleX(textScaleFactor);
+            mTextView.setScaleY(textScaleFactor);
+        } else if(topMargin > maxTranslationY && topMargin < middleMargin) {
             refreshImageView(dy);
             refreshTextView(dy);
+        } else {
+            mImageView.setTranslationY(0);
+            mImageView.setTranslationX(0);
+            mImageView.setScaleX(1);
+            mImageView.setScaleY(1);
+
+            mTextView.setTranslationY(0);
+            mTextView.setTranslationX(0);
+            mTextView.setScaleX(1);
+            mTextView.setScaleY(1);
         }
     }
 
@@ -320,7 +351,8 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
     }
 
     private void recoveryViews() {
-        final int limitMargin = mImageRadius;
+        final int limitMargin = mHeadViewHeight + mImageRadius;
+        final int minMarginTop = mHeadViewHeight;
 
         View view = this;
         MarginLayoutParams params = (MarginLayoutParams) view.getLayoutParams();
@@ -330,7 +362,7 @@ public class ScrollChildView extends LinearLayout implements NestedScrollingChil
                 + " limitMargin = " + limitMargin
                 + " mMiddleTopMargin = " + mMiddleSpaceHeight);
         if (topMargin <= limitMargin) {
-            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, 0);
+            ObjectAnimator marginTopAnim = ObjectAnimator.ofInt(view, MARGIN_TOP, topMargin, minMarginTop);
 
             final float imageScaleFactor = 0.4F;
             final float maxImageTranslationY = mHeadViewHeight / 2 + mImageRadius;
