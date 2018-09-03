@@ -100,6 +100,8 @@ public class NumberProgressView extends View {
 
         mTextPaint.setTextSize(mSmallTextSize);
         mTextPaint.setTypeface(Typeface.DEFAULT);
+        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+
         int bottom = (int) mTextPaint.getFontMetrics().bottom;
         canvas.drawText(String.valueOf(mTotalNumber), centX + offset, centY + 2.5f * offset + bottom, mTextPaint);
     }

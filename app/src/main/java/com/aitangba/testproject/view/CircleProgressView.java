@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -30,6 +31,8 @@ public class CircleProgressView extends View {
     private int mNormalColor = Color.parseColor("#4dffffff");
     private Paint mCirclePaint;
     private Paint mTitlePaint;
+    private int mBackgroundColor = Color.parseColor("#4dffffff");
+    private int mForegroundColor = Color.parseColor("#ccffffff");
 
     private float mTitleSize;
     private float mSecondTitleSize;
@@ -51,6 +54,7 @@ public class CircleProgressView extends View {
         mCirclePaint = new Paint();
         mCirclePaint.setAntiAlias(true);
         mCirclePaint.setStrokeWidth(mStrokeWidth);
+        mCirclePaint.setStyle(Paint.Style.STROKE);
 
         mTitlePaint = new Paint();
         mTitlePaint.setColor(ContextCompat.getColor(context, android.R.color.white));
@@ -68,7 +72,9 @@ public class CircleProgressView extends View {
     }
 
     public void setPercentage(float percentage) {
-        mPercentage = percentage;
+        percentage = Math.max(0, percentage);
+        percentage = Math.min(100, percentage);
+        mPercentage = percentage / 100;
     }
 
     @Override
@@ -91,23 +97,15 @@ public class CircleProgressView extends View {
         int height = getMeasuredHeight();
         int width = getMeasuredWidth();
 
-        canvas.save();
-        canvas.rotate(-90);
-        canvas.translate(-height, 0);
+        // draw background
+        mCirclePaint.setStrokeCap(Paint.Cap.BUTT);
+        mCirclePaint.setColor(mBackgroundColor);
+        canvas.drawArc(mOval, 0, 360, false, mCirclePaint);
 
-        mCirclePaint.setStrokeWidth(mStrokeWidth);
-        mCirclePaint.setStyle(Paint.Style.STROKE);
-//        mCirclePaint.setStrokeCap(Paint.Cap.ROUND);
-        mCirclePaint.setShader(mSweepGradient);
-        mCirclePaint.setColor(ContextCompat.getColor(getContext(), android.R.color.white));
-        canvas.drawArc(mOval, 0, mPercentage * 360, false, mCirclePaint);
-
-        mCirclePaint.setShader(null);
-//        mCirclePaint.setStrokeCap(Paint.Cap.BUTT);
-        mCirclePaint.setColor(mNormalColor);
-//        canvas.drawArc(mOval, 360 - mPercentage * 360, mPercentage * 360, false, mCirclePaint);
-
-        canvas.restore();
+        // draw foregroundColor
+        mCirclePaint.setStrokeCap(Paint.Cap.ROUND);
+        mCirclePaint.setColor(mForegroundColor);
+        canvas.drawArc(mOval, -90, mPercentage * 360, false, mCirclePaint);
 
         mTitlePaint.setTextSize(mTitleSize);
         Paint.FontMetrics titleFontMetrics = mTitlePaint.getFontMetrics();
@@ -121,11 +119,6 @@ public class CircleProgressView extends View {
         absBaseLineHeight = Math.abs(secondTitleFontMetrics.top);
         absTextWidth = mTitlePaint.measureText(mSecondaryTitle);
         canvas.drawText(mSecondaryTitle, width / 2 - absTextWidth / 2, height / 2 + absBaseLineHeight, mTitlePaint);
-
-        mCirclePaint.setColor(Color.RED);
-        mCirclePaint.setStrokeWidth(4);
-        canvas.drawLine(0, height / 2, width, height / 2, mCirclePaint);
-        canvas.drawLine(width / 2, 0, width / 2, height, mCirclePaint);
     }
 
     private static int dp2px(Context context, float dpValue) {

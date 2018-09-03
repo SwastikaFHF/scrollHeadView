@@ -25,5 +25,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <com.aitangba.testproject.view.CircleProgressView
+            android:layout_height="65dp"
+            android:layout_width="65dp"
+            android:background="@color/colorAccent"/>
     </LinearLayout>
 </ScrollView>
