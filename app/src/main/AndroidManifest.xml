@@ -89,6 +89,7 @@
         <activity android:name=".view.ViewDemoActivity"></activity>
         <activity android:name=".view.keyboard.KeyboardActivity"></activity>
         <activity android:name=".view.drag.DragActivity"></activity>
+        <activity android:name=".view.drag.CustomScrollActivity"></activity>
 
     </application>
 

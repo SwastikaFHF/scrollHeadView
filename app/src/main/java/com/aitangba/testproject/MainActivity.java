@@ -31,6 +31,7 @@ import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
+import com.aitangba.testproject.view.drag.CustomScrollActivity;
 import com.aitangba.testproject.view.drag.DragActivity;
 import com.aitangba.testproject.view.drawable.DrawableTestActivity;
 import com.aitangba.testproject.view.edgeeffect.EffectActivity;
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(DragActivity.class);
+                startActivity(CustomScrollActivity.class);
             }
         });
 

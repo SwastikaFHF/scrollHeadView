@@ -47,9 +47,4 @@ public class DragActivity extends AppCompatActivity {
         childView.bindImageView(findViewById(R.id.image));
         childView.bindTextView(findViewById(R.id.text2));
     }
-
-    private static float dp2px(Context context, float dpValue) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return dpValue * scale + 0.5F;
-    }
 }
