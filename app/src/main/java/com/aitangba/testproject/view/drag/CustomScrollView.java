@@ -17,10 +17,13 @@ import android.view.ViewParent;
 public class CustomScrollView extends NestedScrollView {
 
     private static final String TAG = "CustomScrollView";
-    private int mTouchSlop;
-    private int mMinimumVelocity;
-    private int mMaximumVelocity;
+    private final int mTouchSlop;
     private final int mMaxTopMargin;
+    private final int mMinTopMargin = 0;
+
+    private boolean mIsBeingDragged;
+    private boolean mIsMarginEvent;
+    private float mLastMotionY;
 
     public CustomScrollView(@NonNull Context context) {
         this(context, null);
@@ -35,20 +38,9 @@ public class CustomScrollView extends NestedScrollView {
 
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
-        mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
-        mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
 
         mMaxTopMargin = (int) dp2px(context, 100);
     }
-
-    private static float dp2px(Context context, float dpValue) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return dpValue * scale + 0.5F;
-    }
-
-    private float mLastMotionY;
-    private boolean mIsBeingDragged;
-    private final int mMinTopMargin = 0;
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
@@ -62,6 +54,7 @@ public class CustomScrollView extends NestedScrollView {
         } else {
             switch (actionMasked) {
                 case MotionEvent.ACTION_DOWN:
+                    mLastMotionY = event.getRawY();
                     mIsBeingDragged = false;
                     break;
 
@@ -80,96 +73,106 @@ public class CustomScrollView extends NestedScrollView {
             }
         }
 
-        return super.onInterceptTouchEvent(event) || mIsBeingDragged;
+        return mIsBeingDragged || super.onInterceptTouchEvent(event);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onTouchEvent --- " + actionToString(event.getAction()));
-
         final int actionMasked = event.getActionMasked();
         MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN:
                 mLastMotionY = event.getRawY();
+                mIsMarginEvent = false;
                 requestDisallowInterceptTouchEvent();
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 final float y = event.getRawY();
-
-                if(!mIsBeingDragged) {
+                if (!mIsBeingDragged) {
                     if (Math.abs(y - mLastMotionY) > mTouchSlop) {
                         mIsBeingDragged = true;
-                        requestDisallowInterceptTouchEvent();
                     }
                 }
+                if (mIsBeingDragged) {
+                    requestDisallowInterceptTouchEvent();
 
-                if (mIsBeingDragged) { // 开始处理拖拽事件
-                    int dy = (int) (y - mLastMotionY);
-                    mLastMotionY = y;
+                    final int dy = (int) (y - mLastMotionY);
+                    if (dy > 0) { // 下拉
+                        // 下发滑动事件
+                        if (getScrollY() > 0) {
+                            mLastMotionY = y;
+                            mIsMarginEvent = false;
+                            break;
+                        }
 
-                    int minTopMargin = mMinTopMargin;
-                    View view = this;
-                    int dyConsumed;
-                    if (params.topMargin == minTopMargin) {
-                        if (dy <= 0) { // 上拉
-                            dyConsumed = 0;
-                            mIsBeingDragged = false;
-                        } else {      // 下拉
-                            if (view.getScrollY() != 0) {
-                                dyConsumed = 0;
-                                mIsBeingDragged = false;
-                            } else {
-                                dyConsumed = dy;
-                            }
+                        // 处理拖拽事件
+                        if (params.topMargin >= mMinTopMargin && params.topMargin < mMaxTopMargin) {
+                            dispatchDragEvent(params, dy);
+                            mLastMotionY = y;
+                            mIsMarginEvent = true;
+                            return true;
                         }
-                    } else if (params.topMargin == mMaxTopMargin) {
-                        if (dy < 0) { // 上拉
-                            dyConsumed = dy;
-                        } else {      // 下拉
-                            dyConsumed = 0;
-                            mIsBeingDragged = false;
+
+                        if (mIsMarginEvent) { // 拖拽转换为滑动事件，需要重置源码中的mLastMotionY
+                            MotionEvent motionEvent = MotionEvent.obtain(event);
+                            motionEvent.setAction(MotionEvent.ACTION_DOWN);
+                            super.onTouchEvent(motionEvent);
+                            mLastMotionY = y;
+                            mIsMarginEvent = false;
+                            return true;
                         }
+
+                        // 下发滑动事件
+                        mLastMotionY = y;
+                        mIsMarginEvent = false;
+                        break;
+                    } else if (dy < 0) { // 上拉
+                        // 处理拖拽事件
+                        if (params.topMargin > mMinTopMargin && params.topMargin <= mMaxTopMargin) {
+                            dispatchDragEvent(params, dy);
+                            mLastMotionY = y;
+                            mIsMarginEvent = true;
+                            return true;
+                        }
+
+                        if (mIsMarginEvent) { // 拖拽转换为滑动事件，需要重置源码中的mLastMotionY
+                            MotionEvent motionEvent = MotionEvent.obtain(event);
+                            motionEvent.setAction(MotionEvent.ACTION_DOWN);
+                            super.onTouchEvent(motionEvent);
+                            mLastMotionY = y;
+                            mIsMarginEvent = false;
+                            return true;
+                        }
+                        // 下发滑动事件
+                        mLastMotionY = y;
+                        mIsMarginEvent = false;
+                        break;
                     } else {
-                        if (params.topMargin + dy < minTopMargin) {
-                            dyConsumed = minTopMargin - params.topMargin;
-                        } else if (params.topMargin + dy > mMaxTopMargin) {
-                            dyConsumed = mMaxTopMargin - params.topMargin;
-                        } else {
-                            dyConsumed = dy;
-                        }
+                        return true;
                     }
-                    Log.d(TAG, "onTouchEvent --- " + actionToString(event.getAction())
-                            + "  topMargin = " + params.topMargin
-                            + "  dy = " + dy
-                            + "  dyConsumed = " + dyConsumed
-                            + "  getScrollY = " + getScrollY()
-                    );
-
-                    return dispatchDragEvent(params, dyConsumed) || mIsBeingDragged || super.onTouchEvent(event);
                 }
                 break;
 
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mIsBeingDragged = false;
+                mIsMarginEvent = false;
                 break;
         }
         Log.d(TAG, "onTouchEvent --- " + actionToString(event.getAction())
-                + "  getScrollY = " + getScrollY()
                 + "  topMargin = " + params.topMargin
+                + "  getScrollY = " + getScrollY()
         );
         return super.onTouchEvent(event);
     }
 
-    private boolean dispatchDragEvent(MarginLayoutParams params, int dyConsumed) {
+    private void dispatchDragEvent(MarginLayoutParams params, int dyConsumed) {
         final int originTopMargin = params.topMargin;
         params.topMargin = (int) (originTopMargin + (dyConsumed > 0 ? 1 : -1) * Math.ceil(1d * Math.abs(dyConsumed) / 2)); // 阻尼系数为0.5
         params.topMargin = Math.max(mMinTopMargin, params.topMargin);
         params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
         requestLayout();
-        return dyConsumed != 0;
     }
 
     private void requestDisallowInterceptTouchEvent() {
@@ -177,6 +180,11 @@ public class CustomScrollView extends NestedScrollView {
         if (parent != null) {
             parent.requestDisallowInterceptTouchEvent(true);
         }
+    }
+
+    private static float dp2px(Context context, float dpValue) {
+        float scale = context.getResources().getDisplayMetrics().density;
+        return dpValue * scale + 0.5F;
     }
 
     private String actionToString(int action) {
