@@ -2,6 +2,7 @@ package com.aitangba.testproject.view.drag;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,6 +18,17 @@ public class CustomScrollActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(v.getContext(), "测试信息", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        CustomScrollView customScrollView = findViewById(R.id.scrollView);
+        customScrollView.setOnScrollListener(new CustomScrollView.OnScrollListener() {
+            @Override
+            public void onScroll(CustomScrollView scrollView, int topMargin, int dy) {
+                Log.d("ScrollActivity", "onScroll -- "
+                        + " topMargin = " + topMargin
+                        + " dy = " + dy
+                );
             }
         });
     }

@@ -7,7 +7,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
 
@@ -18,8 +17,9 @@ public class CustomScrollView extends NestedScrollView {
 
     private static final String TAG = "CustomScrollView";
     private final int mTouchSlop;
-    private final int mMaxTopMargin;
-    private final int mMinTopMargin = 0;
+
+    private int mMinTopMargin;
+    private int mMaxTopMargin;
 
     private boolean mIsBeingDragged;
     private boolean mIsMarginEvent;
@@ -39,7 +39,16 @@ public class CustomScrollView extends NestedScrollView {
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mTouchSlop = configuration.getScaledTouchSlop();
 
-        mMaxTopMargin = (int) dp2px(context, 100);
+        mMaxTopMargin = 0;
+        mMaxTopMargin = 0;
+    }
+
+    public void setMinTopMargin(int minTopMargin) {
+        mMinTopMargin = minTopMargin;
+    }
+
+    public void setMaxTopMargin(int maxTopMargin) {
+        mMaxTopMargin = maxTopMargin;
     }
 
     @Override
@@ -158,6 +167,9 @@ public class CustomScrollView extends NestedScrollView {
             case MotionEvent.ACTION_UP:
                 mIsBeingDragged = false;
                 mIsMarginEvent = false;
+                if (mOnScrollEndListener != null) {
+                    mOnScrollEndListener.onStop(this);
+                }
                 break;
         }
         Log.d(TAG, "onTouchEvent --- " + actionToString(event.getAction())
@@ -172,7 +184,12 @@ public class CustomScrollView extends NestedScrollView {
         params.topMargin = (int) (originTopMargin + (dyConsumed > 0 ? 1 : -1) * Math.ceil(1d * Math.abs(dyConsumed) / 2)); // 阻尼系数为0.5
         params.topMargin = Math.max(mMinTopMargin, params.topMargin);
         params.topMargin = Math.min(mMaxTopMargin, params.topMargin);
+
         requestLayout();
+
+        if (mOnScrollListener != null) {
+            mOnScrollListener.onScroll(this, params.topMargin, dyConsumed);
+        }
     }
 
     private void requestDisallowInterceptTouchEvent() {
@@ -182,9 +199,24 @@ public class CustomScrollView extends NestedScrollView {
         }
     }
 
-    private static float dp2px(Context context, float dpValue) {
-        float scale = context.getResources().getDisplayMetrics().density;
-        return dpValue * scale + 0.5F;
+    private OnScrollListener mOnScrollListener;
+
+    public void setOnScrollListener(OnScrollListener onScrollListener) {
+        mOnScrollListener = onScrollListener;
+    }
+
+    public interface OnScrollListener {
+        void onScroll(CustomScrollView scrollView, int topMargin, int dy);
+    }
+
+    private OnScrollEndListener mOnScrollEndListener;
+
+    public void setOnScrollEndListener(OnScrollEndListener onScrollEndListener) {
+        mOnScrollEndListener = onScrollEndListener;
+    }
+
+    public interface OnScrollEndListener {
+        void onStop(CustomScrollView scrollView);
     }
 
     private String actionToString(int action) {
