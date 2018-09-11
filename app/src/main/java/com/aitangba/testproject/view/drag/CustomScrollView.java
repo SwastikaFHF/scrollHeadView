@@ -132,7 +132,7 @@ public class CustomScrollView extends NestedScrollView {
                             return true;
                         }
 
-                        // 下发滑动事件
+                        // 边缘事件
                         mLastMotionY = y;
                         mIsMarginEvent = false;
                         break;
@@ -153,7 +153,7 @@ public class CustomScrollView extends NestedScrollView {
                             mIsMarginEvent = false;
                             return true;
                         }
-                        // 下发滑动事件
+                        // 滑动事件和边缘事件
                         mLastMotionY = y;
                         mIsMarginEvent = false;
                         break;

@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <com.aitangba.testproject.view.drag.CustomScrollView
-        android:id="@+id/scrollView"
+    <com.aitangba.testproject.view.drag.CustomViewGroup
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/scrollChildView"
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/text1"
+            <LinearLayout
+                android:id="@+id/scrollChildView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/disabled"
-                android:text="
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/disabled"
+                    android:text="
                         从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
@@ -31,10 +34,11 @@
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 "
-                android:textSize="20dp" />
+                    android:textSize="20dp" />
 
-        </LinearLayout>
+            </LinearLayout>
 
+        </android.support.v4.widget.NestedScrollView>
 
-    </com.aitangba.testproject.view.drag.CustomScrollView>
+    </com.aitangba.testproject.view.drag.CustomViewGroup>
 </LinearLayout>

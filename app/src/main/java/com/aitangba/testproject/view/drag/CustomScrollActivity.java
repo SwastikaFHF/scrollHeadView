@@ -21,15 +21,15 @@ public class CustomScrollActivity extends BaseActivity {
             }
         });
 
-        CustomScrollView customScrollView = findViewById(R.id.scrollView);
-        customScrollView.setOnScrollListener(new CustomScrollView.OnScrollListener() {
-            @Override
-            public void onScroll(CustomScrollView scrollView, int topMargin, int dy) {
-                Log.d("ScrollActivity", "onScroll -- "
-                        + " topMargin = " + topMargin
-                        + " dy = " + dy
-                );
-            }
-        });
+//        CustomScrollView customScrollView = findViewById(R.id.scrollView);
+//        customScrollView.setOnScrollListener(new CustomScrollView.OnScrollListener() {
+//            @Override
+//            public void onScroll(CustomScrollView scrollView, int topMargin, int dy) {
+//                Log.d("ScrollActivity", "onScroll -- "
+//                        + " topMargin = " + topMargin
+//                        + " dy = " + dy
+//                );
+//            }
+//        });
     }
 }
