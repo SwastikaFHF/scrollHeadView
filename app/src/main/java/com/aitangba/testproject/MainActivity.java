@@ -24,6 +24,7 @@ import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
 import com.aitangba.testproject.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
+import com.aitangba.testproject.service.CreateActivityService;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
@@ -141,7 +142,9 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(CustomScrollActivity.class);
+//                startActivity(CustomScrollActivity.class);
+                Intent intent = new Intent(MainActivity.this, CreateActivityService.class);
+                startService(intent);
             }
         });
 
