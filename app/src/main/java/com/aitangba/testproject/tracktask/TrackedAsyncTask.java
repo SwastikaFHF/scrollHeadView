@@ -1,5 +1,6 @@
 package com.aitangba.testproject.tracktask;
 
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 /**
@@ -141,7 +142,9 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
         @Override
         protected void onError(Error2[] values) {
             mOwner.unregisterSelf();
-            mOwner.onError(values[0]);
+            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
+                mOwner.onError(values[0]);
+            }
         }
 
         @Override
@@ -149,13 +152,17 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
             mOwner.unregisterSelf();
             // if error occurred task also will be canceled,
             // so onCancelled() will be called only when error never occurred in that task
-            mOwner.onCancelled();
+            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
+                mOwner.onCancelled();
+            }
         }
 
         @Override
         public void onPostExecute(Result2 result) {
             mOwner.unregisterSelf();
-            mOwner.onSuccess(result);
+            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
+                mOwner.onSuccess(result);
+            }
         }
     }
 }
