@@ -28,7 +28,7 @@ public class TrackedActivity extends AppCompatActivity {
             @Override
             protected Object doInBackground(Object[] objects) {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(4000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

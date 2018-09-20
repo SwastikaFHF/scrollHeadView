@@ -1,4 +1,4 @@
-package com.aitangba.testproject.tracktask;
+package com.aitangba.testproject.view;
 
 import android.content.Context;
 import android.graphics.Canvas;

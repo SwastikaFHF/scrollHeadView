@@ -20,16 +20,5 @@ public class CustomScrollActivity extends BaseActivity {
                 Toast.makeText(v.getContext(), "测试信息", Toast.LENGTH_SHORT).show();
             }
         });
-
-//        CustomScrollView customScrollView = findViewById(R.id.scrollView);
-//        customScrollView.setOnScrollListener(new CustomScrollView.OnScrollListener() {
-//            @Override
-//            public void onScroll(CustomScrollView scrollView, int topMargin, int dy) {
-//                Log.d("ScrollActivity", "onScroll -- "
-//                        + " topMargin = " + topMargin
-//                        + " dy = " + dy
-//                );
-//            }
-//        });
     }
 }

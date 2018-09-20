@@ -1,8 +1,5 @@
 package com.aitangba.testproject.tracktask;
 
-import android.support.v4.view.ViewCompat;
-import android.view.View;
-
 /**
  * Modeled after {@link AsyncTask}; the basic usage is the same, with extra features:
  * - Bulk cancellation of multiple tasks.  This is mainly used by UI to cancel pending tasks
@@ -17,22 +14,18 @@ import android.view.View;
 public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
 
     private final InnerTask<Params, Progress, Error, Result> mInnerTask;
-    private View mRootView;
+    private TaskAdapter mTaskAdapter;
 
     /**
      * Construction with what create new instances cannot be canceled later.
      */
-    public TrackedAsyncTask(View rootView) {
-        mRootView = rootView;
+    public TrackedAsyncTask(TaskAdapter taskAdapter) {
+        mTaskAdapter = taskAdapter;
         mInnerTask = new InnerTask<>(this);
     }
 
-    protected View getRootView() {
-        return mRootView;
-    }
-
     private void unregisterSelf() {
-        TaskTracked.getInstance().unregisterTask(this);
+        mTaskAdapter.unregister();
     }
 
     /**
@@ -103,14 +96,14 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
 
     @SafeVarargs
     protected final TrackedAsyncTask<Params, Progress, Error, Result> executeParallel(Params... params) {
-        TaskTracked.getInstance().registerTask(mRootView, this);
+        mTaskAdapter.register(this);
         mInnerTask.executeParallel(params);
         return this;
     }
 
     @SafeVarargs
     protected final TrackedAsyncTask<Params, Progress, Error, Result> executeSerial(Params... params) {
-        TaskTracked.getInstance().registerTask(mRootView, this);
+        mTaskAdapter.register(this);
         mInnerTask.executeSerial(params);
         return this;
     }
@@ -118,7 +111,7 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
     private static class InnerTask<Params2, Progress2, Error2, Result2> extends AsyncTask<Params2, Progress2, Error2, Result2> {
         private final TrackedAsyncTask<Params2, Progress2, Error2, Result2> mOwner;
 
-        public InnerTask(TrackedAsyncTask<Params2, Progress2, Error2, Result2> owner) {
+        private InnerTask(TrackedAsyncTask<Params2, Progress2, Error2, Result2> owner) {
             mOwner = owner;
         }
 
@@ -142,9 +135,7 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
         @Override
         protected void onError(Error2[] values) {
             mOwner.unregisterSelf();
-            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
-                mOwner.onError(values[0]);
-            }
+            mOwner.onError(values[0]);
         }
 
         @Override
@@ -152,17 +143,18 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
             mOwner.unregisterSelf();
             // if error occurred task also will be canceled,
             // so onCancelled() will be called only when error never occurred in that task
-            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
-                mOwner.onCancelled();
-            }
+            mOwner.onCancelled();
         }
 
         @Override
         public void onPostExecute(Result2 result) {
             mOwner.unregisterSelf();
-            if(ViewCompat.isAttachedToWindow(mOwner.mRootView)) {
-                mOwner.onSuccess(result);
-            }
+            mOwner.onSuccess(result);
         }
+    }
+
+    public interface TaskAdapter {
+        void register(TrackedAsyncTask asyncTask);
+        void unregister();
     }
 }

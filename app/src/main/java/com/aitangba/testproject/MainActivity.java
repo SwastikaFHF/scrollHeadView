@@ -28,6 +28,7 @@ import com.aitangba.testproject.service.CreateActivityService;
 import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
+import com.aitangba.testproject.tracktask.TrackedActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
@@ -46,6 +47,7 @@ import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
+import com.aitangba.testproject.view.removeview.RemoveViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
@@ -142,9 +144,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(CustomScrollActivity.class);
-                Intent intent = new Intent(MainActivity.this, CreateActivityService.class);
-                startService(intent);
+                startActivity(TrackedActivity.class);
             }
         });
 

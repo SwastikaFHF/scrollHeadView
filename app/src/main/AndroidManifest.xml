@@ -91,6 +91,7 @@
         <activity android:name=".view.drag.DragActivity"></activity>
         <activity android:name=".view.drag.CustomScrollActivity"></activity>
         <service android:name=".service.CreateActivityService"/>
+        <activity android:name=".view.removeview.RemoveViewActivity"/>
 
     </application>
 

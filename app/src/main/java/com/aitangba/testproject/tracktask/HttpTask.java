@@ -10,19 +10,19 @@ import android.view.View;
 public class HttpTask extends TrackedAsyncTask {
 
     public HttpTask(TrackedActivity activity) {
-        this(activity.getWindow().getDecorView());
+        super(new ActivityTaskAdapter(activity));
     }
 
     public HttpTask(Fragment fragment) {
-        this(fragment.getView());
+        super(new FragmentTaskAdapter(fragment));
     }
 
     public HttpTask(View view) {
-        super(view);
+        super(new ViewTaskAdapter(view));
     }
 
     public void startRequest() {
-//        executeParallel(new Void[0]);
+        executeParallel(new Void[0]);
     }
 
     @Override

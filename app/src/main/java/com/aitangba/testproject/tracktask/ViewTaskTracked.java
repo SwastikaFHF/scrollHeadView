@@ -1,16 +1,15 @@
 package com.aitangba.testproject.tracktask;
 
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class TaskTracked {
+public class ViewTaskTracked {
 
     private final LinkedList<ViewElement> mViewElements = new LinkedList<>();
 
-    public static TaskTracked getInstance() {
+    public static ViewTaskTracked getInstance() {
         return SingletonHandler.instance;
     }
 
@@ -29,16 +28,16 @@ public class TaskTracked {
 
     public void unregisterTask(TrackedAsyncTask task) {
         for(ViewElement viewElement : mViewElements) {
-            if(viewElement.mView == task.getRootView()) {
-                viewElement.remove(task);
-                return;
-            }
+//            if(viewElement.mView == task.getRootView()) {
+//                viewElement.remove(task);
+//                return;
+//            }
         }
     }
 
     //内部类
     private static final class SingletonHandler{
-        private static TaskTracked instance = new TaskTracked();
+        private static ViewTaskTracked instance = new ViewTaskTracked();
     }
 
     private class ViewElement implements View.OnAttachStateChangeListener {
