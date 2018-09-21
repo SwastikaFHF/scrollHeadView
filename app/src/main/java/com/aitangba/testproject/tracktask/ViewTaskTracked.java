@@ -84,7 +84,7 @@ public class ViewTaskTracked {
                 Iterator<TrackedAsyncTask<?, ?, ?, ?>> iterator = mTasks.iterator();
                 while (iterator.hasNext()) {
                     TrackedAsyncTask<?, ?, ?, ?> task = iterator.next();
-                    task.cancelWithoutCallback();
+                    task.cancel();
                     iterator.remove();
                 }
             }

@@ -2,7 +2,7 @@ package com.aitangba.testproject.view.removeview;
 
 import android.view.View;
 
-import com.aitangba.testproject.tracktask.HttpTask;
+import com.aitangba.testproject.tracktask.ui.HttpTask;
 
 public class TaskViewObserver implements View.OnAttachStateChangeListener {
 

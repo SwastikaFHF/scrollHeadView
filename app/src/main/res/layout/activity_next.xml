@@ -7,7 +7,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    tools:context=".slideback.slidingmenu.SlidingMenuActivity">
+    tools:context=".view.slideback.slidingmenu.SlidingMenuActivity">
 
     <TextView
         android:id="@+id/tv_content"

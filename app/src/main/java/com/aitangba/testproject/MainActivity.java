@@ -1,40 +1,37 @@
 package com.aitangba.testproject;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
+import com.aitangba.testproject.invisiblefragment.permission.PermissionTask;
 import com.aitangba.testproject.job.JobListActivity;
-import com.aitangba.testproject.lightadapter.viewmodel.LightAdapterActivity;
+import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
-import com.aitangba.testproject.multiadapter.ui.MultiAdapterActivity;
+import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
-import com.aitangba.testproject.removeitem.RemoveItemActivity;
+import com.aitangba.testproject.view.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
-import com.aitangba.testproject.service.CreateActivityService;
-import com.aitangba.testproject.slideback.slidingmenu.SlidingMenuActivity;
+import com.aitangba.testproject.view.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
-import com.aitangba.testproject.tracktask.TrackedActivity;
+import com.aitangba.testproject.tracktask.ui.TrackedActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
-import com.aitangba.testproject.view.drag.CustomScrollActivity;
-import com.aitangba.testproject.view.drag.DragActivity;
 import com.aitangba.testproject.view.drawable.DrawableTestActivity;
 import com.aitangba.testproject.view.edgeeffect.EffectActivity;
 import com.aitangba.testproject.view.flowlayout.FlowViewActivity;
@@ -42,22 +39,16 @@ import com.aitangba.testproject.view.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.view.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.view.horizonscrollview.HorizonScrollAdActivity;
 import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
-import com.aitangba.testproject.view.keyboard.KeyboardActivity;
 import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
-import com.aitangba.testproject.view.removeview.RemoveViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
 import com.aitangba.testproject.view.wheelview.WheelViewActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
-import com.aitangba.testproject.youtube.YoutubeActivity;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.aitangba.testproject.view.youtube.YoutubeActivity;
 
 import java.util.ArrayList;
 
@@ -144,7 +135,13 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(TrackedActivity.class);
+//                startActivity(TrackedActivity.class);
+                new PermissionTask(MainActivity.this) {
+                    @Override
+                    protected void onSuccess() {
+                        super.onSuccess();
+                    }
+                }.start(Manifest.permission.ACCESS_FINE_LOCATION);
             }
         });
 

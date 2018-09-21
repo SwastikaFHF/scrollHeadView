@@ -11,7 +11,7 @@ package com.aitangba.testproject.tracktask;
  * - Support SDK version from GINGERBREAD.
  */
 @SuppressWarnings("hiding")
-public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
+public abstract class TrackedAsyncTask<Params, Progress, Error, Result> implements CancelableJob {
 
     private final InnerTask<Params, Progress, Error, Result> mInnerTask;
     private TaskAdapter mTaskAdapter;
@@ -69,8 +69,9 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
         mInnerTask.cancel(mayInterruptIfRunning);
     }
 
-    public void cancelWithoutCallback() {
-        mInnerTask.cancelWithoutCallback();
+    @Override
+    public boolean cancel() {
+        return mInnerTask.cancelWithoutCallback();
     }
 
     /**
@@ -151,10 +152,5 @@ public abstract class TrackedAsyncTask<Params, Progress, Error, Result> {
             mOwner.unregisterSelf();
             mOwner.onSuccess(result);
         }
-    }
-
-    public interface TaskAdapter {
-        void register(TrackedAsyncTask asyncTask);
-        void unregister();
     }
 }

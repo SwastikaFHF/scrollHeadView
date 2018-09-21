@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.slideback.slidinglayout.BaseActivity;
+import com.aitangba.testproject.view.slideback.slidinglayout.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
