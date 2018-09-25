@@ -3,7 +3,9 @@ package com.aitangba.testproject.invisiblefragment.permission;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -81,12 +83,19 @@ public abstract class PermissionTask {
 
         private int mReqCode = INIT_CODE;
         private PermissionTask mPermissionTask;
+        private List<String> mDeniedList = new ArrayList<>();
 
         public void add(PermissionTask permissionTask, List<String> deniedList) {
             mPermissionTask = permissionTask;
+            mDeniedList.clear();
+            mDeniedList.addAll(deniedList);
             mReqCode = (mReqCode + 1) % 100;
+        }
 
-            requestPermissions(deniedList.toArray(new String[deniedList.size()]), mReqCode);
+        @Override
+        public void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            requestPermissions(mDeniedList.toArray(new String[mDeniedList.size()]), mReqCode);
         }
 
         @Override

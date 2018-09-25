@@ -2,7 +2,7 @@ package com.aitangba.testproject.view.removeview;
 
 import android.view.View;
 
-import com.aitangba.testproject.tracktask.ui.HttpTask;
+import com.aitangba.testproject.invisiblefragment.task.HttpTask;
 
 public class TaskViewObserver implements View.OnAttachStateChangeListener {
 
@@ -20,6 +20,6 @@ public class TaskViewObserver implements View.OnAttachStateChangeListener {
     @Override
     public void onViewDetachedFromWindow(View v) {
         v.removeOnAttachStateChangeListener(this);
-        mHttpTask.cancelWithoutCallback();
+        mHttpTask.cancel();
     }
 }

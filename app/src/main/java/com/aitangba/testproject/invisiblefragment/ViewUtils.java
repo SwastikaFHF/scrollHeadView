@@ -40,7 +40,11 @@ public class ViewUtils {
                         break;
                     }
                 }
-                tempView = (View) tempView.getParent();
+                if(tempView.getParent() instanceof View) {
+                    tempView = (View) tempView.getParent();
+                } else {
+                    break;
+                }
             }
         }
         return fragmentManager;
@@ -72,7 +76,11 @@ public class ViewUtils {
                         break;
                     }
                 }
-                tempView = (View) tempView.getParent();
+                if(tempView.getParent() instanceof View) {
+                    tempView = (View) tempView.getParent();
+                } else {
+                    break;
+                }
             }
         }
         return lifecycle;

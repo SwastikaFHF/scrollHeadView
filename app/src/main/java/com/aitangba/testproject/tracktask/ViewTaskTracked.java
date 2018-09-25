@@ -2,6 +2,8 @@ package com.aitangba.testproject.tracktask;
 
 import android.view.View;
 
+import com.aitangba.testproject.invisiblefragment.task.TrackedAsyncTask;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 

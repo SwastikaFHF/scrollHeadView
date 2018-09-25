@@ -4,16 +4,19 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
+import com.aitangba.testproject.invisiblefragment.amap.AMapTask;
 import com.aitangba.testproject.invisiblefragment.permission.PermissionTask;
 import com.aitangba.testproject.job.JobListActivity;
 import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
@@ -49,6 +52,7 @@ import com.aitangba.testproject.view.viewpager.ViewPageActivity;
 import com.aitangba.testproject.view.wheelview.WheelViewActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
 import com.aitangba.testproject.view.youtube.YoutubeActivity;
+import com.amap.api.location.AMapLocation;
 
 import java.util.ArrayList;
 
@@ -115,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String[] titles = new String[activityInfoList.size()];
 
-                for(int i = 0, size = activityInfoList.size(); i < size ; i++) {
+                for (int i = 0, size = activityInfoList.size(); i < size; i++) {
                     titles[i] = activityInfoList.get(i).name;
                 }
 
@@ -136,10 +140,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                startActivity(TrackedActivity.class);
-                new PermissionTask(MainActivity.this) {
+                new PermissionTask(v) {
                     @Override
                     protected void onSuccess() {
                         super.onSuccess();
+                        Toast.makeText(v.getContext(), "授权成功", Toast.LENGTH_SHORT).show();
+
+                        new AMapTask(v) {
+                            @Override
+                            protected void onSuccess(@NonNull AMapLocation location) {
+                                super.onSuccess(location);
+                                Toast.makeText(v.getContext(), "定位成功", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            protected void onError(int errorCode, @NonNull String errorDesc) {
+                                super.onError(errorCode, errorDesc);
+                                Toast.makeText(v.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
+                            }
+                        }.start(false);
+                    }
+
+                    @Override
+                    protected void onFailed() {
+                        super.onFailed();
+                        Toast.makeText(v.getContext(), "授权失败了", Toast.LENGTH_SHORT).show();
                     }
                 }.start(Manifest.permission.ACCESS_FINE_LOCATION);
             }
@@ -150,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startActivity(Class<?> activityClass) {
-        if(activityClass != null) {
+        if (activityClass != null) {
             startActivity(new Intent(this, activityClass));
         }
     }
@@ -164,6 +189,4 @@ public class MainActivity extends AppCompatActivity {
             this.activityClass = activityClass;
         }
     }
-
-
 }

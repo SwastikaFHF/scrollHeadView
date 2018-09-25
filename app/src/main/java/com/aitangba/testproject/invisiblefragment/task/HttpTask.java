@@ -1,12 +1,13 @@
-package com.aitangba.testproject.tracktask.ui;
+package com.aitangba.testproject.invisiblefragment.task;
 
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import com.aitangba.testproject.tracktask.TrackedAsyncTask;
-import com.aitangba.testproject.tracktask.adapter.ActivityTaskAdapter;
-import com.aitangba.testproject.tracktask.adapter.FragmentTaskAdapter;
-import com.aitangba.testproject.tracktask.adapter.ViewTaskAdapter;
+import com.aitangba.testproject.invisiblefragment.task.TrackedAsyncTask;
+import com.aitangba.testproject.invisiblefragment.task.adapter.ActivityTaskAdapter;
+import com.aitangba.testproject.invisiblefragment.task.adapter.FragmentTaskAdapter;
+import com.aitangba.testproject.invisiblefragment.task.adapter.ViewTaskAdapter;
+import com.aitangba.testproject.tracktask.ui.TrackedActivity;
 
 /**
  * Created by fhf11991 on 2018/3/26.
@@ -27,7 +28,7 @@ public class HttpTask extends TrackedAsyncTask {
     }
 
     public void startRequest() {
-        executeParallel(new Void[0]);
+        executeParallel(new Object[]{});
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.aitangba.testproject.R;
+import com.aitangba.testproject.invisiblefragment.task.HttpTask;
 
 /**
  * Created by fhf11991 on 2018/4/24.

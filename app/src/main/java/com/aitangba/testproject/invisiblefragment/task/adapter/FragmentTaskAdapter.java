@@ -1,12 +1,12 @@
-package com.aitangba.testproject.tracktask.adapter;
+package com.aitangba.testproject.invisiblefragment.task.adapter;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.support.v4.app.Fragment;
 
-import com.aitangba.testproject.tracktask.CancelableJob;
-import com.aitangba.testproject.tracktask.TaskAdapter;
+import com.aitangba.testproject.invisiblefragment.task.CancelableJob;
+import com.aitangba.testproject.invisiblefragment.task.TaskAdapter;
 
 public class FragmentTaskAdapter implements TaskAdapter,LifecycleObserver {
 
