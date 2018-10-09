@@ -3,9 +3,6 @@ package com.aitangba.testproject.invisiblefragment.task.adapter;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.content.Context;
-import android.content.ContextWrapper;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.aitangba.testproject.invisiblefragment.ViewUtils;
@@ -20,7 +17,7 @@ public class ViewTaskAdapter implements TaskAdapter, View.OnAttachStateChangeLis
 
     public ViewTaskAdapter(View view) {
         mView = view;
-        mLifecycle = ViewUtils.findLifecyle(view);
+        mLifecycle = ViewUtils.findLifecycle(view);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

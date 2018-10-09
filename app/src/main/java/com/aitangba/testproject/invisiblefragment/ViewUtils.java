@@ -12,6 +12,9 @@ import android.view.Window;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Create by fhf11991
+ */
 public class ViewUtils {
 
     public static FragmentManager findFragmentManager(View view) {
@@ -50,7 +53,7 @@ public class ViewUtils {
         return fragmentManager;
     }
 
-    public static Lifecycle findLifecyle(View view) {
+    public static Lifecycle findLifecycle(View view) {
         FragmentActivity fragmentActivity = getActivityFromView(view);
         Lifecycle lifecycle = null;
         if (fragmentActivity != null) {

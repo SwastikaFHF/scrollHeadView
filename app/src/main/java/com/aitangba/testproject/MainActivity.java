@@ -1,33 +1,24 @@
 package com.aitangba.testproject;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
-import com.aitangba.testproject.invisiblefragment.amap.AMapTask;
-import com.aitangba.testproject.invisiblefragment.permission.PermissionTask;
 import com.aitangba.testproject.job.JobListActivity;
-import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
-import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
-import com.aitangba.testproject.view.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
-import com.aitangba.testproject.view.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.tracktask.ui.TrackedActivity;
@@ -42,17 +33,21 @@ import com.aitangba.testproject.view.horizonscroll.HorizonScrollActivity;
 import com.aitangba.testproject.view.horizonscroll.HorizonScrollTestActivity;
 import com.aitangba.testproject.view.horizonscrollview.HorizonScrollAdActivity;
 import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
+import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.view.loadingview.LoadViewActivity;
+import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
+import com.aitangba.testproject.view.removeitem.RemoveItemActivity;
+import com.aitangba.testproject.view.slideback.slidingmenu.SlidingMenuActivity;
+import com.aitangba.testproject.view.slideback.slidingpanelayout.SlidingPaneActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
 import com.aitangba.testproject.view.wheelview.WheelViewActivity;
-import com.aitangba.testproject.webdebug.WebDebugActivity;
 import com.aitangba.testproject.view.youtube.YoutubeActivity;
-import com.amap.api.location.AMapLocation;
+import com.aitangba.testproject.webdebug.WebDebugActivity;
 
 import java.util.ArrayList;
 
@@ -139,34 +134,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(TrackedActivity.class);
-                new PermissionTask(v) {
-                    @Override
-                    protected void onSuccess() {
-                        super.onSuccess();
-                        Toast.makeText(v.getContext(), "授权成功", Toast.LENGTH_SHORT).show();
-
-                        new AMapTask(v) {
-                            @Override
-                            protected void onSuccess(@NonNull AMapLocation location) {
-                                super.onSuccess(location);
-                                Toast.makeText(v.getContext(), "定位成功", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            protected void onError(int errorCode, @NonNull String errorDesc) {
-                                super.onError(errorCode, errorDesc);
-                                Toast.makeText(v.getContext(), "定位失败", Toast.LENGTH_SHORT).show();
-                            }
-                        }.start(false);
-                    }
-
-                    @Override
-                    protected void onFailed() {
-                        super.onFailed();
-                        Toast.makeText(v.getContext(), "授权失败了", Toast.LENGTH_SHORT).show();
-                    }
-                }.start(Manifest.permission.ACCESS_FINE_LOCATION);
+                startActivity(SlidingPaneActivity.class);
             }
         });
 

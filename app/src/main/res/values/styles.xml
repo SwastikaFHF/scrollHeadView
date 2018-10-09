@@ -71,6 +71,4 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <item type="id" name="tag_holder">holder</item>
-
 </resources>
