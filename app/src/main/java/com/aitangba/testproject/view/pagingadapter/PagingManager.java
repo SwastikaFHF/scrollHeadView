@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.view.adpater;
+package com.aitangba.testproject.view.pagingadapter;
 
 /**
  * Created by XBeats on 2017/3/26.

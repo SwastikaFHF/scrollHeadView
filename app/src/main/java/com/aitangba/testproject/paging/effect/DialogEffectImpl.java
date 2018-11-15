@@ -1,6 +1,7 @@
 package com.aitangba.testproject.paging.effect;
 
-import com.aitangba.testproject.paging.HttpTask;
+import com.aitangba.testproject.paging.Request;
+import com.aitangba.testproject.paging.Response;
 import com.aitangba.testproject.paging.helper.LoadingDialogHelper;
 
 /**
@@ -18,19 +19,19 @@ public class DialogEffectImpl implements UIEffect {
     }
 
     @Override
-    public void onPreExecute(HttpTask httpTask) {
+    public void onPreExecute(Request request) {
         if(mNeedDialog) {
             mLoadingDialogHelper.showLoadingDialog();
         }
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(Response response) {
         mLoadingDialogHelper.dismiss();
     }
 
     @Override
-    public void onError() {
+    public void onError(Response response) {
         mLoadingDialogHelper.dismiss();
     }
 

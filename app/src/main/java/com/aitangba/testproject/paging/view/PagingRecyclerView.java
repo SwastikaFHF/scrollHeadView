@@ -1,6 +1,7 @@
 package com.aitangba.testproject.paging.view;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,9 +14,7 @@ import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
-
-import java.util.Collections;
-import java.util.List;
+import com.aitangba.testproject.paging.Response;
 
 /**
  * Created by fhf11991 on 2017/5/11.
@@ -73,30 +72,15 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
     }
 
     @Override
-    public void setAutoLoadEnabled(boolean enable) {
-        mPagingHelper.setAutoLoadEnabled(enable);
-    }
-
-    @Override
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         mPagingHelper.setOnLoadMoreListener(loadMoreListener);
     }
 
     @Override
-    public void startLoad(boolean refresh) {
-        mPagingHelper.startLoad(refresh);
-    }
-
-    @Override
-    public <T> List<T> checkPaging(List<T> list) {
-        if(list == null) {
-            list = Collections.EMPTY_LIST;
-        }
-
-        boolean hasMoreData = mPagingHelper.finishLoadMore(list.size());
+    public void checkPaging(Response response) {
+        boolean hasMoreData = mPagingHelper.finishLoadMore(response.array.size());
         updateEmptyStatus();
         updateFooterStatus(hasMoreData);
-        return list;
     }
 
     @Override
@@ -187,12 +171,13 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
         private RecyclerView.Adapter mAdapter;
 
-        public EasyAdapter(Adapter adapter) {
+        private EasyAdapter(Adapter adapter) {
             mAdapter = adapter;
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        @NonNull
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if(viewType == TYPE_HEADER_VIEW) {
                 return new ViewHolder(mHeaderView) {};
             } else if(viewType == TYPE_FOOTER_VIEW) {
@@ -202,7 +187,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             if(getItemViewType(position) == TYPE_HEADER_VIEW) {
 
             } else if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
@@ -215,7 +200,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         @Override
         public int getItemCount() {
             final boolean hasHeader = mHeaderView != null;
-            final boolean hasFooter = mPagingHelper.isAutoLoadEnabled() && mFooterViewHolder.itemView != null;
+            final boolean hasFooter = mFooterViewHolder.itemView != null;
 
             final int commonItemCount = mAdapter.getItemCount();
             final int headerCount = hasHeader ? 1 : 0;
@@ -251,22 +236,22 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         }
 
         @Override
-        public void registerAdapterDataObserver(AdapterDataObserver observer) {
+        public void registerAdapterDataObserver(@NonNull AdapterDataObserver observer) {
             mAdapter.registerAdapterDataObserver(observer);
         }
 
         @Override
-        public void unregisterAdapterDataObserver(AdapterDataObserver observer) {
+        public void unregisterAdapterDataObserver(@NonNull AdapterDataObserver observer) {
             mAdapter.unregisterAdapterDataObserver(observer);
         }
 
         @Override
-        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
             mAdapter.onAttachedToRecyclerView(recyclerView);
         }
 
         @Override
-        public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
             mAdapter.onDetachedFromRecyclerView(recyclerView);
         }
     }

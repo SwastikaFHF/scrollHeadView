@@ -1,7 +1,9 @@
 package com.aitangba.testproject.paging.effect;
 
 
-import com.aitangba.testproject.paging.HttpTask;
+import com.aitangba.testproject.paging.PageBean;
+import com.aitangba.testproject.paging.Request;
+import com.aitangba.testproject.paging.Response;
 import com.aitangba.testproject.paging.view.PagingManager;
 
 /**
@@ -19,16 +21,24 @@ public class PagingEffectImpl implements UIEffect {
     }
 
     @Override
-    public void onPreExecute(HttpTask httpTask) {
+    public void onPreExecute(Request request) {
         mPagingManager.startLoad(mRefresh);
+        PageBean pageBean = mPagingManager.getPageBean();
+        if(mRefresh) {
+            pageBean.reset();
+        } else {
+            pageBean.increase();
+        }
+        request.pageIndx = pageBean.pageIndex;
+        request.pageSize = pageBean.pageSize;
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(Response response) {
     }
 
     @Override
-    public void onError() {
+    public void onError(Response response) {
         mPagingManager.checkPaging(null);
     }
 

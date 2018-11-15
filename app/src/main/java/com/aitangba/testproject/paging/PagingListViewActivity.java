@@ -54,7 +54,7 @@ public class PagingListViewActivity extends AppCompatActivity {
         mListView = (PagingListView) findViewById(R.id.listView);
         mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onLoadMore(boolean isReload) {
+            public void onLoadMore() {
                 loadData(false, false, false);
             }
         });
@@ -79,10 +79,6 @@ public class PagingListViewActivity extends AppCompatActivity {
         final SwipeRefreshEffectImpl swipeRefreshEffect = SwipeRefreshEffectImpl.build(mSwipeRefreshLayout);
         final PagingEffectImpl pagingEffect = PagingEffectImpl.build(mListView, refresh);
 
-//        swipeRefreshEffect.onPreExecute();
-//        dialogEffect.onPreExecute();
-//        statefulEffect.onPreExecute();
-//        pagingEffect.onPreExecute();
         mListView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -91,10 +87,6 @@ public class PagingListViewActivity extends AppCompatActivity {
                 } else {
                     mAdapter.addData(getData(0), !refresh);
                 }
-                swipeRefreshEffect.onSuccess();
-                dialogEffect.onSuccess();
-                statefulEffect.onSuccess();
-                pagingEffect.onSuccess();
             }
         }, 2000);
     }

@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.view.adpater;
+package com.aitangba.testproject.view.pagingadapter;
 
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;

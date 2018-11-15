@@ -43,7 +43,7 @@ public abstract class AMapTask {
         this.mFragmentManager = ViewUtils.findFragmentManager(view);
     }
 
-    public void start(boolean useCache) {
+    public final void start(boolean useCache) {
         // check locate switch
         if (!isLocationEnabled(mContext)) {
             onError(AMapLocation.ERROR_CODE_SERVICE_FAIL, "locate service is stopped");
@@ -60,7 +60,7 @@ public abstract class AMapTask {
         List<Fragment> fragmentList = mFragmentManager.getFragments();
         LocateFragment locateFragment = null;
         for (Fragment fragment : fragmentList) {
-            if (fragment != null && fragment instanceof LocateFragment) {
+            if (fragment instanceof LocateFragment) {
                 locateFragment = (LocateFragment) fragment;
                 break;
             }

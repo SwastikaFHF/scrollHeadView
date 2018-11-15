@@ -10,9 +10,7 @@ import android.widget.ListView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
-
-import java.util.Collections;
-import java.util.List;
+import com.aitangba.testproject.paging.Response;
 
 
 /**
@@ -60,11 +58,6 @@ public class PagingListView extends ListView implements PagingManager {
     }
 
     @Override
-    public void setAutoLoadEnabled(boolean enable) {
-        mPagingHelper.setAutoLoadEnabled(enable);
-    }
-
-    @Override
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
         mPagingHelper.setOnLoadMoreListener(loadMoreListener);
     }
@@ -75,19 +68,9 @@ public class PagingListView extends ListView implements PagingManager {
     }
 
     @Override
-    public void startLoad(boolean refresh) {
-        mPagingHelper.startLoad(refresh);
-    }
-
-    @Override
-    public <T> List<T> checkPaging(List<T> list) {
-        if(list == null) {
-            list = Collections.EMPTY_LIST;
-        }
-
-        boolean hasMoreData = mPagingHelper.finishLoadMore(list.size());
+    public void checkPaging(Response response) {
+        boolean hasMoreData = mPagingHelper.finishLoadMore(response.array.size());
         updateFooterStatus(hasMoreData);
-        return list;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.aitangba.testproject.paging.view.adpater;
+package com.aitangba.testproject.view.pagingadapter;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -192,7 +192,7 @@ public abstract class BasePagingAdapter<T> extends RecyclerView.Adapter<Recycler
     public void scrollLoadMore() {
         if (mLoadMoreListener != null) {
             isLoadingMore = true;
-            mLoadMoreListener.onLoadMore(false);
+            mLoadMoreListener.onLoadMore();
         }
     }
 
@@ -225,7 +225,7 @@ public abstract class BasePagingAdapter<T> extends RecyclerView.Adapter<Recycler
         }
 
         final int currentSize = mList.size();
-        if(currentSize - originSize < PageBean.PAGE_SIZE) {
+        if(currentSize - originSize < PageBean.ORIGIN_PAGE_SIZE) {
             setNeverLoadMore(true);
         } else {
             setNeverLoadMore(false);

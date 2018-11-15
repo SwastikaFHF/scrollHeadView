@@ -35,7 +35,7 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView = (PagingRecyclerView) findViewById(R.id.recyclerView);
         mRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onLoadMore(boolean isReload) {
+            public void onLoadMore() {
                 Log.d("TAG", "onLoadMore ---");
                 loadData();
             }

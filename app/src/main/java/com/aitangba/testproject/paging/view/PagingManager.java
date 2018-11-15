@@ -1,6 +1,7 @@
 package com.aitangba.testproject.paging.view;
 
 import com.aitangba.testproject.paging.PageBean;
+import com.aitangba.testproject.paging.Response;
 
 import java.util.List;
 
@@ -10,13 +11,9 @@ import java.util.List;
 
 public interface PagingManager {
 
-    void setAutoLoadEnabled(boolean enable);
-
     void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener);
 
-    void startLoad(boolean refresh);
-
-    <T> List<T> checkPaging(List<T> list);
+    void checkPaging(Response response);
 
     PageBean getPageBean();
 

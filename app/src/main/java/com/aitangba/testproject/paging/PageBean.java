@@ -6,32 +6,22 @@ package com.aitangba.testproject.paging;
 
 public class PageBean {
 
-    public final static int PAGE_SIZE = 10;
-    public final static int ORIGIN_PAGE = 1;
+    private final static int ORIGIN_PAGE_INDEX = 1;
+    public final static int ORIGIN_PAGE_SIZE = 20;
 
-    public volatile int currentPage = 1;
-
-    private boolean refresh;
-
-    public void setRefresh(boolean refresh){
-        this.refresh = refresh;
-
-        if(this.refresh) {
-            reset();
-        } else {
-            increase();
-        }
-    }
+    public int pageIndex = ORIGIN_PAGE_INDEX;
+    public int pageSize = ORIGIN_PAGE_SIZE;
 
     public void reset() {
-        currentPage = 1;
+        pageIndex = ORIGIN_PAGE_INDEX;
+        pageSize = ORIGIN_PAGE_SIZE;
     }
 
     public void increase() {
-        currentPage = currentPage + 1;
+        pageIndex = pageIndex + 1;
     }
 
     public void decline() {
-        currentPage = Math.max(ORIGIN_PAGE, currentPage - 1);
+        pageIndex = Math.max(ORIGIN_PAGE_INDEX, pageIndex - 1);
     }
 }
