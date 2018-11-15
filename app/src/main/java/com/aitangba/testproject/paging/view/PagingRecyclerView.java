@@ -195,9 +195,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
-
-            } else {
+            if(getItemViewType(position) != TYPE_FOOTER_VIEW) {
                 mAdapter.onBindViewHolder(holder, position);
             }
         }

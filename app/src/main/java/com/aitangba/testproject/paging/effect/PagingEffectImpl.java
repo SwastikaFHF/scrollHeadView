@@ -41,7 +41,6 @@ public class PagingEffectImpl implements UIEffect {
 
     @Override
     public void onError(@NonNull Response response) {
-        mPagingManager.checkError(1, mRefresh);
     }
 
     @Override
