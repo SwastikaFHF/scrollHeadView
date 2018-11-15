@@ -1,5 +1,7 @@
 package com.aitangba.testproject.paging.effect;
 
+import android.support.annotation.NonNull;
+
 import com.aitangba.testproject.paging.Request;
 import com.aitangba.testproject.paging.Response;
 
@@ -9,11 +11,11 @@ import com.aitangba.testproject.paging.Response;
 
 public interface UIEffect {
 
-    void onPreExecute(Request request);
+    void onPreExecute(@NonNull Request request);
 
-    void onSuccess(Response response);
+    void onSuccess(@NonNull Response response);
 
-    void onError(Response response);
+    void onError(@NonNull Response response);
 
     void onCancel();
 

@@ -10,7 +10,8 @@ import android.widget.ListView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
-import com.aitangba.testproject.paging.Response;
+
+import java.util.List;
 
 
 /**
@@ -23,6 +24,7 @@ public class PagingListView extends ListView implements PagingManager {
     private FooterViewHolder mFooterViewHolder;
 
     private PagingHelper mPagingHelper = new PagingHelper();
+    private OnLoadMoreListener mLoadMoreListener;
 
     public PagingListView(Context context) {
         this(context, null);
@@ -43,11 +45,15 @@ public class PagingListView extends ListView implements PagingManager {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(mOnScrollListener != null) {
+                // 判断有没有滑动到最后一组数据
+                if(mOnScrollListener != null && view.getLastVisiblePosition() + 1 !=  view.getCount()) {
                     mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
                 }
 
-                mPagingHelper.onScrolled(view.getLastVisiblePosition() + 1 ==  view.getCount());
+                // 判断能不能加载更多
+                if(mPagingHelper.isPagingEnabled() && mLoadMoreListener != null) {
+                    mLoadMoreListener.onLoadMore();
+                }
             }
         });
     }
@@ -57,9 +63,8 @@ public class PagingListView extends ListView implements PagingManager {
         mOnScrollListener = l;
     }
 
-    @Override
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
-        mPagingHelper.setOnLoadMoreListener(loadMoreListener);
+        mLoadMoreListener = loadMoreListener;
     }
 
     @Override
@@ -68,9 +73,14 @@ public class PagingListView extends ListView implements PagingManager {
     }
 
     @Override
-    public void checkPaging(Response response) {
-        boolean hasMoreData = mPagingHelper.finishLoadMore(response.array.size());
+    public void checkPaging(List array) {
+        boolean hasMoreData = mPagingHelper.finishLoadMore(array.size());
         updateFooterStatus(hasMoreData);
+    }
+
+    @Override
+    public void checkError(int errorType, boolean refresh) {
+
     }
 
     @Override

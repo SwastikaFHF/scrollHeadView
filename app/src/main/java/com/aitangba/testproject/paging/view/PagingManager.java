@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface PagingManager {
 
-    void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener);
-
-    void checkPaging(Response response);
-
     PageBean getPageBean();
+
+    void checkPaging(List array);
+
+    void checkError(int errorType, boolean refresh);
 
 }

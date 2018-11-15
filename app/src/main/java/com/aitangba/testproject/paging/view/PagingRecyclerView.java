@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
-import com.aitangba.testproject.paging.Response;
+
+import java.util.List;
 
 /**
  * Created by fhf11991 on 2017/5/11.
@@ -22,15 +23,14 @@ import com.aitangba.testproject.paging.Response;
 
 public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
-    private static final int TYPE_HEADER_VIEW = 1001; //header类型 Item
     private static final int TYPE_FOOTER_VIEW = 1002; //footer类型 Item
 
     private EasyAdapter mEasyAdapter;
     private View mEmptyView;
-    private View mHeaderView;
     private FooterViewHolder mFooterViewHolder;
 
     private PagingHelper mPagingHelper = new PagingHelper();
+    private OnLoadMoreListener mLoadMoreListener;
 
     public PagingRecyclerView(Context context) {
         this(context, null);
@@ -47,18 +47,18 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
         addOnScrollListener(new OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(mEasyAdapter == null) {
+
+                // 判断有没有滑动到最后一组数据
+                if(mEasyAdapter == null || findLastVisibleItemPosition(getLayoutManager()) + 1 != mEasyAdapter.getItemCount()) {
                     return;
                 }
 
-                mPagingHelper.onScrolled(findLastVisibleItemPosition(getLayoutManager()) + 1 == mEasyAdapter.getItemCount());
+                // 判断能不能加载更多
+                if(mPagingHelper.isPagingEnabled() && mLoadMoreListener != null) {
+                    mLoadMoreListener.onLoadMore();
+                }
             }
         });
     }
@@ -71,28 +71,25 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         super.setAdapter(mEasyAdapter = new EasyAdapter(adapter));
     }
 
-    @Override
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
-        mPagingHelper.setOnLoadMoreListener(loadMoreListener);
+        mLoadMoreListener = loadMoreListener;
     }
 
     @Override
-    public void checkPaging(Response response) {
-        boolean hasMoreData = mPagingHelper.finishLoadMore(response.array.size());
+    public void checkPaging(List array) {
+        boolean hasMoreData = mPagingHelper.finishLoadMore(array.size());
         updateEmptyStatus();
         updateFooterStatus(hasMoreData);
     }
 
     @Override
-    public PageBean getPageBean() {
-        return mPagingHelper.getPageBean();
+    public void checkError(int errorType, boolean refresh) {
+
     }
 
-    public void setHeaderView(View headerView) {
-        mHeaderView = headerView;
-        if(mEasyAdapter != null) {
-            mEasyAdapter.notifyDataSetChanged();
-        }
+    @Override
+    public PageBean getPageBean() {
+        return mPagingHelper.getPageBean();
     }
 
     public void setEmptyView(View emptyView) {
@@ -178,9 +175,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         @Override
         @NonNull
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if(viewType == TYPE_HEADER_VIEW) {
-                return new ViewHolder(mHeaderView) {};
-            } else if(viewType == TYPE_FOOTER_VIEW) {
+            if(viewType == TYPE_FOOTER_VIEW) {
                 return new ViewHolder(mFooterViewHolder.itemView) {};
             }
             return mAdapter.onCreateViewHolder(parent, viewType);
@@ -188,50 +183,34 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if(getItemViewType(position) == TYPE_HEADER_VIEW) {
-
-            } else if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
+            if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
 
             } else {
-                mAdapter.onBindViewHolder(holder, mHeaderView == null ? position : position - 1);
+                mAdapter.onBindViewHolder(holder, position);
             }
         }
 
         @Override
         public int getItemCount() {
-            final boolean hasHeader = mHeaderView != null;
             final boolean hasFooter = mFooterViewHolder.itemView != null;
-
             final int commonItemCount = mAdapter.getItemCount();
-            final int headerCount = hasHeader ? 1 : 0;
             final int footerCount;
             if(commonItemCount == 0) {
                 footerCount = 0;
             } else {
                 footerCount = hasFooter ? 1 : 0;
             }
-            return commonItemCount + headerCount + footerCount;
+            return commonItemCount + footerCount;
         }
 
         @Override
         public int getItemViewType(int position) {
-            final boolean hasHeader = mHeaderView != null;
             final int commonItemCount = mAdapter.getItemCount();
 
-            if(hasHeader) {
-                if(position == 0) {
-                    return TYPE_HEADER_VIEW;
-                } else if(position > 1 + (commonItemCount - 1)) {
-                    return TYPE_FOOTER_VIEW;
-                } else {
-                    return mAdapter.getItemViewType(position);
-                }
+            if(position > commonItemCount - 1) {
+                return TYPE_FOOTER_VIEW;
             } else {
-                if(position > commonItemCount - 1) {
-                    return TYPE_FOOTER_VIEW;
-                } else {
-                    return mAdapter.getItemViewType(position);
-                }
+                return mAdapter.getItemViewType(position);
             }
         }
 

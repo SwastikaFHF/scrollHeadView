@@ -1,6 +1,8 @@
 package com.aitangba.testproject.paging.effect;
 
 
+import android.support.annotation.NonNull;
+
 import com.aitangba.testproject.paging.PageBean;
 import com.aitangba.testproject.paging.Request;
 import com.aitangba.testproject.paging.Response;
@@ -21,8 +23,7 @@ public class PagingEffectImpl implements UIEffect {
     }
 
     @Override
-    public void onPreExecute(Request request) {
-        mPagingManager.startLoad(mRefresh);
+    public void onPreExecute(@NonNull Request request) {
         PageBean pageBean = mPagingManager.getPageBean();
         if(mRefresh) {
             pageBean.reset();
@@ -34,12 +35,13 @@ public class PagingEffectImpl implements UIEffect {
     }
 
     @Override
-    public void onSuccess(Response response) {
+    public void onSuccess(@NonNull Response response) {
+        mPagingManager.checkPaging(response.array);
     }
 
     @Override
-    public void onError(Response response) {
-        mPagingManager.checkPaging(null);
+    public void onError(@NonNull Response response) {
+        mPagingManager.checkError(1, mRefresh);
     }
 
     @Override

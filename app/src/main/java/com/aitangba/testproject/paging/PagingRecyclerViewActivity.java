@@ -17,6 +17,7 @@ import com.aitangba.testproject.paging.view.OnLoadMoreListener;
 import com.aitangba.testproject.paging.view.PagingRecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ import java.util.List;
 
 public class PagingRecyclerViewActivity extends AppCompatActivity {
 
+    private static final String TAG = "PagingActivity";
     private Adapter mAdapter;
     private PagingRecyclerView mRecyclerView;
 
@@ -36,7 +38,7 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.d("TAG", "onLoadMore ---");
+                Log.d(TAG, "onLoadMore ---");
                 loadData();
             }
         });
@@ -46,13 +48,10 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         View view = findViewById(R.id.emptyView);
         mRecyclerView.setEmptyView(view);
 
-        TextView textView = new TextView(this);
-        textView.setText("title");
-        mRecyclerView.setHeaderView(textView);
-
         findViewById(R.id.emptyTextBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRecyclerView.checkPaging(Collections.EMPTY_LIST);
                 mAdapter.mList.clear();
                 mAdapter.notifyDataSetChanged();
             }
@@ -77,10 +76,15 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
         findViewById(Window.ID_ANDROID_CONTENT).postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "开始分页------ page = " + page);
                 if(page == 1 || page == 2) {
-                    mAdapter.setData(mRecyclerView.checkPaging(getData(10)));
+                    List<String> list = getData(4);
+                    mRecyclerView.checkPaging(list);
+                    mAdapter.setData(list);
                 } else if (page == 3) {
-                    mAdapter.setData(mRecyclerView.checkPaging(getData(2)));
+                    List<String> list = getData(2);
+                    mRecyclerView.checkPaging(list);
+                    mAdapter.setData(list);
                 }
 
             }

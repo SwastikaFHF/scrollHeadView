@@ -1,5 +1,6 @@
 package com.aitangba.testproject.paging.effect;
 
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import com.aitangba.testproject.paging.Request;
@@ -18,17 +19,17 @@ public class SwipeRefreshEffectImpl implements UIEffect{
     }
 
     @Override
-    public void onPreExecute(Request request) {
+    public void onPreExecute(@NonNull Request request) {
 
     }
 
     @Override
-    public void onSuccess(Response response) {
+    public void onSuccess(@NonNull Response response) {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
-    public void onError(Response response) {
+    public void onError(@NonNull Response response) {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 

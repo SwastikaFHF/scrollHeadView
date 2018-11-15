@@ -1,5 +1,7 @@
 package com.aitangba.testproject.paging.effect;
 
+import android.support.annotation.NonNull;
+
 import com.aitangba.testproject.paging.Request;
 import com.aitangba.testproject.paging.Response;
 import com.aitangba.testproject.paging.helper.LoadingDialogHelper;
@@ -19,19 +21,19 @@ public class DialogEffectImpl implements UIEffect {
     }
 
     @Override
-    public void onPreExecute(Request request) {
+    public void onPreExecute(@NonNull Request request) {
         if(mNeedDialog) {
             mLoadingDialogHelper.showLoadingDialog();
         }
     }
 
     @Override
-    public void onSuccess(Response response) {
+    public void onSuccess(@NonNull Response response) {
         mLoadingDialogHelper.dismiss();
     }
 
     @Override
-    public void onError(Response response) {
+    public void onError(@NonNull Response response) {
         mLoadingDialogHelper.dismiss();
     }
 
