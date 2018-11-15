@@ -68,19 +68,9 @@ public class PagingListView extends ListView implements PagingManager {
     }
 
     @Override
-    public void setAdapter(ListAdapter adapter) {
-        super.setAdapter(adapter);
-    }
-
-    @Override
     public void checkPaging(List array) {
         boolean hasMoreData = mPagingHelper.finishLoadMore(array.size());
         updateFooterStatus(hasMoreData);
-    }
-
-    @Override
-    public void checkError(int errorType, boolean refresh) {
-
     }
 
     @Override

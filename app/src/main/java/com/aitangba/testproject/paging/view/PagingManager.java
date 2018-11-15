@@ -15,6 +15,4 @@ public interface PagingManager {
 
     void checkPaging(List array);
 
-    void checkError(int errorType, boolean refresh);
-
 }

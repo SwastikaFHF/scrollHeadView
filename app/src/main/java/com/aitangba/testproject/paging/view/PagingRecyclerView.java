@@ -31,6 +31,19 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
     private PagingHelper mPagingHelper = new PagingHelper();
     private OnLoadMoreListener mLoadMoreListener;
+    private AdapterDataObserver mEmptyAdapterDataObserver = new AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            updateEmptyStatus();
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            super.onItemRangeRemoved(positionStart, itemCount);
+            updateEmptyStatus();
+        }
+    };
 
     public PagingRecyclerView(Context context) {
         this(context, null);
@@ -68,7 +81,11 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         if (adapter == null) {
             return;
         }
+        if(mEasyAdapter != null) {
+            mEasyAdapter.unregisterAdapterDataObserver(mEmptyAdapterDataObserver);
+        }
         super.setAdapter(mEasyAdapter = new EasyAdapter(adapter));
+        mEasyAdapter.registerAdapterDataObserver(mEmptyAdapterDataObserver);
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener loadMoreListener) {
@@ -80,11 +97,6 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         boolean hasMoreData = mPagingHelper.finishLoadMore(array.size());
         updateEmptyStatus();
         updateFooterStatus(hasMoreData);
-    }
-
-    @Override
-    public void checkError(int errorType, boolean refresh) {
-
     }
 
     @Override

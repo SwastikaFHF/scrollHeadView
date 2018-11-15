@@ -78,7 +78,7 @@ public class PagingRecyclerViewActivity extends AppCompatActivity {
             public void run() {
                 Log.d(TAG, "开始分页------ page = " + page);
                 if(page == 1 || page == 2) {
-                    List<String> list = getData(4);
+                    List<String> list = getData(20);
                     mRecyclerView.checkPaging(list);
                     mAdapter.setData(list);
                 } else if (page == 3) {
