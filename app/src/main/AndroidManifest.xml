@@ -96,6 +96,7 @@
         <service android:name=".service.CreateActivityService"/>
         <activity android:name=".view.removeview.RemoveViewActivity"/>
         <activity android:name=".view.slideback.slidingpanelayout.SlidingPaneActivity"/>
+        <activity android:name=".lifecycle.LifeCycleActivity"/>
 
     </application>
 

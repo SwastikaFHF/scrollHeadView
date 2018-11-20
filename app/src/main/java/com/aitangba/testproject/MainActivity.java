@@ -14,6 +14,7 @@ import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
 import com.aitangba.testproject.job.JobListActivity;
+import com.aitangba.testproject.lifecycle.LifeCycleActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(PagingRecyclerViewActivity.class);
+                startActivity(LifeCycleActivity.class);
             }
         });
 
