@@ -166,8 +166,13 @@ public class PagingListView extends ListView implements PagingManager {
             if (position < commonItemCount) {
                 return mAdapter.getView(position, convertView, parent);
             }
-            mFooterViewHelper.onCreateView(parent);
-            return mFooterViewHelper.itemView;
+
+            if(convertView == null) {
+                mFooterViewHelper.onCreateView(parent);
+                convertView = mFooterViewHelper.itemView;
+            }
+            mFooterViewHelper.refresh();
+            return convertView;
         }
 
         @Override
