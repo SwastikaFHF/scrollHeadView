@@ -28,11 +28,6 @@ import java.util.List;
 
 public class PagingListViewActivity extends AppCompatActivity {
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    private LoadingDialogHelper mLoadingDialogHelper;
-
-    private StatefulViewHelper mStatefulViewHelper;
     private PagingListView mListView;
     private CustomAdapter mAdapter;
 
@@ -40,29 +35,18 @@ public class PagingListViewActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paging_listview);
-        mLoadingDialogHelper = new LoadingDialogHelper(this);
-
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadData(false, false, true);
-            }
-        });
-        mStatefulViewHelper = new StatefulViewHelper(mSwipeRefreshLayout);
 
         mListView = (PagingListView) findViewById(R.id.listView);
         mListView.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                loadData(false, false, false);
+                loadData(false);
             }
         });
         mAdapter = new CustomAdapter();
         mListView.setAdapter(mAdapter);
-//        mAdapter.addData(getData(10), true);
 
-        loadData(true, false, true);
+        loadData(true);
     }
 
     private List<String> getData(int size) {
@@ -73,20 +57,13 @@ public class PagingListViewActivity extends AppCompatActivity {
         return list;
     }
 
-    private void loadData(boolean needDialog, boolean needState, final boolean refresh) {
-        final DialogEffectImpl dialogEffect = DialogEffectImpl.build(mLoadingDialogHelper, needDialog);
-        final StatefulEffectImpl statefulEffect = StatefulEffectImpl.build(mStatefulViewHelper, needState);
-        final SwipeRefreshEffectImpl swipeRefreshEffect = SwipeRefreshEffectImpl.build(mSwipeRefreshLayout);
-        final PagingEffectImpl pagingEffect = PagingEffectImpl.build(mListView, refresh);
-
+    private void loadData(final boolean refresh) {
         mListView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(refresh) {
-                    mAdapter.addData(getData(20), refresh);
-                } else {
-                    mAdapter.addData(getData(0), !refresh);
-                }
+                List<String> list = getData(10);
+                mListView.checkPaging(list);
+                mAdapter.addData(list, refresh);
             }
         }, 2000);
     }

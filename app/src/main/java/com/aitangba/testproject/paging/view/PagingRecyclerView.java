@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.aitangba.testproject.R;
 import com.aitangba.testproject.paging.PageBean;
@@ -27,7 +29,6 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
     private EasyAdapter mEasyAdapter;
     private View mEmptyView;
-    private FooterViewHolder mFooterViewHolder;
 
     private PagingHelper mPagingHelper = new PagingHelper();
     private OnLoadMoreListener mLoadMoreListener;
@@ -55,8 +56,6 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
 
     public PagingRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
-        setFooterView(new FooterViewHolder(LayoutInflater.from(context).inflate(R.layout.layout_footer_view, null)));
 
         addOnScrollListener(new OnScrollListener() {
             @Override
@@ -96,7 +95,12 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
     public void checkPaging(List array) {
         boolean hasMoreData = mPagingHelper.finishLoadMore(array.size());
         updateEmptyStatus();
-        updateFooterStatus(hasMoreData);
+
+        if(mEasyAdapter == null) {
+            return;
+        }
+
+        mEasyAdapter.mFooterViewHelper.setMoreData(hasMoreData);
     }
 
     @Override
@@ -126,20 +130,6 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         } else {
             mEmptyView.setVisibility(View.GONE);
         }
-    }
-
-    public void setFooterView(FooterViewHolder footerViewHolder) {
-        mFooterViewHolder = footerViewHolder;
-        if(mEasyAdapter != null) {
-            mEasyAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void updateFooterStatus(boolean hasMoreData) {
-        if(mFooterViewHolder == null) {
-            return;
-        }
-        mFooterViewHolder.bindView(hasMoreData);
     }
 
     @Override
@@ -179,6 +169,7 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
     private class EasyAdapter extends RecyclerView.Adapter {
 
         private RecyclerView.Adapter mAdapter;
+        private FooterViewHelper mFooterViewHelper = new FooterViewHelper();
 
         private EasyAdapter(Adapter adapter) {
             mAdapter = adapter;
@@ -188,29 +179,31 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         @NonNull
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if(viewType == TYPE_FOOTER_VIEW) {
-                return new ViewHolder(mFooterViewHolder.itemView) {};
+                mFooterViewHelper.onCreateView(parent);
+                return new ViewHolder(mFooterViewHelper.itemView) {};
             }
             return mAdapter.onCreateViewHolder(parent, viewType);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            if(getItemViewType(position) != TYPE_FOOTER_VIEW) {
+            if(getItemViewType(position) == TYPE_FOOTER_VIEW) {
+                mFooterViewHelper.refresh();
+            } else {
                 mAdapter.onBindViewHolder(holder, position);
             }
         }
 
         @Override
         public int getItemCount() {
-            final boolean hasFooter = mFooterViewHolder.itemView != null;
             final int commonItemCount = mAdapter.getItemCount();
-            final int footerCount;
             if(commonItemCount == 0) {
-                footerCount = 0;
+                return 0;
+            } else if(commonItemCount < 10) {
+                return commonItemCount;
             } else {
-                footerCount = hasFooter ? 1 : 0;
+                return commonItemCount + 1;
             }
-            return commonItemCount + footerCount;
         }
 
         @Override
@@ -242,6 +235,39 @@ public class PagingRecyclerView extends RecyclerView implements PagingManager {
         @Override
         public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
             mAdapter.onDetachedFromRecyclerView(recyclerView);
+        }
+    }
+
+    private static class FooterViewHelper {
+
+        public View itemView;
+        private ProgressBar mProgressBar;
+        private TextView mTextView;
+        private boolean mHasMoreData;
+
+        private void onCreateView(ViewGroup parent) {
+            this.itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_footer_view, parent, false);
+            mProgressBar = (ProgressBar) this.itemView.findViewById(R.id.footer_view_progressbar);
+            mTextView = (TextView) this.itemView.findViewById(R.id.footer_view_tv);
+        }
+
+        private void setMoreData(boolean hasMoreData) {
+            mHasMoreData = hasMoreData;
+
+            refresh();
+        }
+
+        private void refresh() {
+            if(itemView == null) {
+                return;
+            }
+            if(mHasMoreData) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mTextView.setText("加载更多数据中");
+            } else {
+                mProgressBar.setVisibility(View.GONE);
+                mTextView.setText("没有更多数据了");
+            }
         }
     }
 }

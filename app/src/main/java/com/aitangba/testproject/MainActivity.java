@@ -5,16 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
 import com.aitangba.testproject.job.JobListActivity;
-import com.aitangba.testproject.lifecycle.LifeCycleActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
@@ -22,7 +19,6 @@ import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
-import com.aitangba.testproject.tracktask.ui.TrackedActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
@@ -42,7 +38,6 @@ import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
 import com.aitangba.testproject.view.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.view.slideback.slidingmenu.SlidingMenuActivity;
-import com.aitangba.testproject.view.slideback.slidingpanelayout.SlidingPaneActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.nestedscrollview.NestedScrollActivity;
 import com.aitangba.testproject.view.viewpager.ViewPageActivity;
@@ -135,12 +130,9 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(LifeCycleActivity.class);
+                startActivity(PagingListViewActivity.class);
             }
         });
-
-        TextView textView = findViewById(R.id.text);
-        textView.setText(Html.fromHtml(getString(R.string.debug_string)));
     }
 
     private void startActivity(Class<?> activityClass) {
