@@ -21,6 +21,7 @@ import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
+import com.aitangba.testproject.view.coordinatorlayout.CoordinatorLayoutActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
 import com.aitangba.testproject.view.drawable.DrawableTestActivity;
@@ -130,7 +131,8 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(PagingListViewActivity.class);
+                v.getContext().startActivity(new Intent(MainActivity.this, CoordinatorLayoutActivity.class));
+//                startActivity(PagingListViewActivity.class);
             }
         });
     }

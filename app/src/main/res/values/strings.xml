@@ -6,5 +6,5 @@
     <string name="debug_string"><![CDATA[马上开通<b><tt>微信通知服务</tt></b>，订单信息实时通知]]></string>
     <string name="debug_image_string">\/Public\/goods\/5b03ead4cd5d1.jpeg</string>
 
-    <string name="avatar_behavior"></string>
+    <string name="custom_behavior">com.aitangba.testproject.view.coordinatorlayout.CustomBehavior</string>
 </resources>

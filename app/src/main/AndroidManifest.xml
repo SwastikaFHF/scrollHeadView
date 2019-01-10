@@ -97,6 +97,7 @@
         <activity android:name=".view.removeview.RemoveViewActivity"/>
         <activity android:name=".view.slideback.slidingpanelayout.SlidingPaneActivity"/>
         <activity android:name=".lifecycle.LifeCycleActivity"/>
+        <activity android:name=".view.coordinatorlayout.CoordinatorLayoutActivity"/>
 
     </application>
 

@@ -20,5 +20,8 @@
             style="@style/MainBigButton"
             android:text="测试"/>
 
+        <com.aitangba.testproject.view.UserWelfareTextView
+            android:layout_width="100dp"
+            android:layout_height="30dp" />
     </LinearLayout>
 </ScrollView>
