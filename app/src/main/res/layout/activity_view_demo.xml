@@ -9,39 +9,41 @@
     <com.aitangba.testproject.view.PollutionIndicatorView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#12ADD4"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:background="#12ADD4"/>
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:orientation="horizontal">
 
         <com.aitangba.testproject.view.partiality.PartialityLinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:gravity="right"
-            android:background="@color/colorAccent">
+            android:background="@color/colorAccent"
+            app:gravity="center"
+            app:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/debug_short_string"/>
+                android:text="@string/debug_short_string" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@mipmap/ic_launcher"
-                app:primary="true"/>
+                app:primary="true" />
 
         </com.aitangba.testproject.view.partiality.PartialityLinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/debug_short_string"/>
+            android:text="@string/debug_short_string" />
     </LinearLayout>
 
 </LinearLayout>
