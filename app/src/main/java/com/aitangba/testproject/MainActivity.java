@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testListBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 String[] titles = new String[activityInfoList.size()];
 
                 for (int i = 0, size = activityInfoList.size(); i < size; i++) {
