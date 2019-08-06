@@ -20,6 +20,7 @@ import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
+import com.aitangba.testproject.view.SlideTabLayout;
 import com.aitangba.testproject.view.ViewDemoActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
@@ -47,6 +48,7 @@ import com.aitangba.testproject.view.youtube.YoutubeActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by fhf11991 on 2016/6/22.
@@ -134,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(PagingListViewActivity.class);
             }
         });
+
+        SlideTabLayout slideTabLayout = findViewById(R.id.slideTabLayout);
+        slideTabLayout.setTitles(new String[]{"接机", "送机"});
     }
 
     private void startActivity(Class<?> activityClass) {
