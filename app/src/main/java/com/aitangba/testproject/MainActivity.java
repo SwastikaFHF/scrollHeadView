@@ -17,6 +17,7 @@ import com.aitangba.testproject.login.DrawTestActivity;
 import com.aitangba.testproject.paging.PagingListViewActivity;
 import com.aitangba.testproject.paging.PagingRecyclerViewActivity;
 import com.aitangba.testproject.runnablemanager.RunnableManagerActivity;
+import com.aitangba.testproject.service.ServiceTestActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         activityInfoList.add(new ActivityInfo("WebView调试测试", WebDebugActivity.class));
         activityInfoList.add(new ActivityInfo("任务调度", JobListActivity.class));
         activityInfoList.add(new ActivityInfo("加载Dialog", LoadingActivity.class));
+        activityInfoList.add(new ActivityInfo("后台启动Service测试", ServiceTestActivity.class));
     }
 
     @Override
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, ViewDemoActivity.class), 101);
+                startActivityForResult(new Intent(MainActivity.this, ServiceTestActivity.class), 101);
 //                startActivity(PagingListViewActivity.class);
             }
         });

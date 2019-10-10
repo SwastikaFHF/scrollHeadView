@@ -5,11 +5,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.aitangba.testproject.view.drag.CustomScrollActivity;
 
-public class CreateActivityService extends Service {
+public class FirstService extends Service {
 
     @Nullable
     @Override
@@ -20,20 +21,12 @@ public class CreateActivityService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(ServiceTestActivity.TAG, "第一个service启动");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(CreateActivityService.this, "测试数据", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(CreateActivityService.this, CustomScrollActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                CreateActivityService.this.startActivity(intent);
+                startService(new Intent(FirstService.this, SecondService.class));
             }
-        }, 5000);
-        return super.onStartCommand(intent, flags, startId);
+        }, 8000);
     }
 }

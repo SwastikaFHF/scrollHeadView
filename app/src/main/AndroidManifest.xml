@@ -93,12 +93,15 @@
         <activity android:name=".view.keyboard.KeyboardActivity"></activity>
         <activity android:name=".view.drag.DragActivity"></activity>
         <activity android:name=".view.drag.CustomScrollActivity"></activity>
-        <service android:name=".service.CreateActivityService"/>
         <activity android:name=".view.removeview.RemoveViewActivity"/>
         <activity android:name=".view.slideback.slidingpanelayout.SlidingPaneActivity"/>
         <activity android:name=".lifecycle.LifeCycleActivity"/>
         <activity android:name=".view.coordinatorlayout.CoordinatorLayoutActivity"/>
         <activity android:name=".activity.FirstActivity"/>
+
+        <activity android:name=".service.ServiceTestActivity"/>
+        <service android:name=".service.SecondService"/>
+        <service android:name=".service.FirstService"/>
 
     </application>
 

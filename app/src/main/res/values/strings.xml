@@ -7,4 +7,5 @@
     <string name="debug_image_string">\/Public\/goods\/5b03ead4cd5d1.jpeg</string>
 
     <string name="custom_behavior">com.aitangba.testproject.view.coordinatorlayout.CustomBehavior</string>
+    <string name="test">测试</string>
 </resources>
