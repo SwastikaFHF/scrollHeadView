@@ -17,23 +17,35 @@
         android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintVertical_chainStyle="spread_inside"
-        app:layout_constraintBottom_toTopOf="@+id/text"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/text"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        app:layout_constrainedHeight="true"
-        android:text="@string/privacy_agreement_larger"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:fillViewport="true"
+        android:background="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toTopOf="@+id/okBtn"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleText" />
+        app:layout_constraintTop_toBottomOf="@+id/titleText">
+
+        <com.aitangba.testproject.html.CustomTextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_agreement_larger" />
+
+
+    </ScrollView>
+
 
     <Button
         android:id="@+id/okBtn"
@@ -43,11 +55,12 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
         android:text="@android:string/ok"
         android:background="@android:color/holo_red_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text" />
+        app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
 </android.support.constraint.ConstraintLayout>
