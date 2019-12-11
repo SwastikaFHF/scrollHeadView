@@ -28,7 +28,7 @@ public class UbbActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ubb);
+        setContentView(R.layout.activity_text);
 
         mTextView = (TextView) findViewById(R.id.text);
         mTextView.setMovementMethod(LinkMovementMethod.getInstance());

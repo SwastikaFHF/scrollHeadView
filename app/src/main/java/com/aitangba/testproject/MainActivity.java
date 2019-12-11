@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
+import com.aitangba.testproject.html.HtmlTestActivity;
 import com.aitangba.testproject.job.JobListActivity;
 import com.aitangba.testproject.loading.LoadingActivity;
 import com.aitangba.testproject.login.DrawTestActivity;
@@ -21,8 +22,6 @@ import com.aitangba.testproject.service.ServiceTestActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
-import com.aitangba.testproject.view.SlideTabLayout;
-import com.aitangba.testproject.view.ViewDemoActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
@@ -49,7 +48,6 @@ import com.aitangba.testproject.view.youtube.YoutubeActivity;
 import com.aitangba.testproject.webdebug.WebDebugActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by fhf11991 on 2016/6/22.
@@ -102,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         activityInfoList.add(new ActivityInfo("任务调度", JobListActivity.class));
         activityInfoList.add(new ActivityInfo("加载Dialog", LoadingActivity.class));
         activityInfoList.add(new ActivityInfo("后台启动Service测试", ServiceTestActivity.class));
+        activityInfoList.add(new ActivityInfo("Html标签测试", HtmlTestActivity.class));
     }
 
     @Override
@@ -134,13 +133,10 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MainActivity.this, ServiceTestActivity.class), 101);
-//                startActivity(PagingListViewActivity.class);
+//                startActivityForResult(new Intent(MainActivity.this, ApkTestActivity.class), 101);
+                startActivity(HtmlTestActivity.class);
             }
         });
-
-        SlideTabLayout slideTabLayout = findViewById(R.id.slideTabLayout);
-        slideTabLayout.setTitles(new String[]{"接机", "送机"});
     }
 
     private void startActivity(Class<?> activityClass) {

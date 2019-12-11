@@ -19,19 +19,5 @@
             style="@style/MainBigButton"
             android:text="测试" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@color/colorAccent">
-
-            <com.aitangba.testproject.view.SlideTabLayout
-                android:id="@+id/slideTabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:layout_gravity="center"/>
-
-        </FrameLayout>
-
-
     </LinearLayout>
 </ScrollView>

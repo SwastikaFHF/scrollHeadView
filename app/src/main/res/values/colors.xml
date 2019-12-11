@@ -7,4 +7,6 @@
     <color name="disabled">#CCCCCC</color>
     <color name="primary">#333333</color>
     <color name="blue_pressed">#2979FF</color>
+
+    <color name="bg_pressed">#ffededed</color>
 </resources>
