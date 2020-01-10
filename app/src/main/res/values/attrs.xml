@@ -63,4 +63,7 @@
     <declare-styleable name="CalendarCellView">
         <attr name="state_weekend" format="boolean" />
     </declare-styleable>
+
+    <attr name="windowHeight" format="dimension|fraction" />
+    <attr name="windowWidth" format="dimension|fraction" />
 </resources>

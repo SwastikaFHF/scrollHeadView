@@ -76,12 +76,21 @@
     </style>
 
     <style name="Dialog.BottomPopup">
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/holo_red_dark</item>
         <item name="listPreferredItemPaddingLeft">0dip</item>
         <item name="listPreferredItemPaddingRight">0dip</item>
+        <item name="android:padding">0dp</item>
         <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="windowHeight">90%</item>
+        <item name="windowWidth">90%</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="Dialog.Fullscreen" parent="Dialog.BottomPopup">
+        <item name="windowWidth">100%</item>
+        <item name="windowHeight">100%</item>
+        <item name="android:layout_gravity">bottom</item>
     </style>
 </resources>
