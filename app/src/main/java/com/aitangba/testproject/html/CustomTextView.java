@@ -23,8 +23,7 @@ public class CustomTextView extends AppCompatTextView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.d("Custom", "onMeasure : height = " + MeasureSpec.getSize(heightMeasureSpec)
-        + ", width = " + MeasureSpec.getSize(widthMeasureSpec));
-
+        Log.d("Custom", "CustomTextView : width = " + CustomFrameLayout.toString(widthMeasureSpec)
+                + "， height = " + CustomFrameLayout.toString(heightMeasureSpec));
     }
 }

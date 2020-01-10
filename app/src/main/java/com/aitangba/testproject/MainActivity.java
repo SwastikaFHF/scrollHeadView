@@ -134,7 +134,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                startActivityForResult(new Intent(MainActivity.this, ApkTestActivity.class), 101);
-                startActivity(HtmlTestActivity.class);
+                Intent intent = new Intent(v.getContext(), HtmlTestActivity.class);
+                intent.putExtra("params", "来自传递参数");
+                startActivity(intent);
+//                startActivity(HtmlTestActivity.class);
             }
         });
     }

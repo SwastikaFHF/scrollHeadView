@@ -1,9 +1,8 @@
 package com.aitangba.testproject.html;
 
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Spanned;
-import android.text.TextUtils;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -11,39 +10,25 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by XBeats on 2019/12/10
  */
-public class HtmlHelper {
+class HtmlHelper {
+    private static final String HOCK_SUFFIX = "_hook";
 
-    private static final String HOCK_ELEMENT = "hock";
-    private static final String HOCK_MARKER = "<hock/>";
-    private static final String HOCK_SUFFIX = "_hock";
-
-    public static Spanned fromHtml(String source, List<Element> elements) {
-        return Html.fromHtml(HOCK_MARKER + source, null, new CustomHandler(elements));
-    }
-
-    public interface Element {
-
-        String getOriginElement();
-
-        void onCreate(Attributes attrs);
-
-        void handleTag(boolean open, String tag, Editable output);
-    }
-
-
-    private static class CustomHandler implements Html.TagHandler {
+    static class CustomHandler implements Html.TagHandler {
 
         private CustomContentHandler mContentHandler;
-        private List<Element> mElements = new LinkedList<>();
+        private HashMap<String, ElementHandler> mElementsHandlerMap = new HashMap<>();
+        private LinkedList<Element> mElementsMap = new LinkedList<>();
 
-        private CustomHandler(List<Element> elements) {
-            mElements.addAll(elements);
+        CustomHandler(@NonNull Map<String, ElementHandler> elementsHandlerMap) {
+            mElementsHandlerMap.putAll(elementsHandlerMap);
         }
 
         @Override
@@ -53,11 +38,31 @@ public class HtmlHelper {
                 xmlReader.setContentHandler(mContentHandler);
             }
 
-            tag = tag.replace(HOCK_SUFFIX, "");
-            for (Element element : mElements) {
-                if (TextUtils.equals(element.getOriginElement(), tag)) {
-                    element.handleTag(opening, tag, output);
-                    break;
+            final String originTag = tag.replace(HOCK_SUFFIX, "");
+            ElementHandler elementHandler = mElementsHandlerMap.get(originTag);
+            if (elementHandler != null) {
+                if (opening) {
+                    Element element;
+                    for (int i = mElementsMap.size() - 1; i >= 0; i--) {
+                        element = mElementsMap.get(i);
+                        if (originTag.equals(element.tag) && element.startIndex == -1) {
+                            element.startIndex = output.length();
+                            break;
+                        }
+                    }
+                } else {
+                    Element element = null;
+                    for (int i = mElementsMap.size() - 1; i >= 0; i--) {
+                        if (originTag.equals(mElementsMap.get(i).tag)) {
+                            element = mElementsMap.get(i);
+                            break;
+                        }
+                    }
+                    final int startIndex = element != null ? element.startIndex : output.length();
+                    final Map<String, String> attrMap = element != null ? element.attrMap : new HashMap<>();
+                    elementHandler.handleTag(startIndex, attrMap, output);
+                    attrMap.clear();
+                    mElementsMap.remove(element);
                 }
             }
         }
@@ -100,32 +105,21 @@ public class HtmlHelper {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-            if (localName.equalsIgnoreCase(HOCK_ELEMENT)) {
-                return;
-            }
-            for (Element element : mCustomHandler.mElements) {
-                if (TextUtils.equals(element.getOriginElement(), localName)) {
-                    element.onCreate(atts);
-                    localName = localName + HOCK_SUFFIX;
-                    qName = qName + HOCK_SUFFIX;
-                    break;
-                }
+            if (mCustomHandler.mElementsHandlerMap.containsKey(localName) && mCustomHandler.mElementsHandlerMap.get(localName) != null) {
+                Element element = new Element(localName);
+                mCustomHandler.mElementsMap.add(element);
+                Objects.requireNonNull(mCustomHandler.mElementsHandlerMap.get(localName)).onCreate(element.attrMap, atts);
+                localName = localName + HOCK_SUFFIX;
+                qName = qName + HOCK_SUFFIX;
             }
             mInnerContentHandler.startElement(uri, localName, qName, atts);
         }
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (localName.equalsIgnoreCase(HOCK_ELEMENT)) {
-                return;
-            }
-
-            for (Element element : mCustomHandler.mElements) {
-                if (TextUtils.equals(element.getOriginElement(), localName)) {
-                    localName = localName + HOCK_SUFFIX;
-                    qName = qName + HOCK_SUFFIX;
-                    break;
-                }
+            if (mCustomHandler.mElementsHandlerMap.containsKey(localName) && mCustomHandler.mElementsHandlerMap.get(localName) != null) {
+                localName = localName + HOCK_SUFFIX;
+                qName = qName + HOCK_SUFFIX;
             }
             mInnerContentHandler.endElement(uri, localName, qName);
         }
@@ -151,4 +145,13 @@ public class HtmlHelper {
         }
     }
 
+    private static class Element {
+        private final String tag;
+        private int startIndex = -1;
+        private HashMap<String, String> attrMap = new HashMap<>();
+
+        private Element(String tag) {
+            this.tag = tag;
+        }
+    }
 }
