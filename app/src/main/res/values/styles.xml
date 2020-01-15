@@ -71,7 +71,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="Dialog" parent="Theme.AppCompat.Light.Dialog">
+    <style name="Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:textColorPrimary">@color/primary</item>
     </style>
 
@@ -82,16 +82,14 @@
         <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="windowHeight">90%</item>
-        <item name="windowWidth">90%</item>
-        <item name="android:layout_gravity">center</item>
+        <item name="android:windowMinWidthMajor">65%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
     </style>
 
     <style name="Dialog.Fullscreen" parent="Dialog.BottomPopup">
-        <item name="windowWidth">100%</item>
-        <item name="windowHeight">100%</item>
-        <item name="android:layout_gravity">bottom</item>
-        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowFullscreen">true</item>
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
     </style>
 </resources>
