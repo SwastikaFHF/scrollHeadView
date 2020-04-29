@@ -16,7 +16,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <com.aitangba.testproject.view.partiality.PartialityLinearLayout
@@ -45,5 +46,11 @@
             android:layout_height="wrap_content"
             android:text="@string/debug_short_string" />
     </LinearLayout>
+
+    <com.aitangba.testproject.view.TextDrawableView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:paddingTop="20dp" />
 
 </LinearLayout>

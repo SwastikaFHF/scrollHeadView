@@ -22,6 +22,7 @@ import com.aitangba.testproject.service.ServiceTestActivity;
 import com.aitangba.testproject.threadpool.ThreadPoolActivity;
 import com.aitangba.testproject.threadpool.volley.VolleyActivity;
 import com.aitangba.testproject.ubb.UbbActivity;
+import com.aitangba.testproject.view.ViewDemoActivity;
 import com.aitangba.testproject.view.calendar.CalendarActivity;
 import com.aitangba.testproject.view.cornerrectangle.CornerRectangleActivity;
 import com.aitangba.testproject.view.customswipe.CustomSwipeActivity;
@@ -38,6 +39,7 @@ import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
+import com.aitangba.testproject.view.recyclerroll.RecyclableViewTestActivity;
 import com.aitangba.testproject.view.removeitem.RemoveItemActivity;
 import com.aitangba.testproject.view.slideback.slidingmenu.SlidingMenuActivity;
 import com.aitangba.testproject.view.verticalnestedscroll.listview.ListViewActivity;
@@ -133,11 +135,8 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivityForResult(new Intent(MainActivity.this, ApkTestActivity.class), 101);
-                Intent intent = new Intent(v.getContext(), HtmlTestActivity.class);
-                intent.putExtra("params", "来自传递参数");
+                Intent intent = new Intent(v.getContext(), RecyclableViewTestActivity.class);
                 startActivity(intent);
-//                startActivity(HtmlTestActivity.class);
             }
         });
     }

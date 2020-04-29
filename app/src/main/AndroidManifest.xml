@@ -121,6 +121,9 @@
 
         <activity android:name=".apk.ApkTestActivity" />
         <activity android:name=".html.HtmlTestActivity" />
+        <activity android:name=".view.drawabletext.DrawableTextActivity" />
+        <activity android:name=".addialog.AdDialogActivity" />
+        <activity android:name=".view.recyclerroll.RecyclableViewTestActivity" />
 
     </application>
 
