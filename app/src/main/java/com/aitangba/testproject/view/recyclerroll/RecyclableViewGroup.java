@@ -6,12 +6,14 @@ import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.Scroller;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class RecyclableViewGroup extends ViewGroup {
     public RecyclableViewGroup(Context context) {
         super(context);
         init(context, null);
+        new ViewSwitcher(context);
     }
 
     public RecyclableViewGroup(Context context, AttributeSet attrs) {
@@ -67,6 +70,7 @@ public class RecyclableViewGroup extends ViewGroup {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         dispose();
+        setScrollX(1);
     }
 
     @Override
@@ -135,8 +139,18 @@ public class RecyclableViewGroup extends ViewGroup {
         }
     }
 
+    private static final String TAG = "Recyclable_TAG";
     @Override
     public void computeScroll() {
+        Log.d(TAG, "computeScroll -- getScrollX = " + getScrollX());
+        if(getScrollX() == 1440) {
+            mScroller.abortAnimation();
+            scrollTo(0, 0);
+            mPager.updateCurrentPosition(1);
+            requestLayout();
+            return;
+        }
+
         if (mScroller.computeScrollOffset()) {
             int scrollX = mScroller.getCurrX();
             scrollTo(scrollX, mScroller.getCurrY());
@@ -158,6 +172,8 @@ public class RecyclableViewGroup extends ViewGroup {
             }
             float positionOffset = (float) positionOffsetPixels / (float) periodLength;
             onPageScrolledInternal(page, positionOffset, positionOffsetPixels);
+
+            Log.d(TAG, "onScrollChanged -- page = " + page + ", positionOffset = " + positionOffset + ", positionOffsetPixels = " + positionOffsetPixels);
         }
     }
 
