@@ -1,5 +1,8 @@
 package com.aitangba.testproject.view.recyclerroll;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,7 +12,8 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.widget.Scroller;
+import android.view.animation.AccelerateInterpolator;
+
 
 /**
  * Created by XBeats on 2020/4/30
@@ -32,7 +36,6 @@ public class CustomViewGroup extends ViewGroup {
         ViewConfiguration config = ViewConfiguration.get(context);
         mMaxVelocity = config.getScaledMinimumFlingVelocity();
         mTouchSlop = config.getScaledTouchSlop();
-        mScroller = new Scroller(context);
     }
 
     private int mMaxVelocity;
@@ -42,14 +45,16 @@ public class CustomViewGroup extends ViewGroup {
         int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
         int maxHeight = sizeHeight - getPaddingTop() - getPaddingBottom();
-        int childMaxWidth = (int) ((MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight()));
+        int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
+
+        int childMaxWidth = sizeWidth - getPaddingLeft() - getPaddingRight();
         int height = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             measureChild(child, MeasureSpec.makeMeasureSpec(childMaxWidth, MeasureSpec.EXACTLY), heightMeasureSpec);
             height = Math.min(Math.max(height, child.getMeasuredHeight()), maxHeight);
         }
-        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
+        setMeasuredDimension(sizeWidth,
                 modeHeight == MeasureSpec.EXACTLY ? sizeHeight : height + getPaddingTop() + getPaddingBottom());
     }
 
@@ -64,54 +69,76 @@ public class CustomViewGroup extends ViewGroup {
         int width = getMeasuredWidth();
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
-            if (i == currentIndex) {
-                layoutChild(child, left, top);
-            } else if (i == (currentIndex + 1) % count) {
-                if (direction == Direction.RIGHT) {
-                    layoutChild(child, width, top);
+
+            if (mOffset < 0) {
+                if (i == mCurrentIndex) {
+                    layoutChild(child, left + mOffset, top);
+                } else if (i == (mCurrentIndex + 1) % getChildCount()) {
+                    layoutChild(child, width + mOffset + left, top);
                 } else {
-                    layoutChild(child, -width, top);
+                    layoutChild(child, left - width, top);
+                }
+            } else if (mOffset > 0) {
+                if (i == (mCurrentIndex - 1 + getChildCount()) % getChildCount()) {
+                    layoutChild(child, mOffset - width + left, top);
+                } else if (i == mCurrentIndex) {
+                    layoutChild(child, left + mOffset, top);
+                } else {
+                    layoutChild(child, left - width, top);
                 }
             } else {
-                layoutChild(child, -width, top);
+                if (i == mCurrentIndex) {
+                    layoutChild(child, left + mOffset, top);
+                } else {
+                    layoutChild(child, left - width, top);
+                }
             }
         }
     }
 
     private void layoutChild(View child, int left, int top) {
-        child.layout(left, top, left + child.getMeasuredWidth(), top + child.getMeasuredHeight());
+        child.layout(left, top, left + (getMeasuredWidth() - getPaddingLeft() - getPaddingRight()), top + child.getMeasuredHeight());
     }
 
     private VelocityTracker mVelocityTracker;
-    private Scroller mScroller;
     private int mLastX, mLastDownX, mLastDownY;
     private boolean mIsTouching;
+    private boolean mAutoMoving;
     private boolean mIsBeingDragged;
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if(mAutoMoving) {
+            return true;
+        }
+        Log.d(TAG, "dispatchTouchEvent " + actionToString(ev));
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        if (action != MotionEvent.ACTION_UP && action != MotionEvent.ACTION_CANCEL) {
-            if (mIsBeingDragged) {
-                return true;
+        if (!mIsBeingDragged && action == MotionEvent.ACTION_MOVE) {
+            int dx = (int) (mLastDownY - ev.getX());
+            float xDiff = Math.abs(dx);
+            if (xDiff > mTouchSlop) {
+                mIsBeingDragged = true;
+                requestDisallowInterceptTouchEvent(true);
             }
         }
 
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mLastX = mLastDownX = (int) ev.getX();
-                mLastDownY = (int) ev.getY();
-                mIsTouching = true;
-                mIsBeingDragged = false;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                int dx = (int) (mLastX - ev.getX());
-                float xDiff = Math.abs(dx);
-                if (xDiff > mTouchSlop) {
-                    mIsBeingDragged = true;
-                    requestDisallowInterceptTouchEvent(true);
-                }
-                break;
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "onInterceptTouchEvent " + actionToString(ev) + ", mIsBeingDragged = " + mIsBeingDragged);
+        int action = ev.getAction() & MotionEvent.ACTION_MASK;
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        // ACTION_DOWN 事件不进行拦截，防止子View需要处理onclick事件
+        if (action == MotionEvent.ACTION_DOWN) {
+            mVelocityTracker.addMovement(ev);
+            mLastDownY = (int) ev.getY();
+            mLastX = (int) ev.getX();
+            mIsTouching = true;
+            mIsBeingDragged = false;
         }
         return mIsBeingDragged;
     }
@@ -119,68 +146,41 @@ public class CustomViewGroup extends ViewGroup {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!isManuallyScrollLocked()) {
-            if (mVelocityTracker == null) {
-                mVelocityTracker = VelocityTracker.obtain();
-            }
+        Log.d(TAG, "onTouchEvent " + actionToString(ev));
+        int action = ev.getAction() & MotionEvent.ACTION_MASK;
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        if(action != MotionEvent.ACTION_DOWN) {
             mVelocityTracker.addMovement(ev);
         }
         int x = (int) ev.getX();
         int y = (int) ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!mScroller.isFinished() && !isManuallyScrollLocked()) {
-                    mScroller.abortAnimation();
-                }
                 mLastX = mLastDownX = x;
                 mLastDownY = y;
                 mIsTouching = true;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (!isManuallyScrollLocked()) {
-                    int dx = mLastX - x;
-
-                    if (getScrollX() <= 0 && getScrollX() + dx > 0) {
-                        direction = Direction.RIGHT;
-                        requestLayout();
-                        scrollBy(dx + getScrollX(), 0);
-                    } else if (getScrollX() >= 0 && getScrollX() + dx < 0) {
-                        direction = Direction.LEFT;
-                        requestLayout();
-                        scrollBy(dx + getScrollX(), 0);
-                    } else {
-                        scrollBy(dx, 0);
-                    }
-                    if (Math.abs(mLastDownX - x) > 20) {
-                        requestDisallowInterceptTouchEvent(true);
-                    }
+                int dx = x - mLastX;
+                if (mIsBeingDragged) {
+                    requestDisallowInterceptTouchEvent(true);
+                    mOffset = Math.min(getMeasuredWidth(), mOffset + dx);
+                    mOffset = Math.max(-getMeasuredWidth(), mOffset + dx);
+                    requestLayout();
                 }
                 mLastX = x;
                 break;
             case MotionEvent.ACTION_OUTSIDE:
             case MotionEvent.ACTION_CANCEL:
-                if (x != mLastDownX) {
-                    slowScrollToPage();
-                }
-                touchFinished();
+                handleTouchAction();
                 break;
             case MotionEvent.ACTION_UP:
-                float outsideEachPercent = 0;
-                if (Math.abs(mLastDownX - x) < 20
-                        && Math.abs(mLastDownY - y) < 20
-                        && !performClick()) {
-                    if (x > getWidth() * outsideEachPercent && x < getWidth() * (1 - outsideEachPercent)) {
-                    } else if (!isManuallyScrollLocked()) {
-                        if (x < getWidth() * outsideEachPercent) {
-                            goPreviousPage();
-                        } else {
-                            goNextPage();
-                        }
-                    }
-                } else if (!isManuallyScrollLocked()) {
-                    handleScroll();
+                if (Math.abs(mLastDownX - x) < 20 && Math.abs(mLastDownY - y) < 20) {
+                    return performClick();
                 }
-                touchFinished();
+                handleTouchAction();
                 break;
             default:
                 mIsTouching = false;
@@ -189,104 +189,136 @@ public class CustomViewGroup extends ViewGroup {
         return true;
     }
 
-    private boolean autoSlide;
-    @Override
-    public void computeScroll() {
-        int scrollX = mScroller.getCurrX();
-        Log.d(TAG, "scrollX = " + scrollX + ", computeScrollOffset = "+ mScroller.computeScrollOffset());
-        if (mScroller.computeScrollOffset()) {
-            if(autoSlide && scrollX == 1440) {
-                requestLayout();
-                mScroller.abortAnimation();
-                scrollTo(0, 0);
-                currentIndex = (currentIndex + getChildCount() - 1) % getChildCount();
-                direction = Direction.ORIGIN;
-                Log.d(TAG, "currentIndex = " + currentIndex);
-                return;
+    /**
+     * Velocity 向左为负值，向右为正值
+     * Offset   向左为负值，向右为正值
+     */
+    private void handleTouchAction() {
+        mVelocityTracker.computeCurrentVelocity(1000);
+        int currentVelocity = (int) mVelocityTracker.getXVelocity();
+
+        Log.d(TAG, "handleTouchAction " + ", mCurrentIndex = " + mCurrentIndex+  ", currentVelocity = " + currentVelocity + ", mOffset = " + mOffset);
+        if (currentVelocity > mMaxVelocity) {
+            if(mOffset < 0) {
+                back2Page();
+            } else {
+                goPreviousPage();
             }
-            scrollTo(scrollX, mScroller.getCurrY());
-
-            invalidate();
-        }
-    }
-
-    private boolean isManuallyScrollLocked() {
-        return getChildCount() <= 1;
-    }
-
-    private void slowScrollToPage() {
-        int scrollX = getScrollX();
-        int width = getMeasuredWidth();
-
-        if (scrollX < -width / 2) {
-            goPreviousPage();
-        } else if (scrollX > width / 2) {
-            goNextPage();
+        } else if (currentVelocity < -mMaxVelocity) {
+            if(mOffset > 0) {
+                back2Page();
+            } else {
+                goNextPage();
+            }
         } else {
-            scrollToPage(Direction.ORIGIN);
+            if(mOffset < - getMeasuredWidth() / 2) {
+                goNextPage();
+            } else if(mOffset > getMeasuredWidth() / 2) {
+                goPreviousPage();
+            } else {
+                back2Page();
+            }
         }
-    }
 
-    private long mLastTouchTime;
-
-    private void touchFinished() {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
         }
         mIsTouching = false;
-        mLastTouchTime = System.currentTimeMillis();
-    }
-
-    private void handleScroll() {
-        autoSlide = true;
-        mVelocityTracker.computeCurrentVelocity(1000);
-        int initVelocity = (int) mVelocityTracker.getXVelocity();
-        if (initVelocity > mMaxVelocity) {
-            goPreviousPage();
-        } else if (initVelocity < -mMaxVelocity) {
-            goNextPage();
-        } else {
-            slowScrollToPage();
-        }
     }
 
     /**
      * Scroll to the next position
      */
     public void goNextPage() {
-        scrollToPage(Direction.RIGHT);
+        autoScroll(Direction.LEFT);
     }
 
     /**
      * Scroll to the previous position
      */
     public void goPreviousPage() {
-        scrollToPage(Direction.LEFT);
+        autoScroll(Direction.RIGHT);
     }
 
-    private void scrollToPage(int direction) {
-        int dx;
-        if (direction == Direction.RIGHT) {
-            dx = getMeasuredWidth() - getScrollX();
-        } else if (direction == Direction.LEFT) {
-            dx = -getMeasuredWidth() - getScrollX();
+    private void back2Page() {
+        autoScroll(Direction.ORIGIN);
+    }
+
+    private void autoScroll(int direction) {
+        mAutoMoving = true;
+        final int targetIndex;
+        final int targetValue;
+        ValueAnimator animator = new ValueAnimator();
+        if (direction == Direction.LEFT) {
+            targetValue = -getMeasuredWidth();
+            targetIndex = (mCurrentIndex + 1) % getChildCount();
+        } else if (direction == Direction.RIGHT) {
+            targetValue = getMeasuredWidth();
+            targetIndex = (mCurrentIndex - 1 + getChildCount()) % getChildCount();
         } else {
-            dx = -getScrollX();
+            targetValue = 0;
+            targetIndex = mCurrentIndex;
         }
-
-        mScroller.startScroll(getScrollX(), 0, dx, 0, Math.abs(dx));
-        invalidate();
+        Log.d(TAG, "autoScroll   targetValue = " + targetValue);
+        animator.setIntValues(mOffset, targetValue);
+        animator.setDuration(800);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mOffset = (int) animation.getAnimatedValue();
+                requestLayout();
+            }
+        });
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                mCurrentIndex = targetIndex;
+                mOffset = 0;
+                requestLayout();
+                mAutoMoving = false;
+            }
+        });
+        animator.start();
     }
 
-
-    private int currentIndex;
-
-    private int direction = Direction.RIGHT; // 默右滑
+    private int mCurrentIndex;
+    private int mOffset;
 
     private static final class Direction {
         private static final int ORIGIN = 0;
         private static final int LEFT = 1;
         private static final int RIGHT = 2;
+    }
+
+    public static String actionToString(MotionEvent motionEvent) {
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                return "ACTION_DOWN";
+            case MotionEvent.ACTION_UP:
+                return "ACTION_UP";
+            case MotionEvent.ACTION_CANCEL:
+                return "ACTION_CANCEL";
+            case MotionEvent.ACTION_OUTSIDE:
+                return "ACTION_OUTSIDE";
+            case MotionEvent.ACTION_MOVE:
+                return "ACTION_MOVE";
+            case MotionEvent.ACTION_HOVER_MOVE:
+                return "ACTION_HOVER_MOVE";
+            case MotionEvent.ACTION_SCROLL:
+                return "ACTION_SCROLL";
+            case MotionEvent.ACTION_HOVER_ENTER:
+                return "ACTION_HOVER_ENTER";
+            case MotionEvent.ACTION_HOVER_EXIT:
+                return "ACTION_HOVER_EXIT";
+            case MotionEvent.ACTION_BUTTON_PRESS:
+                return "ACTION_BUTTON_PRESS";
+            case MotionEvent.ACTION_BUTTON_RELEASE:
+                return "ACTION_BUTTON_RELEASE";
+        }
+
+        return "";
     }
 }

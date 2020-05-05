@@ -142,15 +142,6 @@ public class RecyclableViewGroup extends ViewGroup {
     private static final String TAG = "Recyclable_TAG";
     @Override
     public void computeScroll() {
-        Log.d(TAG, "computeScroll -- getScrollX = " + getScrollX());
-        if(getScrollX() == 1440) {
-            mScroller.abortAnimation();
-            scrollTo(0, 0);
-            mPager.updateCurrentPosition(1);
-            requestLayout();
-            return;
-        }
-
         if (mScroller.computeScrollOffset()) {
             int scrollX = mScroller.getCurrX();
             scrollTo(scrollX, mScroller.getCurrY());
@@ -294,7 +285,7 @@ public class RecyclableViewGroup extends ViewGroup {
             boolean changeable = Math.abs(getScrollX() - mPager.mCurrentPosition * periodLength) <= 2 * periodLength
                     && currentTime - mLastScrollTime > 300;
             if (changeable || reset) {
-                mPager.updateCurrentPosition(indexPage);
+                 mPager.updateCurrentPosition(indexPage);
                 mLastScrollTime = currentTime;
                 if (!mOnPageChangeListeners.isEmpty()) {
                     for (OnPageChangeListener onPageChangeListener : mOnPageChangeListeners) {

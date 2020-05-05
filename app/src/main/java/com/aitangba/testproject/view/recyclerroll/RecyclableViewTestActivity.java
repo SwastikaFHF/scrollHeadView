@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.aitangba.testproject.R;
 
@@ -34,14 +37,24 @@ public class RecyclableViewTestActivity extends AppCompatActivity {
         recyclableViewGroup.start();
 
         CustomViewGroup customViewGroup = findViewById(R.id.customView);
+        customViewGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "点击事件", Toast.LENGTH_SHORT).show();
+            }
+        });
         imageView = new ImageView(this);
-        imageView.setBackgroundColor(Color.RED);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageResource(R.drawable.bg_red);
         customViewGroup.addView(imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "第一张图片", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         imageView = new ImageView(this);
-        imageView.setBackgroundColor(Color.BLUE);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageResource(R.drawable.bg_update_common);
         customViewGroup.addView(imageView);
