@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -12,7 +14,8 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
+import android.view.ViewParent;
+import android.view.animation.Interpolator;
 
 
 /**
@@ -21,7 +24,22 @@ import android.view.animation.AccelerateInterpolator;
 public class CustomViewGroup extends ViewGroup {
 
     private static final String TAG = "CustomView_TAG";
+    private static final long LOOP_INTERVAL = 3000;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private VelocityTracker mVelocityTracker;
     private int mTouchSlop;
+    private int mMaxVelocity;
+
+    private int mCurrentVelocity;
+    private int mLastX;
+    private int mLastDownX;
+    private int mLastDownY;
+    private boolean mIsTouching;
+    private boolean mAutoMoving;
+    private boolean mIsBeingDragged;
+    private long mLastTouchTime;
+
+    private boolean mAutoScroll = true; // 默认开启自动滑动
 
     public CustomViewGroup(Context context) {
         this(context, null);
@@ -38,7 +56,52 @@ public class CustomViewGroup extends ViewGroup {
         mTouchSlop = config.getScaledTouchSlop();
     }
 
-    private int mMaxVelocity;
+    public void enableAutoScroll(boolean enable) {
+        mAutoScroll = enable;
+        loop();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        loop();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        dispose();
+    }
+
+    private void dispose() {
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
+    private void loop(){
+        if(!mAutoScroll) {
+            return;
+        }
+
+        if (getChildCount() <= 1) {
+            return;
+        }
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!mIsTouching && System.currentTimeMillis() - mLastTouchTime > LOOP_INTERVAL / 2) {
+                    goNextPage();
+                }
+                loop();
+            }
+        }, LOOP_INTERVAL);
+    }
+
+    @Override
+    public void addView(View child, int index, LayoutParams params) {
+        super.addView(child, index, params);
+        loop();
+    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -100,34 +163,12 @@ public class CustomViewGroup extends ViewGroup {
         child.layout(left, top, left + (getMeasuredWidth() - getPaddingLeft() - getPaddingRight()), top + child.getMeasuredHeight());
     }
 
-    private VelocityTracker mVelocityTracker;
-    private int mLastX, mLastDownX, mLastDownY;
-    private boolean mIsTouching;
-    private boolean mAutoMoving;
-    private boolean mIsBeingDragged;
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(mAutoMoving) {
-            return true;
-        }
-        Log.d(TAG, "dispatchTouchEvent " + actionToString(ev));
-        int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        if (!mIsBeingDragged && action == MotionEvent.ACTION_MOVE) {
-            int dx = (int) (mLastDownY - ev.getX());
-            float xDiff = Math.abs(dx);
-            if (xDiff > mTouchSlop) {
-                mIsBeingDragged = true;
-                requestDisallowInterceptTouchEvent(true);
-            }
-        }
-
-        return super.dispatchTouchEvent(ev);
-    }
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.d(TAG, "onInterceptTouchEvent " + actionToString(ev) + ", mIsBeingDragged = " + mIsBeingDragged);
+        if(mAutoMoving) {
+            return true;
+        }
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -135,18 +176,31 @@ public class CustomViewGroup extends ViewGroup {
         // ACTION_DOWN 事件不进行拦截，防止子View需要处理onclick事件
         if (action == MotionEvent.ACTION_DOWN) {
             mVelocityTracker.addMovement(ev);
+            mLastX = mLastDownX = (int) ev.getX();
             mLastDownY = (int) ev.getY();
-            mLastX = (int) ev.getX();
             mIsTouching = true;
             mIsBeingDragged = false;
         }
+        if (!mIsBeingDragged && action == MotionEvent.ACTION_MOVE) {
+            float xDiff = Math.abs(ev.getX() - mLastDownX);
+            if (xDiff > mTouchSlop) {
+                mIsBeingDragged = true;
+                requestParentDisallowInterceptTouchEvent();
+            }
+        }
         return mIsBeingDragged;
+    }
+
+    private void requestParentDisallowInterceptTouchEvent() {
+        ViewParent parent = this.getParent();
+        if (parent != null) {
+            parent.requestDisallowInterceptTouchEvent(true);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onTouchEvent " + actionToString(ev));
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -163,12 +217,22 @@ public class CustomViewGroup extends ViewGroup {
                 mIsTouching = true;
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (!mIsBeingDragged) {
+                    float xDiff = Math.abs(x - mLastDownX);
+                    if (xDiff > mTouchSlop) {
+                        mIsBeingDragged = true;
+                        requestParentDisallowInterceptTouchEvent();
+                    }
+                }
+
                 int dx = x - mLastX;
-                if (mIsBeingDragged) {
-                    requestDisallowInterceptTouchEvent(true);
-                    mOffset = Math.min(getMeasuredWidth(), mOffset + dx);
-                    mOffset = Math.max(-getMeasuredWidth(), mOffset + dx);
+                if(mIsBeingDragged) {
+                    int targetOffset = mOffset + dx;
+                    mOffset = Math.max(-getMeasuredWidth(), Math.min(getMeasuredWidth(), targetOffset));
                     requestLayout();
+                    if(mOnPageChangeListener != null) {
+                        mOnPageChangeListener.onPageScrolled(mCurrentIndex, mOffset);
+                    }
                 }
                 mLastX = x;
                 break;
@@ -195,16 +259,15 @@ public class CustomViewGroup extends ViewGroup {
      */
     private void handleTouchAction() {
         mVelocityTracker.computeCurrentVelocity(1000);
-        int currentVelocity = (int) mVelocityTracker.getXVelocity();
+        mCurrentVelocity = (int) mVelocityTracker.getXVelocity();
 
-        Log.d(TAG, "handleTouchAction " + ", mCurrentIndex = " + mCurrentIndex+  ", currentVelocity = " + currentVelocity + ", mOffset = " + mOffset);
-        if (currentVelocity > mMaxVelocity) {
+        if (mCurrentVelocity > mMaxVelocity) {
             if(mOffset < 0) {
                 back2Page();
             } else {
                 goPreviousPage();
             }
-        } else if (currentVelocity < -mMaxVelocity) {
+        } else if (mCurrentVelocity < -mMaxVelocity) {
             if(mOffset > 0) {
                 back2Page();
             } else {
@@ -223,8 +286,10 @@ public class CustomViewGroup extends ViewGroup {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
             mVelocityTracker = null;
+            mCurrentVelocity = 0;
         }
         mIsTouching = false;
+        mLastTouchTime = System.currentTimeMillis();
     }
 
     /**
@@ -249,7 +314,6 @@ public class CustomViewGroup extends ViewGroup {
         mAutoMoving = true;
         final int targetIndex;
         final int targetValue;
-        ValueAnimator animator = new ValueAnimator();
         if (direction == Direction.LEFT) {
             targetValue = -getMeasuredWidth();
             targetIndex = (mCurrentIndex + 1) % getChildCount();
@@ -260,15 +324,34 @@ public class CustomViewGroup extends ViewGroup {
             targetValue = 0;
             targetIndex = mCurrentIndex;
         }
-        Log.d(TAG, "autoScroll   targetValue = " + targetValue);
+
+        int dx = targetValue - mOffset;
+        int width = this.getMeasuredWidth();
+        int halfWidth = width / 2;
+        float distanceRatio = Math.min(1.0F, 1.0F * (float)Math.abs(dx) / (float)width);
+        float distance = (float)halfWidth + (float)halfWidth * this.distanceInfluenceForSnapDuration(distanceRatio);
+        int duration;
+        if (mCurrentVelocity > 0) {
+            duration = 4 * Math.round(1000.0F * Math.abs(distance / (float) mCurrentVelocity));
+        } else {
+            float pageDelta = (float)Math.abs(dx) / width;
+            duration = (int)((pageDelta + 1.0F) * 100.0F);
+        }
+        duration = Math.min(duration, 600);
+
+        ValueAnimator animator = new ValueAnimator();
         animator.setIntValues(mOffset, targetValue);
-        animator.setDuration(800);
-        animator.setInterpolator(new AccelerateInterpolator());
+        animator.setDuration(duration);
+        animator.setInterpolator(sInterpolator);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mOffset = (int) animation.getAnimatedValue();
                 requestLayout();
+                if(mOnPageChangeListener != null) {
+                    mOnPageChangeListener.onPageScrolled(mCurrentIndex, mOffset);
+                }
+                Log.d(TAG, "onAnimationUpdate mOffset = " + mOffset);
             }
         });
         animator.addListener(new AnimatorListenerAdapter() {
@@ -279,10 +362,26 @@ public class CustomViewGroup extends ViewGroup {
                 mOffset = 0;
                 requestLayout();
                 mAutoMoving = false;
+                if(mOnPageChangeListener != null) {
+                    mOnPageChangeListener.onPageScrolled(mCurrentIndex, mOffset);
+                }
             }
         });
         animator.start();
     }
+
+    private float distanceInfluenceForSnapDuration(float f) {
+        f -= 0.5F;
+        f *= 0.47123894F;
+        return (float)Math.sin((double)f);
+    }
+
+    private static final Interpolator sInterpolator = new Interpolator() {
+        public float getInterpolation(float t) {
+            --t;
+            return t * t * t * t * t + 1.0F;
+        }
+    };
 
     private int mCurrentIndex;
     private int mOffset;
@@ -293,7 +392,7 @@ public class CustomViewGroup extends ViewGroup {
         private static final int RIGHT = 2;
     }
 
-    public static String actionToString(MotionEvent motionEvent) {
+    private static String actionToString(MotionEvent motionEvent) {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 return "ACTION_DOWN";
@@ -320,5 +419,15 @@ public class CustomViewGroup extends ViewGroup {
         }
 
         return "";
+    }
+
+    private OnPageChangeListener mOnPageChangeListener;
+
+    public void setOnPageChangeListener(OnPageChangeListener onPageChangeListener) {
+        mOnPageChangeListener = onPageChangeListener;
+    }
+
+    public interface OnPageChangeListener {
+        void onPageScrolled(int position, int offset);
     }
 }
