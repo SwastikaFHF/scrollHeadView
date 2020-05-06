@@ -333,12 +333,14 @@ public class CustomViewGroup extends ViewGroup {
         int duration;
         if (mCurrentVelocity > 0) {
             duration = 4 * Math.round(1000.0F * Math.abs(distance / (float) mCurrentVelocity));
-        } else {
+        } else if (mCurrentVelocity < 0){
             float pageDelta = (float)Math.abs(dx) / width;
             duration = (int)((pageDelta + 1.0F) * 100.0F);
+        } else {
+            duration = 600;
         }
         duration = Math.min(duration, 600);
-
+        Log.d(TAG, "autoScroll duration = " + duration);
         ValueAnimator animator = new ValueAnimator();
         animator.setIntValues(mOffset, targetValue);
         animator.setDuration(duration);
