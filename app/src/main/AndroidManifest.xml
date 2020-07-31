@@ -124,6 +124,7 @@
         <activity android:name=".view.drawabletext.DrawableTextActivity" />
         <activity android:name=".addialog.AdDialogActivity" />
         <activity android:name=".view.recyclerroll.RecyclableViewTestActivity" />
+        <activity android:name=".view.nestwebview.NestWebViewActivity" />
 
     </application>
 

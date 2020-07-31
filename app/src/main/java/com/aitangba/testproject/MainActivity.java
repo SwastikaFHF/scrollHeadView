@@ -36,6 +36,7 @@ import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
 import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
+import com.aitangba.testproject.view.nestwebview.NestWebViewActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), RecyclableViewTestActivity.class);
+                Intent intent = new Intent(v.getContext(), NestWebViewActivity.class);
                 startActivity(intent);
             }
         });
