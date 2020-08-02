@@ -81,6 +81,7 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
     @Override
     public void computeScroll() {
         super.computeScroll();
+        Log.d(TAG, String.format("computeScroll getScrollY = %d", getScrollY()));
         if (mScroller.computeScrollOffset()) {
             final int x = mScroller.getCurrX();
             final int y = mScroller.getCurrY();
@@ -116,7 +117,7 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
         }
     }
 
-    private int mDyConsumed;
+    private int mScrollOffsetRecord;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         initVelocityTrackerIfNotExists();
@@ -136,7 +137,8 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                mDyConsumed = 0;
+                stopNestedScroll();
+                mScrollOffsetRecord = 0;
                 final VelocityTracker velocityTracker = mVelocityTracker;
                 velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
                 int initialVelocity = (int) velocityTracker.getYVelocity();
@@ -148,32 +150,49 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
                 recycleVelocityTracker();
                 break;
             case MotionEvent.ACTION_MOVE:
-                final int y = (int) event.getY();
-                final int deltaY = mLastMotionY - y;
+
+                final int y = (int) event.getY() + mScrollOffsetRecord;
+                final int deltaY =  y - mLastMotionY;
+
+                Log.d(TAG, String.format("move: y = %d, deltaY = %d, mScrollOffsetRecord =  %d", y , deltaY, mScrollOffsetRecord));
                 mLastMotionY = y;
                 int scrollY = getScrollY();
 
+
                 // 预处理滑动事件
                 if (dispatchNestedPreScroll(0, deltaY, mScrollConsumed, mScrollOffset)) {
-                    Log.d(TAG, String.format("onPreScroll: mScrollConsumed[1] = %d, mScrollOffset[1] = %d: ", mScrollConsumed[1] , mScrollOffset[1]));
+//                    Log.d(TAG, String.format("onPreScroll: mScrollConsumed[1] = %d, mScrollOffset[1] = %d: ", mScrollConsumed[1] , mScrollOffset[1]));
                     motionEvent.offsetLocation(0, mScrollConsumed[1]);
+                    mScrollOffsetRecord += mScrollOffset[1];
                 }
 
                 // 向上滑动，优先查看Parent要不要处理，
                 // 向下滑动，优先查看自己要不要处理
-                float maxScrollY = getContentHeight() * getScale() - getHeight();
+                int maxScrollY = (int) (getContentHeight() * getScale() - getHeight());
 
-                int targetScrollY = scrollY + deltaY;
+                if(scrollY == 0) {
+                    dispatchNestedScroll(0, 0, 0, -deltaY, mScrollOffset);
+                    mScrollOffsetRecord += mScrollOffset[1];
 
-                if(deltaY > 0) {
-                    dispatchNestedScroll(0, 0, 0, deltaY, mScrollOffset);
-                    mDyConsumed -= mScrollOffset[1];
-                    Log.d(TAG, String.format("scrollY == 0, deltaY = %d, mScrollOffset[1] = %d", deltaY, mScrollOffset[1]));
+                    Log.d(TAG, String.format("scrollY = 0: mScrollOffset[1] = %d, dy = %d ", mScrollOffset[1], deltaY));
+                    if(deltaY != 0 && mScrollOffset[1] == 0) {
+                        motionEvent.offsetLocation(0, mScrollOffset[1]);
+                        return super.onTouchEvent(event);
+                    }
                     return true;
-                } else if(deltaY < 0){
-
+                } else if(scrollY < maxScrollY) {
+                    Log.d(TAG, String.format("scrollY > 0: mScrollOffset[1] = %d: ", mScrollOffset[1]));
+                    return super.onTouchEvent(event);
+                } else {
+                    Log.d(TAG, String.format("scrollY = max: mScrollOffset[1] = %d: ", mScrollOffset[1]));
+                    if(deltaY > 0) {
+                        return super.onTouchEvent(event);
+                    } else {
+                        dispatchNestedScroll(0, 0, 0, -deltaY, mScrollOffset);
+                        mScrollOffsetRecord += mScrollOffset[1];
+                        return true;
+                    }
                 }
-                return true;
             default:
                 break;
         }

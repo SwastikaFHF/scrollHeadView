@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
@@ -31,12 +30,21 @@ import java.lang.reflect.Method;
 public class NestWebViewActivity extends FragmentActivity {
 
     private WebView mWebView;
+    private View textView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_nest_webview);
+
+        textView = findViewById(R.id.text);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWebView.setScrollY(200);
+            }
+        });
 
         mWebView = findViewById(R.id.webView);
         initWebView();
