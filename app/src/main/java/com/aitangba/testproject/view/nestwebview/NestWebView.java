@@ -81,31 +81,45 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
     @Override
     public void computeScroll() {
         super.computeScroll();
-        Log.d(TAG, String.format("computeScroll getScrollY = %d", getScrollY()));
+        final int y = mScroller.getCurrY();
+        final int dy = y - mLastScrollerY;
+        mLastScrollerY = y;
+
+        Log.d(TAG, String.format("computeScroll getScrollY = %d, dy = %d", getScrollY(), dy));
         if (mScroller.computeScrollOffset()) {
-            final int x = mScroller.getCurrX();
-            final int y = mScroller.getCurrY();
-            int dy = y - mLastScrollerY;
-            if (dy != 0) {
-                int scrollY = getScrollY();
-                int dyUnConsumed = 0;
-                int consumedY = dy;
-                if (scrollY == 0) {
+            int scrollY = getScrollY();
+            int consumedY = dy;
+            int dyUnConsumed = 0;
+
+            if (scrollY == 0) {
+                // 向上滑动
+                if (dy > 0) {
+                    // 尝试先让父控件回到初始状态
+                    dispatchNestedScroll(0, 0, 0, dy, mScrollOffset,
+                            ViewCompat.TYPE_NON_TOUCH);
+                    int parentUnConsumed = dy + mScrollOffset[1];
+
+                    Log.d(TAG, String.format("dispatchNested+Scroll parentUnConsumed = %d", parentUnConsumed));
+                    scrollBy(0, parentUnConsumed);
+                } else {
                     dyUnConsumed = dy;
                     consumedY = 0;
-                } else if (scrollY + dy < 0) {
-                    dyUnConsumed = dy + scrollY;
-                    consumedY = -scrollY;
+                    dispatchNestedScroll(0, consumedY, 0, dyUnConsumed, mScrollOffset,
+                            ViewCompat.TYPE_NON_TOUCH);
                 }
 
-                if (!dispatchNestedScroll(0, consumedY, 0, dyUnConsumed, null,
-                        ViewCompat.TYPE_NON_TOUCH)) {
+            } else if (scrollY + dy < 0) {
+                consumedY = -scrollY;
+                dyUnConsumed = dy + scrollY;
 
-                }
+                dispatchNestedScroll(0, consumedY, 0, dyUnConsumed, mScrollOffset,
+                        ViewCompat.TYPE_NON_TOUCH);
+                scrollBy(0, consumedY);
+            } else {
+                scrollBy(0, consumedY);
             }
 
             // Finally update the scroll positions and post an invalidation
-            mLastScrollerY = y;
             ViewCompat.postInvalidateOnAnimation(this);
         } else {
             // We can't scroll any more, so stop any indirect scrolling
@@ -118,16 +132,18 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
     }
 
     private int mScrollOffsetRecord;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         initVelocityTrackerIfNotExists();
-        Log.d("Custom_TAG", "onTouchEvent -- " + actionToString(event.getAction()));
+        Log.d(TAG, "onTouchEvent -- " + actionToString(event.getAction()));
         MotionEvent motionEvent = MotionEvent.obtain(event);
 
         final int actionMasked = event.getAction();
 
         switch (actionMasked) {
             case MotionEvent.ACTION_DOWN:
+                requestDisallowInterceptTouchEvent(true);
                 mLastMotionY = (int) event.getY();
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
                 mVelocityTracker.addMovement(motionEvent);
@@ -145,16 +161,19 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
                 if (Math.abs(initialVelocity) > mMinimumVelocity) {
                     fling(-initialVelocity);
                 }
+                recycleVelocityTracker();
+                requestDisallowInterceptTouchEvent(false);
             case MotionEvent.ACTION_CANCEL:
                 stopNestedScroll();
                 recycleVelocityTracker();
                 break;
             case MotionEvent.ACTION_MOVE:
 
+                mVelocityTracker.addMovement(motionEvent);
                 final int y = (int) event.getY() + mScrollOffsetRecord;
-                final int deltaY =  y - mLastMotionY;
+                final int deltaY = y - mLastMotionY;
 
-                Log.d(TAG, String.format("move: y = %d, deltaY = %d, mScrollOffsetRecord =  %d", y , deltaY, mScrollOffsetRecord));
+//                Log.d(TAG, String.format("move: y = %d, deltaY = %d, mScrollOffsetRecord =  %d", y , deltaY, mScrollOffsetRecord));
                 mLastMotionY = y;
                 int scrollY = getScrollY();
 
@@ -170,22 +189,22 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
                 // 向下滑动，优先查看自己要不要处理
                 int maxScrollY = (int) (getContentHeight() * getScale() - getHeight());
 
-                if(scrollY == 0) {
+                if (scrollY == 0) {
                     dispatchNestedScroll(0, 0, 0, -deltaY, mScrollOffset);
                     mScrollOffsetRecord += mScrollOffset[1];
 
-                    Log.d(TAG, String.format("scrollY = 0: mScrollOffset[1] = %d, dy = %d ", mScrollOffset[1], deltaY));
-                    if(deltaY != 0 && mScrollOffset[1] == 0) {
+//                    Log.d(TAG, String.format("scrollY = 0: mScrollOffset[1] = %d, dy = %d ", mScrollOffset[1], deltaY));
+                    if (deltaY != 0 && mScrollOffset[1] == 0) {
                         motionEvent.offsetLocation(0, mScrollOffset[1]);
                         return super.onTouchEvent(event);
                     }
                     return true;
-                } else if(scrollY < maxScrollY) {
-                    Log.d(TAG, String.format("scrollY > 0: mScrollOffset[1] = %d: ", mScrollOffset[1]));
+                } else if (scrollY < maxScrollY) {
+//                    Log.d(TAG, String.format("scrollY > 0: mScrollOffset[1] = %d: ", mScrollOffset[1]));
                     return super.onTouchEvent(event);
                 } else {
-                    Log.d(TAG, String.format("scrollY = max: mScrollOffset[1] = %d: ", mScrollOffset[1]));
-                    if(deltaY > 0) {
+//                    Log.d(TAG, String.format("scrollY = max: mScrollOffset[1] = %d: ", mScrollOffset[1]));
+                    if (deltaY > 0) {
                         return super.onTouchEvent(event);
                     } else {
                         dispatchNestedScroll(0, 0, 0, -deltaY, mScrollOffset);
@@ -198,8 +217,6 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
         }
         return super.onTouchEvent(motionEvent);
     }
-
-    // NestedScrollingChild
 
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {

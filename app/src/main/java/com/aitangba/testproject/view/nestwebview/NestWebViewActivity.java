@@ -53,7 +53,8 @@ public class NestWebViewActivity extends FragmentActivity {
         layoutParams.height = getDisplayMetrics(this).heightPixels - getStatusBarHeight(this);
         mWebView.requestLayout();
 
-        mWebView.loadUrl("https://zhuanti.chebada.com/zhuanti/release/app/2019/02/linestemplate/?refid=1033315721&specialRecommendId=5a832c293cd4435d2460e518f45a3ea9&v=1203#/");
+//        mWebView.loadUrl("https://zhuanti.chebada.com/zhuanti/release/app/2019/02/linestemplate/?refid=1033315721&specialRecommendId=5a832c293cd4435d2460e518f45a3ea9&v=1203#/");
+        mWebView.loadUrl("http://10.102.52.44:8088/");
     }
 
     public static int getStatusBarHeight(Context context) {
