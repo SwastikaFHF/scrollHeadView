@@ -31,6 +31,8 @@ public class NestWebViewActivity extends FragmentActivity {
 
     private WebView mWebView;
     private View textView;
+    private View mTextView1;
+    private TopDockedScrollView mScrollView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,16 +47,19 @@ public class NestWebViewActivity extends FragmentActivity {
                 mWebView.setScrollY(200);
             }
         });
+        mTextView1 = findViewById(R.id.text1);
+        mScrollView = findViewById(R.id.scrollView);
+        mScrollView.setTopDockedView(mTextView1);
 
         mWebView = findViewById(R.id.webView);
         initWebView();
 
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mWebView.getLayoutParams();
-        layoutParams.height = getDisplayMetrics(this).heightPixels - getStatusBarHeight(this);
+        layoutParams.height = 100;
         mWebView.requestLayout();
 
 //        mWebView.loadUrl("https://zhuanti.chebada.com/zhuanti/release/app/2019/02/linestemplate/?refid=1033315721&specialRecommendId=5a832c293cd4435d2460e518f45a3ea9&v=1203#/");
-        mWebView.loadUrl("http://10.102.52.44:8088/");
+        mWebView.loadUrl("file:///android_asset/test.html");
     }
 
     public static int getStatusBarHeight(Context context) {

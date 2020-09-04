@@ -2,6 +2,7 @@ package com.aitangba.testproject.view.nestwebview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Handler;
 import android.support.v4.view.NestedScrollingChild2;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
@@ -9,6 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.webkit.WebView;
 import android.widget.OverScroller;
@@ -53,6 +55,18 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
         final ViewConfiguration configuration = ViewConfiguration.get(getContext());
         mMinimumVelocity = configuration.getScaledMinimumFlingVelocity();
         mMaximumVelocity = configuration.getScaledMaximumFlingVelocity();
+
+        addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                getCurrentHeight();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                mHandler.removeCallbacksAndMessages(null);
+            }
+        });
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -281,4 +295,31 @@ public class NestWebView extends WebView implements NestedScrollingChild2 {
         Log.d(TAG, msg);
     }
 
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.d(TAG, "onMeasure -- ");
+    }
+
+    private Handler mHandler = new Handler();
+    private int mContentHeight;
+    private void getCurrentHeight() {
+        int currentHeight = getContentHeight();
+
+        if(mContentHeight != currentHeight) {
+            onHeightChanged(currentHeight, mContentHeight);
+            mContentHeight = currentHeight;
+        }
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getCurrentHeight();
+            }
+        }, 500);
+    }
+
+    protected void onHeightChanged(int height, int oldHeight) {
+        Log.d(TAG, "onHeightChanged -- height = " + height);
+    }
 }
