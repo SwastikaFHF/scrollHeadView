@@ -1,7 +1,7 @@
 package com.aitangba.testproject.view.calendar.common;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,6 @@ import com.aitangba.testproject.view.calendar.common.manager.BaseCellManager;
 import com.aitangba.testproject.view.calendar.common.pojo.CellBean;
 import com.aitangba.testproject.view.calendar.common.pojo.WeekBean;
 import com.aitangba.testproject.view.calendar.common.view.CalendarCellView;
-import com.aitangba.testproject.view.calendar.common.view.CheckableRelativeLayout;
 import com.aitangba.testproject.view.calendar.common.view.WeekView;
 
 import java.util.ArrayList;

@@ -1,9 +1,8 @@
 package com.aitangba.testproject.invisiblefragment.task;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.view.View;
 
-import com.aitangba.testproject.invisiblefragment.task.TrackedAsyncTask;
 import com.aitangba.testproject.invisiblefragment.task.adapter.ActivityTaskAdapter;
 import com.aitangba.testproject.invisiblefragment.task.adapter.FragmentTaskAdapter;
 import com.aitangba.testproject.invisiblefragment.task.adapter.ViewTaskAdapter;

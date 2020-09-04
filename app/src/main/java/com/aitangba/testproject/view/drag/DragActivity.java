@@ -1,12 +1,9 @@
 package com.aitangba.testproject.view.drag;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aitangba.testproject.R;
 

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.support.v4.widget.SlidingPaneLayout;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -100,7 +100,7 @@ public class SlideBackLayout extends SlidingPaneLayout {
     }
 
     public void attachViewToActivity(final Activity activity) {
-        setPanelSlideListener(new android.support.v4.widget.SlidingPaneLayout.PanelSlideListener() {
+        setPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
             @Override
             public void onPanelOpened(View panel) {
 

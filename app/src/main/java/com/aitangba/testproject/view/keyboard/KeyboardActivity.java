@@ -1,12 +1,11 @@
 package com.aitangba.testproject.view.keyboard;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.EditText;
 
 import com.aitangba.testproject.R;
-import com.bumptech.glide.Glide;
 
 /**
  * Created by fhf11991 on 2018/6/28

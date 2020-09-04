@@ -1,7 +1,7 @@
 package com.aitangba.testproject.view;
 
-import android.databinding.ViewDataBinding;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by fhf11991 on 2018/3/27.

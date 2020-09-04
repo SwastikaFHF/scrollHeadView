@@ -1,7 +1,7 @@
 package com.aitangba.testproject.view.flowlayout;
 
 import android.content.Context;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import android.util.AttributeSet;
 import android.util.SparseIntArray;
 import android.view.View;

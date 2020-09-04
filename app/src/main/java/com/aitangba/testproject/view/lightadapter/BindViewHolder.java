@@ -1,6 +1,6 @@
 package com.aitangba.testproject.view.lightadapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

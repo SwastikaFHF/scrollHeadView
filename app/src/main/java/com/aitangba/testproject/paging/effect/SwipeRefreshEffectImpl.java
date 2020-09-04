@@ -1,7 +1,7 @@
 package com.aitangba.testproject.paging.effect;
 
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.aitangba.testproject.paging.Request;
 import com.aitangba.testproject.paging.Response;

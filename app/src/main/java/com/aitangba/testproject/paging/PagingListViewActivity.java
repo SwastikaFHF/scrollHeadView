@@ -1,21 +1,14 @@
 package com.aitangba.testproject.paging;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.aitangba.testproject.R;
-import com.aitangba.testproject.paging.effect.DialogEffectImpl;
-import com.aitangba.testproject.paging.effect.PagingEffectImpl;
-import com.aitangba.testproject.paging.effect.StatefulEffectImpl;
-import com.aitangba.testproject.paging.effect.SwipeRefreshEffectImpl;
-import com.aitangba.testproject.paging.helper.LoadingDialogHelper;
-import com.aitangba.testproject.paging.helper.StatefulViewHelper;
 import com.aitangba.testproject.paging.view.OnLoadMoreListener;
 import com.aitangba.testproject.paging.view.PagingListView;
 

@@ -1,6 +1,6 @@
 package com.aitangba.testproject.view.lightadapter.viewmodel;
 
-import android.databinding.ViewDataBinding;
+import androidx.databinding.ViewDataBinding;
 import android.view.ViewGroup;
 
 /**

@@ -2,9 +2,9 @@ package com.aitangba.testproject;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatViewInflater;
-import android.support.v7.widget.AppCompatButton;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatViewInflater;
+import androidx.appcompat.widget.AppCompatButton;
 import android.util.AttributeSet;
 import android.util.Log;
 

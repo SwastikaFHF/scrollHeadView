@@ -1,7 +1,7 @@
 package com.aitangba.testproject.html;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;

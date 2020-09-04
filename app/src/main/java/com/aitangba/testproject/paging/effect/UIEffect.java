@@ -1,6 +1,6 @@
 package com.aitangba.testproject.paging.effect;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.aitangba.testproject.paging.Request;
 import com.aitangba.testproject.paging.Response;

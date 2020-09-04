@@ -1,6 +1,6 @@
 package com.aitangba.testproject.view.lightadapter.viewmodel;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseIntArray;
 import android.view.ViewGroup;
 

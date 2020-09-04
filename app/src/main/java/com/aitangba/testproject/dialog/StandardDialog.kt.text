@@ -6,10 +6,6 @@ import android.util.DisplayMetrics
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
-import com.chebada.log.Log
-import com.chebada.platform.R
-import com.chebada.platform.databinding.DialogStandardBinding
-import com.chebada.platform.utils.UiUtils
 
 /**
  * Created by Fring on 2020/8/24

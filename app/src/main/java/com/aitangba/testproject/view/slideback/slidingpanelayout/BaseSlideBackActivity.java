@@ -1,9 +1,10 @@
 package com.aitangba.testproject.view.slideback.slidingpanelayout;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.SlidingPaneLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
+
 import android.util.Log;
 import android.view.View;
 

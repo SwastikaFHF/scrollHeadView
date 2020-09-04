@@ -5,8 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.ColorInt;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.annotation.ColorInt;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 /**

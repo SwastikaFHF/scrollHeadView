@@ -1,9 +1,9 @@
 package com.aitangba.testproject.view.calendar.hotel;
 
-import android.databinding.ViewDataBinding;
-import android.support.annotation.IntDef;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.ViewDataBinding;
+import androidx.annotation.IntDef;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

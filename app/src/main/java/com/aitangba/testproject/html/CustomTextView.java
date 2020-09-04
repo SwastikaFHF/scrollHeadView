@@ -2,13 +2,12 @@ package com.aitangba.testproject.html;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.WindowCompat;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.WindowInsets;
-import android.widget.TextView;
 
 public class CustomTextView extends AppCompatTextView {
 

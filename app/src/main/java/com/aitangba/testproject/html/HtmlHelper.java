@@ -1,6 +1,6 @@
 package com.aitangba.testproject.html;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.Html;
 

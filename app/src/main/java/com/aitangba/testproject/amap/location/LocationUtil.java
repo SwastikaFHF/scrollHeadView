@@ -3,7 +3,7 @@ package com.aitangba.testproject.amap.location;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by fhf11991 on 2018/6/7

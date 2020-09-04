@@ -2,7 +2,7 @@ package com.aitangba.testproject.view.partiality;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;

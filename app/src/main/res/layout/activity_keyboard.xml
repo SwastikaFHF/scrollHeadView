@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -34,4 +34,4 @@
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。
 从增长来看，腾讯依然保持着青春期一般的增速，这是股价大涨的主要原因。不过漂亮的财报后，腾讯投资似乎取代了腾讯主营业务，成为被业界多方讨论的焦点，华尔街日报甚至指出：「腾讯的行事风格越来越像软银」。"/>
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>
