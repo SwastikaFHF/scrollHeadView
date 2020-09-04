@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
     <application
         android:name=".login.CustomApplication"
@@ -125,7 +126,11 @@
         <activity android:name=".addialog.AdDialogActivity" />
         <activity android:name=".view.recyclerroll.RecyclableViewTestActivity" />
         <activity android:name=".view.nestwebview.NestWebViewActivity" />
-
+        <receiver android:name=".AlarmReceiver" >
+            <intent-filter>
+                <action android:name="intent_alarm_log"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
