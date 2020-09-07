@@ -3,16 +3,19 @@ package com.aitangba.testproject.dialog
 import android.app.Dialog
 import android.content.Context
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import com.aitangba.testproject.R
+import com.aitangba.testproject.databinding.DialogStandardBinding
 
 /**
  * Created by Fring on 2020/8/24
  * 宽度：为屏幕宽度的 60/75；
  * 高度：自适应，最多为屏幕高度 8/13
  */
-open class StandardDialog(context: Context) : Dialog(UiUtils.getBaseContext(context)) {
+open class StandardDialog(context: Context) : Dialog(context, R.style.CustomDialog) {
 
     private var mBinding: DialogStandardBinding? = null
     private var mEnableCloseIcon = true

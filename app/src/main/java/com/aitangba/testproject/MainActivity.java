@@ -1,23 +1,17 @@
 package com.aitangba.testproject;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.provider.Settings;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aitangba.testproject.amap.LocationTestActivity;
 import com.aitangba.testproject.baseui.test.LoadingTestActivity;
+import com.aitangba.testproject.dialog.StandardDialogActivity;
 import com.aitangba.testproject.fragment.FragmentTestActivity;
 import com.aitangba.testproject.html.HtmlTestActivity;
 import com.aitangba.testproject.job.JobListActivity;
@@ -43,7 +37,6 @@ import com.aitangba.testproject.view.irregularview.IrregularViewActivity;
 import com.aitangba.testproject.view.lightadapter.viewmodel.LightAdapterActivity;
 import com.aitangba.testproject.view.loadingview.LoadViewActivity;
 import com.aitangba.testproject.view.multiadapter.ui.MultiAdapterActivity;
-import com.aitangba.testproject.view.nestwebview.NestWebViewActivity;
 import com.aitangba.testproject.view.numberpicker.NumberPickerActivity;
 import com.aitangba.testproject.view.path.PathActivity;
 import com.aitangba.testproject.view.progressbar.ProgressbarActivity;
@@ -142,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), NestWebViewActivity.class);
+                Intent intent = new Intent(v.getContext(), StandardDialogActivity.class);
                 startActivity(intent);
             }
         });

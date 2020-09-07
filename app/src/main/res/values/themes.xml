@@ -55,4 +55,7 @@
         <!--<item name="virtualButtonPressedDrawable">@drawable/item_background_holo_light</item>-->
     </style>
 
+    <style name="CustomDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@drawable/bg_dialog_default</item>
+    </style>
 </resources>

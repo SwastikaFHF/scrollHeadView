@@ -10,14 +10,14 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/testListBtn"
+            android:id="@+id/test1Btn"
             style="@style/MainBigButton"
-            android:text="测试列表" />
+            android:text="测试1" />
 
         <Button
-            android:id="@+id/testBtn"
+            android:id="@+id/test2Btn"
             style="@style/MainBigButton"
-            android:text="测试" />
+            android:text="测试2" />
 
     </LinearLayout>
 </ScrollView>

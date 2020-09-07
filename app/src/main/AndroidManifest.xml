@@ -123,9 +123,9 @@
         <activity android:name=".apk.ApkTestActivity" />
         <activity android:name=".html.HtmlTestActivity" />
         <activity android:name=".view.drawabletext.DrawableTextActivity" />
-        <activity android:name=".addialog.AdDialogActivity" />
         <activity android:name=".view.recyclerroll.RecyclableViewTestActivity" />
         <activity android:name=".view.nestwebview.NestWebViewActivity" />
+        <activity android:name=".dialog.StandardDialogActivity"/>
 
         <receiver android:name=".alarmmanager.AlarmReceiver">
             <intent-filter>
