@@ -1,4 +1,4 @@
-package com.aitangba.testproject;
+package com.aitangba.testproject.alarmmanager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

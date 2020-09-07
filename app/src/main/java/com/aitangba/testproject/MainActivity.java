@@ -120,20 +120,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.testListBtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (true) {
-//                    Intent heartBeatIntent = new Intent();
-//                    heartBeatIntent.setPackage(getPackageName());
-//                    heartBeatIntent.setAction("intent_alarm_log");
-//                    sendBroadcast(heartBeatIntent);
-
-                    if (isIgnoringBatteryOptimizations(MainActivity.this)) {
-                        Toast.makeText(MainActivity.this, "忽略电池优化", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "没有忽略电池优化", Toast.LENGTH_SHORT).show();
-                        isIgnoreBatteryOption(MainActivity.this);
-                    }
-                    return;
-                }
                 String[] titles = new String[activityInfoList.size()];
 
                 for (int i = 0, size = activityInfoList.size(); i < size; i++) {
@@ -160,41 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    public static boolean isIgnoringBatteryOptimizations(Activity activity) {
-        String packageName = activity.getPackageName();
-        PowerManager pm = (PowerManager) activity
-                .getSystemService(Context.POWER_SERVICE);
-        if (pm.isIgnoringBatteryOptimizations(packageName)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * 针对N以上的Doze模式
-     *
-     * @param activity
-     */
-    public static void isIgnoreBatteryOption(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                Intent intent = new Intent();
-                String packageName = activity.getPackageName();
-                PowerManager pm = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-// intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + packageName));
-                    activity.startActivityForResult(intent, 101);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void startActivity(Class<?> activityClass) {
