@@ -2,6 +2,7 @@ package com.aitangba.testproject.dialog
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
@@ -41,6 +42,9 @@ open class StandardDialog(context: Context) : Dialog(context, R.style.CustomDial
         }
         window?.attributes?.height = ViewGroup.LayoutParams.MATCH_PARENT
         window?.attributes?.gravity = Gravity.CENTER
+        window?.findViewById<View>(Window.ID_ANDROID_CONTENT)?.setOnClickListener {
+            dismiss()
+        }
         super.show()
     }
 

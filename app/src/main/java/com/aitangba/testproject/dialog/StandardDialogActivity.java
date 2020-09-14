@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -30,6 +31,12 @@ public class StandardDialogActivity extends FragmentActivity {
                 imageView.setBackgroundColor(Color.RED);
                 imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 imageView.setImageResource(R.drawable.hw_dialog_text_img);
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(StandardDialogActivity.this, "测试信息", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 StandardDialog standardDialog = new StandardDialog(v.getContext());
                 standardDialog.setContentView(imageView);
                 standardDialog.show();
